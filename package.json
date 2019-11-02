@@ -1,0 +1,65 @@
+{
+  "name": "@bennymeg/nx-electron",
+  "version": "0.0.1",
+  "description": "Electron Plugin for Nx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennymeg/nx-electron.git"
+  },
+  "keywords": [
+    "nx",
+    "electron",
+    "forge",
+    "jest",
+    "cypress",
+    "monorepo",
+    "schematics"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "author": "Benny Megidish",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/bennymeg/nx-electron/issues"
+  },
+  "schematics": "./collection.json",
+  "builders": "./builders.json",
+  "ng-update": {
+    "requirements": {},
+    "migrations": "./migrations.json"
+  },
+  "peerDependencies": {
+    "@nrwl/workspace": "*"
+  },
+  "dependencies": {
+    "@angular-devkit/architect": "0.803.3",
+    "@angular-devkit/build-webpack": "0.803.3",
+    "@angular-devkit/core": "8.3.3",
+    "@angular-devkit/schematics": "8.3.3",
+    "@nrwl/jest": "*",
+    "@nrwl/linter": "*",
+    "@nrwl/workspace": "^8.7.0",
+    "circular-dependency-plugin": "^5.0.2",
+    "copy-webpack-plugin": "5.0.3",
+    "fork-ts-checker-webpack-plugin": "0.4.15",
+    "license-webpack-plugin": "^1.4.0",
+    "source-map-support": "0.5.12",
+    "tree-kill": "1.2.1",
+    "ts-loader": "5.4.5",
+    "tsconfig-paths-webpack-plugin": "3.2.0",
+    "webpack": "4.39.2",
+    "webpack-dev-server": "3.1.14",
+    "webpack-node-externals": "1.7.2"
+  },
+  "devDependencies": {
+    "@types/circular-dependency-plugin": "^5.0.0",
+    "@types/copy-webpack-plugin": "^5.0.0",
+    "@types/jest": "^24.0.21",
+    "@types/node": "^12.12.3",
+    "@types/webpack": "^4.39.8",
+    "@types/webpack-merge": "^4.1.5",
+    "@types/webpack-node-externals": "^1.6.3",
+    "electron": "^7.0.0",
+    "jest": "^24.9.0"
+  }
+}

@@ -1,0 +1,2 @@
+// keep this file updated when you update you update you app version
+export const packageVersion = '0.0.1';

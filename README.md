@@ -1,2 +1,2 @@
 # nx-electron
-electron schematic for nrwl nx platform
+electron builders and schematics for nrwl nx platform
