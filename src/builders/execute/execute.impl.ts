@@ -1,7 +1,7 @@
 import { BuilderContext, createBuilder, BuilderOutput, targetFromTargetString, scheduleTargetAndForget } from '@angular-devkit/architect';
 import { ChildProcess, spawn } from 'child_process';
 import electron from 'electron';
-import * as treeKill from 'tree-kill';
+import treeKill from 'tree-kill';
 
 import { Observable, bindCallback, of, zip, from } from 'rxjs';
 import { concatMap, tap, mapTo, first, map, filter } from 'rxjs/operators';

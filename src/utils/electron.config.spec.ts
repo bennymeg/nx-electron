@@ -35,7 +35,7 @@ describe('getElectronPartial', () => {
     it('should not polyfill electron apis', () => {
       const result = getElectronWebpackConfig(input);
 
-      expect(result.electron).toEqual(false);
+      expect(result.node).toEqual(false);
     });
   });
 

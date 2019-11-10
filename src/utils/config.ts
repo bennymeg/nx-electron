@@ -7,7 +7,7 @@ import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import CircularDependencyPlugin = require('circular-dependency-plugin');
 import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
-import * as CopyWebpackPlugin from 'copy-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nrwl/workspace';
 import { BuildBuilderOptions } from './types';
 

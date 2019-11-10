@@ -1,11 +1,14 @@
 {
   "name": "nx-electron",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Benny Megidish",
   "license": "Apache-2.0",
+  "scripts": {
+    "compile": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bennymeg/nx-electron.git"
@@ -27,6 +30,21 @@
   "ng-update": {
     "requirements": {},
     "migrations": "./migrations.json"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "tmp",
+      "<rootDir>/test",
+      "<rootDir>/src",
+      "collection/.*/files"
+    ],
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ],
+    "coverageReporters": [
+      "html"
+    ],
+    "coverageDirectory": "coverage"
   },
   "peerDependencies": {
     "@nrwl/workspace": "*"
@@ -61,6 +79,7 @@
     "@types/webpack-merge": "^4.1.5",
     "@types/webpack-node-externals": "^1.6.3",
     "electron": "^7.0.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "typescript": "^3.7.2"
   }
 }

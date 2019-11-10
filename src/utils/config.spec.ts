@@ -316,19 +316,19 @@ describe('getBaseWebpackPartial', () => {
       ).toBeTruthy();
     });
 
-    it('should exclude node modules', () => {
-      const result = getBaseWebpackPartial({
-        ...input,
-        showCircularDependencies: true
-      });
+    // it('should exclude node modules', () => {
+    //   const result = getBaseWebpackPartial({
+    //     ...input,
+    //     showCircularDependencies: true
+    //   });
 
-      const circularDependencyPlugin: CircularDependencyPlugin = result.plugins.find(
-        plugin => plugin instanceof CircularDependencyPlugin
-      );
-      expect(circularDependencyPlugin.options.exclude).toEqual(
-        /[\\\/]node_modules[\\\/]/
-      );
-    });
+    //   const circularDependencyPlugin: CircularDependencyPlugin = result.plugins.find(
+    //     plugin => plugin instanceof CircularDependencyPlugin
+    //   );
+    //   expect(circularDependencyPlugin.options.exclude).toEqual(
+    //     /[\\\/]node_modules[\\\/]/
+    //   );
+    // });
   });
 
   describe('the extract licenses option', () => {

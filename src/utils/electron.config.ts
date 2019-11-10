@@ -1,7 +1,7 @@
 import { Configuration, BannerPlugin } from 'webpack';
-import * as mergeWebpack from 'webpack-merge';
-import * as nodeExternals from 'webpack-node-externals';
-import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
+import mergeWebpack from 'webpack-merge';
+import nodeExternals from 'webpack-node-externals';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 import { BuildElectronBuilderOptions } from '../builders/build/build.impl';
 import { getBaseWebpackPartial } from './config';
