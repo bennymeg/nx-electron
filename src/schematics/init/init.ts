@@ -8,7 +8,7 @@ function addDependencies(): Rule {
   return addDepsToPackageJson(
     {},
     {
-      '@bennymeg/nx-electron': nxElectronVersion,
+      'nx-electron': nxElectronVersion,
       'electron': electronVersion
     }
   );
@@ -18,7 +18,7 @@ function moveDependency(): Rule {
   return updateJsonInTree('package.json', json => {
     json.dependencies = json.dependencies || {};
 
-    delete json.dependencies['@bennymeg/nx-electron'];
+    delete json.dependencies['nx-electron'];
     delete json.dependencies['electron'];
     return json;
   });
@@ -33,7 +33,7 @@ function setDefault(): Rule {
       ((workspace.extensions.cli as JsonObject).defaultCollection as string);
 
     if (!defaultCollection || defaultCollection === '@nrwl/workspace') {
-      (workspace.extensions.cli as JsonObject).defaultCollection = '@bennymeg/nx-electron';
+      (workspace.extensions.cli as JsonObject).defaultCollection = 'nx-electron';
     }
   });
 }

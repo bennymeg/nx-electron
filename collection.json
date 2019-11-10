@@ -6,7 +6,7 @@
     "init": {
       "factory": "./src/schematics/init/init",
       "schema": "./src/schematics/init/schema.json",
-      "description": "Initialize the @bennymeg/nx-electron plugin",
+      "description": "Initialize the nx-electron plugin",
       "aliases": ["ng-add"],
       "hidden": true
     },

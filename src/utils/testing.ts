@@ -7,7 +7,7 @@ import { Architect, BuilderContext, Target } from '@angular-devkit/architect';
 import { ScheduleOptions } from '@angular-devkit/architect/src/api';
 
 const testRunner = new SchematicTestRunner(
-  '@bennymeg/nx-electron',
+  'nx-electron',
   join(__dirname, '../../collection.json')
 );
 

@@ -14,15 +14,15 @@ describe('init', () => {
   it('should add dependencies', async () => {
     const result = await runSchematic('init', {}, tree);
     const packageJson = readJsonInTree(result, 'package.json');
-    expect(packageJson.dependencies['@bennymeg/nx-electron']).toBeUndefined();
-    expect(packageJson.devDependencies['@bennymeg/nx-electron']).toBeDefined();
+    expect(packageJson.dependencies['nx-electron']).toBeUndefined();
+    expect(packageJson.devDependencies['nx-electron']).toBeDefined();
   });
 
   describe('defaultCollection', () => {
     it('should be set if none was set before', async () => {
       const result = await runSchematic('init', {}, tree);
       const workspaceJson = readJsonInTree(result, 'workspace.json');
-      expect(workspaceJson.cli.defaultCollection).toEqual('@bennymeg/nx-electron');
+      expect(workspaceJson.cli.defaultCollection).toEqual('nx-electron');
     });
 
     it('should be set if @nrwl/workspace was set before', async () => {
@@ -38,7 +38,7 @@ describe('init', () => {
       );
       const result = await runSchematic('init', {}, tree);
       const workspaceJson = readJsonInTree(result, 'workspace.json');
-      expect(workspaceJson.cli.defaultCollection).toEqual('@bennymeg/nx-electron');
+      expect(workspaceJson.cli.defaultCollection).toEqual('nx-electron');
     });
 
     it('should not be set if something else was set before', async () => {

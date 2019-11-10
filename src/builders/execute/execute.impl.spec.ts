@@ -26,7 +26,7 @@ describe('ElectronExecuteBuilder', () => {
         project: 'electronapp',
         target: 'build'
       },
-      '@bennymeg/nx-electron:build'
+      'nx-electron:build'
     );
     testOptions = {
       inspect: true,

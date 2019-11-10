@@ -26,7 +26,7 @@ function updateNxJson(options: NormalizedSchema): Rule {
 
 function getBuildConfig(project: any, options: NormalizedSchema) {
   return {
-    builder: '@bennymeg/nx-electron:build',
+    builder: 'nx-electron:build',
     options: {
       outputPath: join(normalize('dist'), options.appProjectRoot),
       main: join(project.sourceRoot, 'main.ts'),
@@ -51,7 +51,7 @@ function getBuildConfig(project: any, options: NormalizedSchema) {
 
 function getServeConfig(options: NormalizedSchema) {
   return {
-    builder: '@bennymeg/nx-electron:execute',
+    builder: 'nx-electron:execute',
     options: {
       buildTarget: `${options.name}:build`
     }

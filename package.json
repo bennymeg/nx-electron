@@ -1,5 +1,5 @@
 {
-  "name": "@bennymeg/nx-electron",
+  "name": "nx-electron",
   "version": "0.0.1",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
