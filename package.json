@@ -1,13 +1,17 @@
 {
   "name": "nx-electron",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Benny Megidish",
   "license": "Apache-2.0",
   "scripts": {
-    "compile": "tsc"
+    "compile": "tsc && npm run copy:json && npm run copy:readme && npm run copy:licence",
+    "publish": "cd build && npm publish --tag alpha",
+    "copy:json": "xcopy \"*.json\" \"build/\" /F /Y",
+    "copy:readme": "xcopy \"README.md\" \"build/\" /F /Y",
+    "copy:licence": "xcopy \"LICENSE\" \"build/\" /F /Y"
   },
   "repository": {
     "type": "git",
