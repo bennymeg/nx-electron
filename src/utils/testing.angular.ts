@@ -36,6 +36,7 @@ export interface AppConfig {
   appName: string;    // name of app
   appModule: string;  // app/app.module.ts in the above sourceDir
 }
+
 export interface LibConfig {
   name: string;
   module: string;
@@ -48,6 +49,7 @@ var libConfig: LibConfig;
 export function getAppConfig(): AppConfig {
   return appConfig;
 }
+
 export function getLibConfig(): LibConfig {
   return libConfig;
 }

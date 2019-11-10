@@ -13,9 +13,7 @@ import { BuildBuilderOptions } from './types';
 
 export const OUT_FILENAME = 'main.js';
 
-export function getBaseWebpackPartial(
-  options: BuildBuilderOptions
-): Configuration {
+export function getBaseWebpackPartial(options: BuildBuilderOptions): Configuration {
   const { options: compilerOptions } = readTsConfig(options.tsConfig);
   const supportsEs2015 =
     compilerOptions.target !== ts.ScriptTarget.ES3 &&

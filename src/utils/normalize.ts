@@ -8,11 +8,7 @@ export interface FileReplacement {
   with: string;
 }
 
-export function normalizeBuildOptions<T extends BuildBuilderOptions>(
-  options: T,
-  root: string,
-  sourceRoot: string
-): T {
+export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T, root: string, sourceRoot: string): T {
   return {
     ...options,
     root: root,
@@ -28,11 +24,7 @@ export function normalizeBuildOptions<T extends BuildBuilderOptions>(
   };
 }
 
-function normalizeAssets(
-  assets: any[],
-  root: string,
-  sourceRoot: string
-): any[] {
+function normalizeAssets(assets: any[], root: string, sourceRoot: string): any[] {
   return assets.map(asset => {
     if (typeof asset === 'string') {
       const assetPath = normalize(asset);
@@ -75,10 +67,7 @@ function normalizeAssets(
   });
 }
 
-function normalizeFileReplacements(
-  root: string,
-  fileReplacements: FileReplacement[]
-): FileReplacement[] {
+function normalizeFileReplacements(root: string, fileReplacements: FileReplacement[]): FileReplacement[] {
   return fileReplacements.map(fileReplacement => ({
     replace: resolve(root, fileReplacement.replace),
     with: resolve(root, fileReplacement.with)

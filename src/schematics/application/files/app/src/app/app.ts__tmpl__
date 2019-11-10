@@ -94,7 +94,7 @@ export default class App {
             App.mainWindow.loadURL(`http://localhost:4200`);
         } else {
             App.mainWindow.loadURL(url.format({
-                pathname: path.join(__dirname, 'index.html'),
+                pathname: path.join(__dirname, '..', 'RENDERER-APP-NAME', 'index.html'),    // TODO: update to your app name here
                 protocol: 'file:',
                 slashes: true
             }));

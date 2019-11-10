@@ -1,11 +1,12 @@
 import { Configuration, BannerPlugin } from 'webpack';
 import * as mergeWebpack from 'webpack-merge';
 import * as nodeExternals from 'webpack-node-externals';
+import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 import { BuildElectronBuilderOptions } from '../builders/build/build.impl';
 import { getBaseWebpackPartial } from './config';
 
-function getElectronPartial(options: BuildElectronBuilderOptions) {
+function getElectronPartial(options: BuildElectronBuilderOptions): Configuration {
   const webpackConfig: Configuration = {
     output: {
       libraryTarget: 'commonjs'
@@ -19,7 +20,23 @@ function getElectronPartial(options: BuildElectronBuilderOptions) {
       minimize: false,
       concatenateModules: false
     };
-  }
+  } 
+  // else if (options.obfuscate) {
+  //   webpackConfig.optimization = {
+  //     minimizer: [
+  //       new UglifyJsPlugin({
+  //         chunkFilter: (chunk) => {
+  //           // Exclude uglification for the `vendor` chunk
+  //           if (chunk.name === 'vendor') {
+  //             return false;
+  //           }
+  
+  //           return true;
+  //         },
+  //       }),
+  //     ],
+  //   }
+  // }
 
   if (options.externalDependencies === 'all') {
     webpackConfig.externals = [nodeExternals()];
@@ -39,8 +56,5 @@ function getElectronPartial(options: BuildElectronBuilderOptions) {
 }
 
 export function getElectronWebpackConfig(options: BuildElectronBuilderOptions) {
-  return mergeWebpack([
-    getBaseWebpackPartial(options),
-    getElectronPartial(options)
-  ]);
+  return mergeWebpack(getBaseWebpackPartial(options), getElectronPartial(options)); // was array
 }
