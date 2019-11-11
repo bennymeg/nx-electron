@@ -1,8 +1,8 @@
-<p align="center"><img src="https://raw.githubusercontent.com/bennymeg/nx-electron/master/nx-electron.png" width="200"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/bennymeg/nx-electron/master/nx-electron.png" width="240"></p>
 
 <div align="center">
 
-## Nx Electron
+# Nx Electron
 Electron builders and schematics for Nrwl Nx platform.
 
 [![licence](https://img.shields.io/github/license/bennymeg/nx-electron.svg)](https://github.com/bennymeg/nx-electron/blob/master/LICENSE)
@@ -13,9 +13,17 @@ Electron builders and schematics for Nrwl Nx platform.
 
 </div>
 
-<hr>
+<hr></br>
 
 # Features
+
+Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
+- **Schematics**: Provides schematics for developing cross platform apps in a mono repo environment.
+- **Typescript**: Uses Typescript code.
+- **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it).
+- **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
+- **Live Update**: Provides continuos live reload for your backend code.
+- **Coming Soon**: _Packaging, making, auto-updates, distributing and more..._
 
 # Getting Started
 
@@ -37,13 +45,13 @@ nx g nx-electron:app <electron-app-name>
 
 ## Building Electron Application
 
-- Run `nx build <electron-app-name>` to build application.
+- Run `nx build <electron-app-name>` to build your application.
 
 ## Serving Electron Application
 
 - Run `nx serve <electron-app-name>` to serve your application.
-- Run `nx test <electron-app-name>` to test it.
-- Run `nx e2e <electron-app-name-e2e>` to run e2e tests for it.
+- Run `nx test <electron-app-name>` to test your application.
+- Run `nx e2e <electron-app-name-e2e>` to run e2e tests for your application.
 
 <!-- ## Documentation ##  
 - 👨🏼‍💻 [API](https://github.com/bennymeg/nx-electron/blob/master/docs/API.md),  
@@ -62,7 +70,10 @@ Before submitting a pull request, please make sure that you include tests and li
 - 👾 [Issue Tracker](https://github.com/bennymeg/nx-electron/issues),
 - 📦 [Source Code](https://github.com/bennymeg/nx-electron/)
 
+## Versioning ##
+
+This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
 
 
-___
+</br><hr>
 **Author:** Benny Megidish.
