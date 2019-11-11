@@ -29,7 +29,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 
 ## Prerequisite
 
-This module is based on Nx, you will need to set up an Nx workspace before you can use this nx-electron.
+This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use this nx-electron.
 
 ## Installation
 
