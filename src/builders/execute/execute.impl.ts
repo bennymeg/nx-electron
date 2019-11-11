@@ -70,6 +70,14 @@ function runProcess(file: string, options: ElectronExecuteBuilderOptions) {
   }
 
   subProcess = spawn(String(electron), normalizeArgs(file, options));
+
+  subProcess.stdout.on('data', (data) => {
+    console.log(data.toString()); 
+  });
+
+  subProcess.stderr.on('data', (data) => {
+    console.error(data.toString()); 
+  });
 }
 
 function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
