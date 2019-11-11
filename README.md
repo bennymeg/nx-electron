@@ -15,11 +15,13 @@ Electron builders and schematics for Nrwl Nx platform.
 
 <hr></br>
 
+> **NOTE**: This repository is still in alpha, if you wish to be an early adopter, please use the alpha branch to receive the latest implementation.
+
 # Features
 
 Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
 - **Schematics**: Provides schematics for developing cross platform apps in a mono repo environment.
-- **Typescript**: Uses Typescript code.
+- **Typescript**: Uses Typescript to help reduce errors, and create more structured code.
 - **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it).
 - **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
 - **Live Update**: Provides continuos live reload for your backend code.
@@ -29,7 +31,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 
 ## Prerequisite
 
-This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use this nx-electron.
+This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ## Installation
 
