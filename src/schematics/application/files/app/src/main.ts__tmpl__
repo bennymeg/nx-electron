@@ -1,4 +1,4 @@
-import { handleSquirrelEvent } from './app/setup_events';
+import { handleSquirrelEvent } from './app/setup-events';
 import { app, BrowserWindow } from 'electron';
 
 // handle setup events as quickly as possible

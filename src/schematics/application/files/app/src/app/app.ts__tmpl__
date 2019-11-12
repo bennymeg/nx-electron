@@ -1,6 +1,6 @@
-import { BrowserWindow } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
+import { BrowserWindow, shell } from 'electron';
+import { join } from 'path';
+import { format } from 'url';
 
 export default class App {
     // Keep a global reference of the window object, if you don't, the window will
@@ -23,7 +23,7 @@ export default class App {
     }
 
     private static onRedirect(event: any, url: string) {
-        if (url != App.mainWindow.webContents.getURL()) {
+        if (url !== App.mainWindow.webContents.getURL()) {
             // this is a normal external redirect, open it in a new browser window
             event.preventDefault();
             shell.openExternal(url);
@@ -93,8 +93,8 @@ export default class App {
         if (App.isDevelopmentMode()) {
             App.mainWindow.loadURL(`http://localhost:4200`);
         } else {
-            App.mainWindow.loadURL(url.format({
-                pathname: path.join(__dirname, '..', 'RENDERER-APP-NAME', 'index.html'),    // TODO: update to your app name here
+            App.mainWindow.loadURL(format({
+                pathname: join(__dirname, '..', 'RENDERER-APP-NAME', 'index.html'),    // TODO: update to your app name here
                 protocol: 'file:',
                 slashes: true
             }));
