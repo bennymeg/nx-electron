@@ -1,14 +1,18 @@
+/**
+ * This module is responsible on handling all the setup events that is submitted by squirrel.
+ */
+
 import { app } from 'electron';
 import { spawn } from 'child_process';
-import * as path from 'path';
-import { packageVersion } from './constants';
+import { resolve, join, basename } from 'path';
+import { packageVersion } from '../constants';
 
 
 // app paths
-const appFolder = path.resolve(process.execPath, '..');
-const appRootFolder = path.resolve(appFolder, '..');
-const updateExe = path.resolve(path.join(appRootFolder, 'Update.exe'));
-const exeName = path.resolve(path.join(appRootFolder, 'app-' + packageVersion, path.basename(process.execPath)));
+const appFolder = resolve(process.execPath, '..');
+const appRootFolder = resolve(appFolder, '..');
+const updateExe = resolve(join(appRootFolder, 'Update.exe'));
+const exeName = resolve(join(appRootFolder, 'app-' + packageVersion, basename(process.execPath)));
 
 
 export function handleSquirrelEvent(): boolean {

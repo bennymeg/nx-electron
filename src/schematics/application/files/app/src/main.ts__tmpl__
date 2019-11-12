@@ -1,4 +1,4 @@
-import { handleSquirrelEvent } from './app/setup-events';
+import { handleSquirrelEvent } from './app/events/squirrel.events';
 import { app, BrowserWindow } from 'electron';
 
 // handle setup events as quickly as possible
@@ -8,5 +8,7 @@ if (handleSquirrelEvent()) {
 }
 
 import App from './app/app';
+import Events from './app/events/electron.events';
 
 App.main(app, BrowserWindow);
+Events.bootstrapElectronEvents();

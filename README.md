@@ -15,7 +15,7 @@ Electron builders and schematics for Nrwl Nx platform.
 
 <hr></br>
 
-> **NOTE**: This repository is still in alpha, if you wish to be an early adopter, please use the alpha branch to receive the latest implementation.
+> **NOTE**: This repository is still in ***alpha***, if you wish to be an early adopter, please use the alpha branch to receive the latest implementation.
 
 # Features
 
@@ -32,6 +32,9 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 ## Prerequisite
 
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
+```bash
+npx create-nx-workspace@latest
+```
 
 ## Installation
 
