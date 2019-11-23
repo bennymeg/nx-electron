@@ -1,2 +1,3 @@
-// keep this file updated when you update you update you app version
-export const packageVersion = '0.0.1';
+// keep this file updated when you update the app version / frontend project
+export const packageVersion = '0.0.0';      // TODO: update me
+export const rendererAppName = 'frontend';  // TODO: update me

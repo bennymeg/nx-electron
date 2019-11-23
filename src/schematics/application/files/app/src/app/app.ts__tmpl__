@@ -1,4 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
+import { rendererAppName } from './constants';
 import { join } from 'path';
 import { format } from 'url';
 
@@ -94,7 +95,7 @@ export default class App {
             App.mainWindow.loadURL(`http://localhost:4200`);
         } else {
             App.mainWindow.loadURL(format({
-                pathname: join(__dirname, '..', 'RENDERER-APP-NAME', 'index.html'),    // TODO: update to your app name here
+                pathname: join(__dirname, '..', rendererAppName, 'index.html'),
                 protocol: 'file:',
                 slashes: true
             }));

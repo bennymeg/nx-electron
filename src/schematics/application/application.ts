@@ -1,4 +1,4 @@
-import { apply, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, template, Tree, url } from '@angular-devkit/schematics';
+import { apply, chain, externalSchematic, mergeWith, move, noop, SchematicContext, template, Tree, url, Rule } from '@angular-devkit/schematics';
 import { join, normalize, Path } from '@angular-devkit/core';
 import { Schema } from './schema';
 import { updateJsonInTree, updateWorkspaceInTree, generateProjectLint, addLintFiles } from '@nrwl/workspace';
@@ -85,6 +85,18 @@ function updateWorkspaceJson(options: NormalizedSchema): Rule {
   });
 }
 
+function updateConstantsFile(options: NormalizedSchema): Rule {
+  return (host: Tree) => {
+    host.overwrite(
+      join(options.appProjectRoot, 'src/app/constants.ts'),
+`// keep this file updated when you update the app version / frontend project
+export const packageVersion = '0.0.0';
+export const rendererAppName = '${options.frontendProject || options.name.split('-')[0] + '-web'}';
+`
+    );
+  };
+}
+
 function addAppFiles(options: NormalizedSchema): Rule {
   return mergeWith(
     apply(url(`./files/app`), [
@@ -136,6 +148,7 @@ export default function(schema: Schema): Rule {
       }),
       addLintFiles(options.appProjectRoot, options.linter),
       addAppFiles(options),
+      updateConstantsFile(options),
       updateWorkspaceJson(options),
       updateNxJson(options),
       options.unitTestRunner === 'jest'
@@ -145,7 +158,7 @@ export default function(schema: Schema): Rule {
             skipSerializers: true
           })
         : noop(),
-      options.frontendProject ? addProxy(options) : noop()
+      options.addProxy ? addProxy(options) : noop()
     ])(host, context);
   };
 }

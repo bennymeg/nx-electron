@@ -14,14 +14,19 @@
       "x-prompt": "What name would you like to use for the electron application?"
     },
     "directory": {
-      "description": "The directory of the new application.",
       "type": "string",
+      "description": "The directory of the new application.",
       "x-prompt": "In which directory should the electron application be generated?"
     },
-    "target": {
-      "description": "The name of the web app to use inside the electron app. ie, myapp-web",
+    "frontendProject": {
       "type": "string",
+      "description": "Frontend project that needs to access this application.",
       "x-prompt": "What's the name of the web app in your workspace you'd like to use inside Electron?"
+    },
+    "addProxy": {
+      "type": "boolean",
+      "default": false,
+      "description": "Add proxy configuration to the frontend project."
     },
     "skipFormat": {
       "description": "Skip formatting files",
@@ -36,7 +41,7 @@
     "linter": {
       "description": "The tool to use for running lint checks.",
       "type": "string",
-      "enum": ["eslint", "tslint"],
+      "enum": ["tslint", "eslint"],
       "default": "tslint"
     },
     "unitTestRunner": {
@@ -48,11 +53,7 @@
     "tags": {
       "type": "string",
       "description": "Add tags to the application (used for linting)"
-    },
-    "frontendProject": {
-      "type": "string",
-      "description": "Frontend project that needs to access this application. This sets up proxy configuration."
     }
   },
-  "required": []
+  "required": ["frontendProject"]
 }
