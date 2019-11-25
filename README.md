@@ -15,7 +15,7 @@ Electron builders and schematics for Nrwl Nx platform.
 
 <hr></br>
 
-> **NOTE**: This repository is still in ***alpha***, if you wish to be an early adopter, please use the alpha branch to receive the latest implementation.
+> **NOTE**: This repository is still in ***alpha***.
 
 # Features
 
@@ -45,8 +45,10 @@ npm install -D nx-electron
 ## Creating Electron Application
 
 ```bash
-nx g nx-electron:app <electron-app-name>
+nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ```
+**NOTE:** You should add a frontend project to you workspace prior to invoking this command.
+
 
 ## Building Electron Application
 
@@ -57,6 +59,23 @@ nx g nx-electron:app <electron-app-name>
 - Run `nx serve <electron-app-name>` to serve your application.
 - Run `nx test <electron-app-name>` to test your application.
 - Run `nx e2e <electron-app-name-e2e>` to run e2e tests for your application.
+
+## Minimal Project Structure
+Regardless of what framework you chose, the resulting file tree will look like this:
+
+```treeview
+<workspace name>/
+├── apps/
+│   ├── electron-app-name/
+│   ├── frontend-app-name/
+│   └── frontend-app-name-e2e/
+├── libs/
+├── tools/
+├── nx.json
+├── package.json
+├── tsconfig.json
+└── tslint.json
+```
 
 <!-- ## Documentation ##  
 - 👨🏼‍💻 [API](https://github.com/bennymeg/nx-electron/blob/master/docs/API.md),  
