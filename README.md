@@ -35,6 +35,7 @@ This module is based on Nx, you will need to [set up an Nx workspace](https://nx
 ```bash
 npx create-nx-workspace@latest
 ```
+You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
 
 ## Installation
 
