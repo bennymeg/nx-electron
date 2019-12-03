@@ -99,6 +99,9 @@ Before submitting a pull request, please make sure that you include tests and li
 
 This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
 
+## Attribution ## 
+
+This project is highly inspired by (and dependent on) nrwl nx platform.
 
 </br><hr>
 **Author:** Benny Megidish.
