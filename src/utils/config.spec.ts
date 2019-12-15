@@ -340,7 +340,7 @@ describe('getBaseWebpackPartial', () => {
 
       const licensePlugin = result.plugins.find(
         plugin => plugin instanceof LicenseWebpackPlugin
-      ) as LicenseWebpackPlugin;
+      ) as any; // as LicenseWebpackPlugin
       const options = (<any>licensePlugin).options;
 
       expect(licensePlugin).toBeTruthy();
