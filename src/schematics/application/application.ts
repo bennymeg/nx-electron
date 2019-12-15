@@ -121,7 +121,7 @@ function addProxy(options: NormalizedSchema): Rule {
         JSON.stringify(
           {
             '/api': {
-              target: 'http://localhost:3333',
+              target: `http://localhost:${options.proxyPort || 3000}`,
               secure: false
             }
           },

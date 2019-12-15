@@ -28,6 +28,11 @@
       "default": false,
       "description": "Add proxy configuration to the frontend project."
     },
+    "proxyPort": {
+      "type": "number",
+      "default": 3000,
+      "description": "Proxy server port number."
+    },
     "skipFormat": {
       "description": "Skip formatting files",
       "type": "boolean",
