@@ -8,7 +8,14 @@ if (handleSquirrelEvent()) {
 }
 
 import App from './app/app';
-import Events from './app/events/electron.events';
+import ElectronEvents from './app/events/electron.events';
+import UpdateEvents from './app/events/update.events';
 
+// initialize app
 App.main(app, BrowserWindow);
-Events.bootstrapElectronEvents();
+ElectronEvents.bootstrapElectronEvents();
+
+// initialize auto updater service
+if (!App.isDevelopmentMode()) {
+    // UpdateEvents.initAutoUpdateService();
+}

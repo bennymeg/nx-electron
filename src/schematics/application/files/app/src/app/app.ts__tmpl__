@@ -10,6 +10,13 @@ export default class App {
     static application: Electron.App;
     static BrowserWindow;
 
+    public static isDevelopmentMode() { 
+        const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
+        const getFromEnvironment: boolean = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
+
+        return isEnvironmentSet ? getFromEnvironment : !App.application.isPackaged;
+    }
+
     private static onWindowAllClosed() {
         if (process.platform !== 'darwin') {
             App.application.quit();
@@ -45,13 +52,6 @@ export default class App {
         if (App.mainWindow === null) {
             App.onReady();
         }
-    }
-
-    private static isDevelopmentMode() { 
-        const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
-        const getFromEnvironment: boolean = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
-
-        return isEnvironmentSet ? getFromEnvironment : !App.application.isPackaged;
     }
 
     private static initMainWindow() {

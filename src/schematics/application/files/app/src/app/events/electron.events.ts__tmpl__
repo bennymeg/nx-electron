@@ -6,7 +6,7 @@
 import { app, ipcMain } from 'electron';
 import { packageVersion } from '../constants';
 
-export default class Events {
+export default class ElectronEvents {
     static bootstrapElectronEvents(): Electron.IpcMain {
         return ipcMain;
     }
