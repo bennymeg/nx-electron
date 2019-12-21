@@ -7,45 +7,57 @@ import { spawn } from 'child_process';
 import { resolve, join, basename } from 'path';
 import { packageVersion } from '../constants';
 
+export default class SquirrelEvents {
+    private static isAppFirstRun = false;
 
-// app paths
-const appFolder = resolve(process.execPath, '..');
-const appRootFolder = resolve(appFolder, '..');
-const updateExe = resolve(join(appRootFolder, 'Update.exe'));
-const exeName = resolve(join(appRootFolder, 'app-' + packageVersion, basename(process.execPath)));
+    // app paths
+    private static appFolder = resolve(process.execPath, '..');
+    private static appRootFolder = resolve(SquirrelEvents.appFolder, '..');
+    private static updateExe = resolve(join(SquirrelEvents.appRootFolder, 'Update.exe'));
+    private static exeName = resolve(join(SquirrelEvents.appRootFolder, 'app-' + packageVersion, basename(process.execPath)));
 
 
-export function handleSquirrelEvent(): boolean {
-    if (process.argv.length === 1 || process.platform !== 'win32') {
+    static handleEvents(): boolean {
+        if (process.argv.length === 1 || process.platform !== 'win32') {
+            return false;
+        }
+        
+        switch (process.argv[1]) {
+            case '--squirrel-install':
+            case '--squirrel-updated':           
+                // Install desktop and start menu shortcuts
+                SquirrelEvents.update(['--createShortcut', SquirrelEvents.exeName]);
+    
+                return true;
+    
+            case '--squirrel-uninstall':
+                // Remove desktop and start menu shortcuts
+                SquirrelEvents.update(['--removeShortcut', SquirrelEvents.exeName]);
+                
+                return true;
+            
+            case '--squirrel-obsolete':
+                app.quit();
+                return true;
+            
+            case '--squirrel-firstrun':
+                // Check if it the first run of the software
+                SquirrelEvents.isAppFirstRun = true;
+                return false;
+        }
+    
         return false;
     }
     
-    switch (process.argv[1]) {
-        case '--squirrel-install':
-        case '--squirrel-updated':           
-            // Install desktop and start menu shortcuts
-            update(['--createShortcut', exeName]);
-
-            return true;
-
-        case '--squirrel-uninstall':
-            // Remove desktop and start menu shortcuts
-            update(['--removeShortcut', exeName]);
-            
-            return true;
-        
-        case '--squirrel-obsolete':
-            app.quit();
-            return true;
+    static isFirstRun(): boolean {
+        return SquirrelEvents.isAppFirstRun;
     }
-
-    return false;
-}
-
-function update(args: Array<string>) {
-    try {
-        spawn(updateExe, args, { detached: true }).on('close', () => setTimeout(app.quit, 1000));
-    } catch(error) {
-        setTimeout(app.quit, 1000);
+    
+    private static update(args: Array<string>) {
+        try {
+            spawn(SquirrelEvents.updateExe, args, { detached: true }).on('close', () => setTimeout(app.quit, 1000));
+        } catch(error) {
+            setTimeout(app.quit, 1000);
+        }
     }
 }
