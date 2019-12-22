@@ -3,9 +3,8 @@ import { JsonObject, workspaces } from '@angular-devkit/core';
 import { runWebpack, BuildResult } from '@angular-devkit/build-webpack';
 
 import { Observable, from } from 'rxjs';
-import { writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { map, concatMap } from 'rxjs/operators';
+import { map, concatMap, tap } from 'rxjs/operators';
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { OUT_FILENAME } from '../../utils/config';
 import { BuildBuilderOptions } from '../../utils/types';

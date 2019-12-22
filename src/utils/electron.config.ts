@@ -1,7 +1,7 @@
-import { Configuration, BannerPlugin } from 'webpack';
+import { Configuration } from 'webpack';
 import mergeWebpack from 'webpack-merge';
 import nodeExternals from 'webpack-node-externals';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 
 import { BuildElectronBuilderOptions } from '../builders/build/build.impl';
 import { getBaseWebpackPartial } from './config';
@@ -20,23 +20,37 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
       minimize: false,
       concatenateModules: false
     };
-  } 
-  // else if (options.obfuscate) {
-  //   webpackConfig.optimization = {
-  //     minimizer: [
-  //       new UglifyJsPlugin({
-  //         chunkFilter: (chunk) => {
-  //           // Exclude uglification for the `vendor` chunk
-  //           if (chunk.name === 'vendor') {
-  //             return false;
-  //           }
+  }
+
+  if (options.obfuscate) {
+    const obfuscationOptimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          chunkFilter: (chunk) => {
+            // Exclude uglification for the `vendor` chunk
+            if (chunk.name === 'vendor') {
+              return false;
+            }
   
-  //           return true;
-  //         },
-  //       }),
-  //     ],
-  //   }
-  // }
+            return true;
+          },
+          parallel: true,
+          terserOptions: {
+            mangle: true,
+            keep_fnames: false,
+            toplevel: true,
+          }
+        }),
+      ],
+    };
+
+    if (webpackConfig.optimization) {
+      webpackConfig.optimization = Object.assign(webpackConfig.optimization, obfuscationOptimization);
+    } else {
+      webpackConfig.optimization = obfuscationOptimization;
+    }
+  }
 
   if (options.externalDependencies === 'all') {
     webpackConfig.externals = [nodeExternals()];
