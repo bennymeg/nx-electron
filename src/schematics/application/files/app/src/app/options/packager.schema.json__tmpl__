@@ -383,10 +383,6 @@
             ],
             "description": "One or more additional regular expression patterns which specify which files to ignore when copying files to create the app bundle(s).\nThe regular expressions are matched against the absolute path of a given file/directory to be copied."
         },
-        "name": {
-            "description": "The application name. If omitted, it will use the productName or name value from the nearest package.json",
-            "type": "string"
-        },
         "osxNotarize": {
             "$ref": "#/definitions/Pick<NotarizeStartOptions,\"appleId\"|\"appleIdPassword\"|\"ascProvider\">",
             "description": "If present, notarizes OS X target apps when the host platform is OS X and XCode is installed."
