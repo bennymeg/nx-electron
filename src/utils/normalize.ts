@@ -1,6 +1,7 @@
 import { Path, normalize } from '@angular-devkit/core';
 import { resolve, dirname, relative, basename } from 'path';
 import { BuildBuilderOptions } from './types';
+import { Options as ElectronPackagerOptions } from 'electron-packager'; 
 import { statSync } from 'fs';
 
 export interface FileReplacement {
@@ -21,6 +22,14 @@ export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T,
     webpackConfig: options.webpackConfig
       ? resolve(root, options.webpackConfig)
       : options.webpackConfig
+  };
+}
+
+export function normalizePackagingOptions<T extends ElectronPackagerOptions>(options: T, root: string, sourceRoot: string): T {
+  return {
+    ...options,
+    dir: root,
+    sourceRoot: sourceRoot
   };
 }
 

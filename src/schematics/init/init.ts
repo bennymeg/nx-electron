@@ -1,7 +1,7 @@
 import { Rule, chain } from '@angular-devkit/schematics';
 import { addDepsToPackageJson, updateJsonInTree, addPackageWithInit, updateWorkspace, formatFiles } from '@nrwl/workspace';
 import { Schema } from './schema';
-import { nxElectronVersion, electronVersion } from '../../utils/versions';
+import { nxElectronVersion, electronVersion, electronPackagerVersion, rimrafVersion } from '../../utils/versions';
 import { JsonObject } from '@angular-devkit/core';
 
 function addDependencies(): Rule {
@@ -9,7 +9,9 @@ function addDependencies(): Rule {
     {},
     {
       'nx-electron': nxElectronVersion,
-      'electron': electronVersion
+      'electron': electronVersion,
+      'electron-packager': electronPackagerVersion,
+      'rimraf': rimrafVersion
     }
   );
 }
@@ -20,6 +22,9 @@ function moveDependency(): Rule {
 
     delete json.dependencies['nx-electron'];
     delete json.dependencies['electron'];
+    delete json.dependencies['electron-packager'];
+    delete json.dependencies['rimraf'];
+
     return json;
   });
 }

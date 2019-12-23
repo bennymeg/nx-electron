@@ -10,6 +10,11 @@
       "implementation": "./src/builders/execute/execute.impl",
       "schema": "./src/builders/execute/schema.json",
       "description": "Execute an Electron application"
+    },
+    "package": {
+      "implementation": "./src/builders/package/package.impl",
+      "schema": "./src/builders/package/schema.json",
+      "description": "Package an Electron application"
     }
   }
 }
