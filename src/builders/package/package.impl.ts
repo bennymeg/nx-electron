@@ -53,18 +53,7 @@ function run(
           return writeFileAsync(join(buildPath, 'index.js'), `const Main = require('./dist/apps/${options.name}/main');`);
         },
         (buildPath, electronVersion, platform, arch) => {
-          return new Promise((resolve, reject) => {
-            // remove src files (./apps directory)
-            if (statSync(join(buildPath, 'apps')).isDirectory()) {
-              try {
-                removeSync(join(buildPath, 'apps'));
-              } catch (error) {
-                reject(error);
-              }
-            }
-
-            resolve();
-          });
+          return removeSourceFiles(options, buildPath);
         }
       ])];
 
@@ -127,4 +116,30 @@ function addMissingDefaultOptions(options: PackageElectronBuilderOptions): Packa
   Object.keys(options).forEach((key) => (options[key] === '') && delete options[key]);
 
   return options;
+}
+
+function removeSourceFiles(options: PackageElectronBuilderOptions, buildPath: string): Promise<any> {
+  // remove source map files
+  if (options['ignoreSourceMap']) {
+    if (statSync(join(buildPath, 'dist')).isDirectory()) {
+      try {
+        removeSync(join(buildPath, 'dist', '**', '*.js.map'));
+      } catch (error) {
+        error('Failed to remove source map files:', error);
+      }
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    // remove source files (./apps directory)
+    if (statSync(join(buildPath, 'apps')).isDirectory()) {
+      try {
+        removeSync(join(buildPath, 'apps'));
+      } catch (error) {
+        reject(error);
+      }
+    }
+
+    resolve();
+  });
 }
