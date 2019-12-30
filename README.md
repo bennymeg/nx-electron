@@ -15,17 +15,18 @@ Electron builders and schematics for Nrwl Nx platform.
 
 <hr></br>
 
-> **NOTE**: This repository is still in ***alpha***.
+<!-- > **NOTE**: This repository is still in ***beta***. -->
 
 # Features
 
 Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
 - **Schematics**: Provides schematics for developing cross platform apps in a mono repo environment.
 - **Typescript**: Uses Typescript to help reduce errors, and create more structured code.
-- **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it).
+- **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it). 🆕
 - **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
 - **Live Update**: Provides continuos live reload for your backend code.
-- **Coming Soon**: _Packaging, making, auto-updates, distributing and more..._
+- **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events. 🆕
+- **Packaging**: Packages your frontend and backend webpack bundles into single electron package. 🆕
 
 # Getting Started
 
@@ -58,8 +59,21 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ## Serving Electron Application
 
 - Run `nx serve <electron-app-name>` to serve your application.
+
+## Packaging Electron Application
+
+- Run `nx run <electron-app-name>:package [--options]` to package your application.
+
+The options that can be passed are described [here](https://github.com/electron/electron-packager/blob/master/docs/api.md#options). All of the options are available except the functions hooks (afterCopy, afterExtract, afterPrune). In addition, you can pass the --ignoreSourceMap option in order to ignore all the source map files in your package. **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (using the beta version or newer).
+
+### Configuring static packaging options
+
+It is possible to configure all the packaging that are describes above in _`.\apps\composer-app\src\app\options\packager.options.json`_.
+**Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
+
+## Testing Electron Application
+
 - Run `nx test <electron-app-name>` to test your application.
-- Run `nx e2e <electron-app-name-e2e>` to run e2e tests for your application.
 
 ## Minimal Project Structure
 Regardless of what framework you chose, the resulting file tree will look like this:
@@ -101,7 +115,8 @@ This repository follows the semantic versioning rules while adhering to Nx and A
 
 ## Attribution ## 
 
-This project is highly inspired by (and dependent on) nrwl nx platform.
+This project is highly inspired by (and dependent on) Nrwl [Nx](https://nx.dev) platform.
+Under the hood, we use [Electron Packager](https://github.com/electron/electron-packager) to package the electron application.
 
 </br><hr>
 **Author:** Benny Megidish.
