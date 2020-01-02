@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "8.0.0-beta.0",
+  "version": "8.0.0-beta.1",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
@@ -8,14 +8,19 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "compile": "tsc && npm run copy:all && npm run permission",
+    "compile": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish",
     "permission": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./scripts/make_build_public.ps1",
     "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence",
     "copy:ts": "xcopy \"src\" \"build/src/\" /F /Y /S",
     "copy:json": "xcopy \"*.json\" \"build/\" /F /Y",
     "copy:readme": "xcopy \"README.md\" \"build/\" /F /Y",
-    "copy:licence": "xcopy \"LICENSE\" \"build/\" /F /Y"
+    "copy:licence": "xcopy \"LICENSE\" \"build/\" /F /Y",
+    "clear:all": "npm run clear:ts && npm run clear:json && npm run clear:readme && npm run clear:licence",
+    "clear:ts": "rmdir \".\\build\\src\\\" /q /s",
+    "clear:json": "del \".\\build\\*.json\"",
+    "clear:readme": "del \".\\build\\README.md\"",
+    "clear:licence": "del \".\\build\\LICENSE\""
   },
   "repository": {
     "type": "git",
