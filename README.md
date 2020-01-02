@@ -68,7 +68,7 @@ The options that can be passed are described [here](https://github.com/electron/
 
 ### Configuring static packaging options
 
-It is possible to configure all the packaging that are describes above in _`.\apps\composer-app\src\app\options\packager.options.json`_.
+It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\packager.options.json`_.
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
 ## Testing Electron Application
