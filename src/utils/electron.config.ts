@@ -11,7 +11,7 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
     output: {
       libraryTarget: 'commonjs'
     },
-    target: 'node',
+    target: 'electron-main',
     node: false
   };
 
