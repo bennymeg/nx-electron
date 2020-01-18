@@ -6,11 +6,11 @@ import electronPackager from 'electron-packager';
 
 import { join } from 'path';
 import { sync as removeSync } from 'rimraf';
-import { writeFile, readFile, readFileSync, statSync } from 'fs';
+import { writeFile, readFile, readFileSync, statSync, readdirSync } from 'fs';
 import { promisify } from 'util';
 
 import { Observable, from, of } from 'rxjs';
-import { map, concatMap } from 'rxjs/operators';
+import { map, concatMap, tap } from 'rxjs/operators';
 import { normalizePackagingOptions } from '../../utils/normalize';
 import { NodeJsSyncHost } from '@angular-devkit/core/node';
 
@@ -43,6 +43,9 @@ function run(
     ),
     map(options => 
       mergePresetOptions(options)
+    ),
+    map(options => 
+      addDefaultIgnoreOptions(options)
     ),
     map(options => 
       addMissingDefaultOptions(options)
@@ -103,7 +106,71 @@ function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElec
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')
     const externalOptions = JSON.parse(rawData);
-    options = Object.assign(options, externalOptions);
+    options = Object.assign(normalizeIgnoreOptions(options), normalizeIgnoreOptions(externalOptions));
+  }
+
+  return options;
+}
+
+function addDefaultIgnoreOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
+  // add ignore options that ignore all the additional projects in the dist folder
+  // const ignoreExtraProjects: RegExp = new RegExp(`\/dist\/(?!${options.name}$|${options.frontendProject}$).*$`);
+  const ignoreExtraProjects: Array<RegExp> = getUnrelatedWorkspaceAppsIgnoreList(options);
+  
+  if (options.ignore) {
+    if (options.ignore instanceof RegExp) {
+      ignoreExtraProjects.push(options.ignore);
+      options.ignore = ignoreExtraProjects;
+    } else if (Array.isArray(options.ignore)) {
+      options.ignore.concat(ignoreExtraProjects);
+    }
+  } else if (ignoreExtraProjects.length > 0) {
+    options.ignore = ignoreExtraProjects;
+  }
+
+  return options;
+}
+
+function getUnrelatedWorkspaceAppsIgnoreList(options: PackageElectronBuilderOptions): Array<RegExp> {
+  // get regex array of unrelated workspace apps (if exists) to be ignored
+  let unrelatedAppsPaths: Array<RegExp> = [];
+  const appsDir: string = 'apps';
+  const appsPath: string = join(options.dir, appsDir); // assumes that apps is a super set of compiled apps (dist) 
+
+  try {
+    unrelatedAppsPaths = readdirSync(appsPath, { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .filter(entry => entry.name !== options.name && entry.name !== options.frontendProject)
+      .map(entry => new RegExp(appsDir + '/' + entry.name + '$')) // don't use join here
+  } catch(error) {
+    console.error(`${options.name} does not have a valid workspaceRoot. could not generate default ignore list.`);
+  }
+
+  return unrelatedAppsPaths;
+}
+
+function normalizeIgnoreOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
+  // normalize ignore options (if exist) to be of type RegExp | RegExp[]
+  let normalizedIgnoreOptions: Array<RegExp> = [];
+
+  if (options.ignore) {
+    if (typeof options.ignore === 'string') {
+      options.ignore = new RegExp(options.ignore);
+    } else if (typeof options.ignore === 'object' && options.ignore instanceof RegExp) {
+      normalizedIgnoreOptions.push(options.ignore);
+    } else if (Array.isArray(options.ignore)) {
+      options.ignore.forEach(option => {
+        if (typeof option === 'string') {
+          option = new RegExp(option);
+        } 
+        
+        if (option instanceof RegExp) {
+          normalizedIgnoreOptions.push(option);
+        }
+      });
+
+      options.ignore = normalizedIgnoreOptions;
+    }
   }
 
   return options;
