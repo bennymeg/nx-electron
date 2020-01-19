@@ -64,7 +64,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 
-The options that can be passed are described [here](https://github.com/electron/electron-packager/blob/master/docs/api.md#options). All of the options are available except the functions hooks (afterCopy, afterExtract, afterPrune). In addition, you can pass the --ignoreSourceMap option in order to ignore all the source map files in your package. **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (using the beta version or newer).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (using the beta version or newer).
 
 ### Configuring static packaging options
 
