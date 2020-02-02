@@ -64,7 +64,7 @@ export function electronExecuteBuilderHandler(options: ElectronExecuteBuilderOpt
   );
 }
 
-function runProcess(file: string, options: ElectronExecuteBuilderOptions) {
+function runProcess(file: string, options: ElectronExecuteBuilderOptions, context: BuilderContext) {
   if (subProcess) {
     throw new Error('Already running');
   }
@@ -72,11 +72,11 @@ function runProcess(file: string, options: ElectronExecuteBuilderOptions) {
   subProcess = spawn(String(electron), normalizeArgs(file, options));
 
   subProcess.stdout.on('data', (data) => {
-    console.log(data.toString()); 
+    context.logger.info(data.toString());
   });
 
   subProcess.stderr.on('data', (data) => {
-    console.error(data.toString()); 
+    context.logger.error(data.toString());
   });
 }
 
@@ -100,7 +100,7 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
 function restartProcess(file: string, options: ElectronExecuteBuilderOptions, context: BuilderContext) {
   return killProcess(context).pipe(
     tap(() => {
-      runProcess(file, options);
+      runProcess(file, options, context);
     })
   );
 }
