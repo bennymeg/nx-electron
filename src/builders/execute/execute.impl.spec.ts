@@ -1,10 +1,12 @@
 import { InspectType, ElectronExecuteBuilderOptions, electronExecuteBuilderHandler } from './execute.impl';
 import { of, from } from 'rxjs';
+import electron from 'electron';
 import * as devkitArchitect from '@angular-devkit/architect';
 import { MockBuilderContext, getMockContext } from '../../utils/testing';
+import { EventEmitter } from 'events';
 
 jest.mock('child_process');
-let { fork } = require('child_process');
+let { spawn } = require('child_process');
 jest.mock('tree-kill');
 let treeKill = require('tree-kill');
 
@@ -14,8 +16,10 @@ describe('ElectronExecuteBuilder', () => {
   let scheduleTargetAndForget: jasmine.Spy;
 
   beforeEach(async () => {
-    fork.mockReturnValue({
-      pid: 123
+    spawn.mockReturnValue({
+      pid: 123,
+      stdout: new EventEmitter(),
+      stderr: new EventEmitter()
     });
     treeKill.mockImplementation((pid, signal, callback) => {
       callback();
@@ -33,8 +37,7 @@ describe('ElectronExecuteBuilder', () => {
       args: [],
       buildTarget: 'electronapp:build',
       port: 9229,
-      waitUntilTargets: [],
-      host: 'localhost'
+      waitUntilTargets: []
     };
     scheduleTargetAndForget = spyOn(
       devkitArchitect,
@@ -55,15 +58,9 @@ describe('ElectronExecuteBuilder', () => {
         watch: true
       }
     );
-    expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-      execArgv: [
-        '-r',
-        'source-map-support/register',
-        '--inspect=localhost:9229'
-      ]
-    });
+    expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=9229', 'outfile.js']);
     expect(treeKill).toHaveBeenCalledTimes(0);
-    expect(fork).toHaveBeenCalledTimes(1);
+    expect(spawn).toHaveBeenCalledTimes(1);
   });
 
   describe('--inspect', () => {
@@ -76,13 +73,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         ).toPromise();
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '-r',
-            'source-map-support/register',
-            '--inspect=localhost:9229'
-          ]
-        });
+        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=9229', 'outfile.js']);
       });
     });
 
@@ -95,55 +86,22 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         ).toPromise();
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '-r',
-            'source-map-support/register',
-            '--inspect=localhost:9229'
-          ]
-        });
-      });
-    });
-  });
-
-  describe('--host', () => {
-    describe('0.0.0.0', () => {
-      it('should inspect the process on host 0.0.0.0', async () => {
-        await electronExecuteBuilderHandler(
-          {
-            ...testOptions,
-            host: '0.0.0.0'
-          },
-          context
-        ).toPromise();
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '-r',
-            'source-map-support/register',
-            '--inspect=localhost:9229'
-          ]
-        });
+        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect-brk=9229', 'outfile.js']);
       });
     });
   });
 
   describe('--port', () => {
-    describe('1234', () => {
-      it('should inspect the process on port 1234', async () => {
+    describe('5858', () => {
+      it('should inspect the process on port 5858', async () => {
         await electronExecuteBuilderHandler(
           {
             ...testOptions,
-            port: 1234
+            port: 5858
           },
           context
         ).toPromise();
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '-r',
-            'source-map-support/register',
-            '--inspect=localhost:1234'
-          ]
-        });
+        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=5858', 'outfile.js']);
       });
     });
   });
@@ -191,9 +149,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context
     ).toPromise();
-    expect(fork).toHaveBeenCalledWith('outfile.js', ['arg1', 'arg2'], {
-      execArgv: ['-r', 'source-map-support/register']
-    });
+    expect(spawn).toHaveBeenCalledWith(String(electron), ['outfile.js', 'arg1', 'arg2']);
   });
 
   it('should warn users who try to use it in production', async () => {

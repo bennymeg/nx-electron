@@ -81,7 +81,7 @@ function runProcess(file: string, options: ElectronExecuteBuilderOptions, contex
 }
 
 function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
-  const args = [];
+  let args = [];
 
   if (options.inspect === true) {
     options.inspect = InspectType.Inspect;
@@ -92,7 +92,7 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
   }
 
   args.push(file);
-  args.concat(options.args);
+  args = args.concat(options.args);
 
   return args;
 }

@@ -1,5 +1,5 @@
 import { Tree } from '@angular-devkit/schematics';
-import * as stripJsonComments from 'strip-json-comments';
+import stripJsonComments from 'strip-json-comments';
 import { createEmptyWorkspace, getFileContent } from '@nrwl/workspace/testing';
 import { runSchematic } from '../../utils/testing';
 import { NxJson, readJsonInTree } from '@nrwl/workspace';
@@ -15,7 +15,7 @@ describe('app', () => {
 
   describe('not nested', () => {
     it('should update workspace.json', async () => {
-      const tree = await runSchematic('app', { name: 'myElectronApp' }, appTree);
+      const tree = await runSchematic('app', { name: 'myElectronApp', frontendProject: 'my-frontend' }, appTree);
       const workspaceJson = readJsonInTree(tree, '/workspace.json');
       const project = workspaceJson.projects['my-electron-app'];
       expect(project.root).toEqual('apps/my-electron-app');
@@ -69,7 +69,7 @@ describe('app', () => {
     it('should update nx.json', async () => {
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', tags: 'one,two' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', tags: 'one,two' },
         appTree
       );
       const nxJson = readJsonInTree<NxJson>(tree, '/nx.json');
@@ -84,7 +84,7 @@ describe('app', () => {
     });
 
     it('should generate files', async () => {
-      const tree = await runSchematic('app', { name: 'myElectronApp' }, appTree);
+      const tree = await runSchematic('app', { name: 'myElectronApp', frontendProject: 'my-frontend' }, appTree);
       expect(tree.exists(`apps/my-electron-app/jest.config.js`)).toBeTruthy();
       expect(tree.exists('apps/my-electron-app/src/main.ts')).toBeTruthy();
 
@@ -112,7 +112,7 @@ describe('app', () => {
     it('should update workspace.json', async () => {
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', directory: 'myDir' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', directory: 'myDir' },
         appTree
       );
       const workspaceJson = readJsonInTree(tree, '/workspace.json');
@@ -141,7 +141,7 @@ describe('app', () => {
     it('should update nx.json', async () => {
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', directory: 'myDir', tags: 'one,two' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', directory: 'myDir', tags: 'one,two' },
         appTree
       );
       const nxJson = readJsonInTree<NxJson>(tree, '/nx.json');
@@ -164,7 +164,7 @@ describe('app', () => {
       };
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', directory: 'myDir' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', directory: 'myDir' },
         appTree
       );
 
@@ -206,7 +206,7 @@ describe('app', () => {
     it('should not generate test configuration', async () => {
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', unitTestRunner: 'none' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', unitTestRunner: 'none' },
         appTree
       );
       expect(tree.exists('apps/my-electron-app/src/test-setup.ts')).toBeFalsy();
@@ -229,7 +229,7 @@ describe('app', () => {
 
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', frontendProject: 'my-frontend' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', addProxy: true },
         appTree
       );
 
@@ -247,7 +247,7 @@ describe('app', () => {
 
       const tree = await runSchematic(
         'app',
-        { name: 'myElectronApp', frontendProject: 'myFrontend' },
+        { name: 'myElectronApp', frontendProject: 'my-frontend', addProxy: true},
         appTree
       );
 

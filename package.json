@@ -8,6 +8,8 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "t1": "jest --maxWorkers=1 .src/builders/execute/execute.impl.spec.js",
+    "test": "jest --maxWorkers=1 .*.spec.js",
     "compile": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish",
     "permission": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./scripts/make_build_public.ps1",

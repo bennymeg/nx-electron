@@ -3,8 +3,8 @@ import { normalize, getSystemPath } from '@angular-devkit/core';
 
 import * as ts from 'typescript';
 import { LicenseWebpackPlugin } from 'license-webpack-plugin';
-import CircularDependencyPlugin = require('circular-dependency-plugin');
-import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+import CircularDependencyPlugin from 'circular-dependency-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 jest.mock('tsconfig-paths-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { ProgressPlugin } from 'webpack';
@@ -341,11 +341,9 @@ describe('getBaseWebpackPartial', () => {
       const licensePlugin = result.plugins.find(
         plugin => plugin instanceof LicenseWebpackPlugin
       ) as any; // as LicenseWebpackPlugin
-      const options = (<any>licensePlugin).options;
+      const options = (<any>licensePlugin).pluginOptions;
 
       expect(licensePlugin).toBeTruthy();
-      expect(options.pattern).toEqual(/.*/);
-      expect(options.suppressErrors).toEqual(true);
       expect(options.perChunkOutput).toEqual(false);
       expect(options.outputFilename).toEqual('3rdpartylicenses.txt');
     });

@@ -11,13 +11,13 @@ describe('normalizeBuildOptions', () => {
 
   beforeEach(() => {
     testOptions = {
-      main: 'apps/electronapp/src/main.ts',
-      tsConfig: 'apps/electronapp/tsconfig.app.json',
-      outputPath: 'dist/apps/electronapp',
+      main: 'apps\\electronapp\\src\\main.ts',
+      tsConfig: 'apps\\electronapp\\tsconfig.app.json',
+      outputPath: 'dist\\apps\\electronapp',
       fileReplacements: [
         {
-          replace: 'apps/environment/environment.ts',
-          with: 'apps/environment/environment.prod.ts'
+          replace: 'apps\\environment\\environment.ts',
+          with: 'apps\\environment\\environment.prod.ts'
         },
         {
           replace: 'module1.ts',
@@ -27,27 +27,27 @@ describe('normalizeBuildOptions', () => {
       assets: [],
       statsJson: false
     };
-    root = '/root';
-    sourceRoot = normalize('apps/electronapp/src');
+    root = 'C:\\root';
+    sourceRoot = normalize('apps\\electronapp\\src');
   });
   it('should add the root', () => {
     const result = normalizeBuildOptions(testOptions, root, sourceRoot);
-    expect(result.root).toEqual('/root');
+    expect(result.root).toEqual('C:\\root');
   });
 
   it('should resolve main from root', () => {
     const result = normalizeBuildOptions(testOptions, root, sourceRoot);
-    expect(result.main).toEqual('/root/apps/electronapp/src/main.ts');
+    expect(result.main).toEqual('C:\\root\\apps\\electronapp\\src\\main.ts');
   });
 
   it('should resolve the output path', () => {
     const result = normalizeBuildOptions(testOptions, root, sourceRoot);
-    expect(result.outputPath).toEqual('/root/dist/apps/electronapp');
+    expect(result.outputPath).toEqual('C:\\root\\dist\\apps\\electronapp');
   });
 
   it('should resolve the tsConfig path', () => {
     const result = normalizeBuildOptions(testOptions, root, sourceRoot);
-    expect(result.tsConfig).toEqual('/root/apps/electronapp/tsconfig.app.json');
+    expect(result.tsConfig).toEqual('C:\\root\\apps\\electronapp\\tsconfig.app.json');
   });
 
   it('should normalize asset patterns', () => {
@@ -59,12 +59,12 @@ describe('normalizeBuildOptions', () => {
         ...testOptions,
         root,
         assets: [
-          'apps/electronapp/src/assets',
+          'apps\\electronapp\\src\\assets',
           {
             input: 'outsideproj',
             output: 'output',
-            glob: '**/*',
-            ignore: ['**/*.json']
+            glob: '**\\*',
+            ignore: ['**\\*.json']
           }
         ]
       },
@@ -73,15 +73,15 @@ describe('normalizeBuildOptions', () => {
     );
     expect(result.assets).toEqual([
       {
-        input: '/root/apps/electronapp/src/assets',
+        input: 'C:\\root\\apps\\electronapp\\src\\assets',
         output: 'assets',
-        glob: '**/*'
+        glob: '**\\*'
       },
       {
-        input: '/root/outsideproj',
+        input: 'C:\\root\\outsideproj',
         output: 'output',
-        glob: '**/*',
-        ignore: ['**/*.json']
+        glob: '**\\*',
+        ignore: ['**\\*.json']
       }
     ]);
   });
@@ -90,12 +90,12 @@ describe('normalizeBuildOptions', () => {
     const result = normalizeBuildOptions(testOptions, root, sourceRoot);
     expect(result.fileReplacements).toEqual([
       {
-        replace: '/root/apps/environment/environment.ts',
-        with: '/root/apps/environment/environment.prod.ts'
+        replace: 'C:\\root\\apps\\environment\\environment.ts',
+        with: 'C:\\root\\apps\\environment\\environment.prod.ts'
       },
       {
-        replace: '/root/module1.ts',
-        with: '/root/module2.ts'
+        replace: 'C:\\root\\module1.ts',
+        with: 'C:\\root\\module2.ts'
       }
     ]);
   });

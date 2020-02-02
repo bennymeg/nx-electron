@@ -4,7 +4,6 @@ jest.mock('tsconfig-paths-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { BuildElectronBuilderOptions } from './build.impl';
 import { of } from 'rxjs';
-import * as fs from 'fs';
 import * as buildWebpack from '@angular-devkit/build-webpack';
 import { Architect } from '@angular-devkit/architect';
 import { getTestArchitect } from '../../utils/testing';
@@ -48,7 +47,7 @@ describe('ElectronBuildBuilder', () => {
       workspace: {
         projects: {
           get: () => ({
-            sourceRoot: '/root/apps/electronapp/src'
+            sourceRoot: 'C:\\root\\apps\\electronapp\\src'
           })
         }
       }
@@ -81,7 +80,7 @@ describe('ElectronBuildBuilder', () => {
       await run.stop();
 
       expect(output.success).toEqual(true);
-      expect(output.outfile).toEqual('/root/dist/apps/electronapp/main.js');
+      expect(output.outfile).toEqual('C:\\root\\dist\\apps\\electronapp\\main.js');
     });
 
     describe('webpackConfig option', () => {
@@ -90,7 +89,7 @@ describe('ElectronBuildBuilder', () => {
           config: 'config'
         }));
         jest.mock(
-          join(normalize('/root'), 'apps/electronapp/webpack.config.js'),
+          join(normalize('C:\\root'), 'apps\\electronapp\\webpack.config.js'),
           () => mockFunction,
           {
             virtual: true

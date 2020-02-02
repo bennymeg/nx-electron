@@ -29,7 +29,7 @@ describe('getElectronPartial', () => {
     it('should target electron', () => {
       const result = getElectronWebpackConfig(input);
 
-      expect(result.target).toEqual('electron');
+      expect(result.target).toEqual('electron-main');
     });
 
     it('should not polyfill electron apis', () => {
@@ -60,7 +60,7 @@ describe('getElectronPartial', () => {
   });
 
   describe('the externalDependencies option', () => {
-    it('should change all electron_modules to commonjs imports', () => {
+    it('should change all node_modules to commonjs imports', () => {
       const result = getElectronWebpackConfig(input);
       const callback = jest.fn();
       result.externals[0](null, '@nestjs/core', callback);
