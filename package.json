@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
@@ -8,7 +8,6 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "t1": "jest --maxWorkers=1 .src/builders/execute/execute.impl.spec.js",
     "test": "jest --maxWorkers=1 .*.spec.js",
     "compile": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish",
