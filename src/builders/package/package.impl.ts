@@ -1,5 +1,7 @@
 import { BuilderContext, createBuilder, BuilderOutput } from '@angular-devkit/architect';
 import { JsonObject, workspaces } from '@angular-devkit/core';
+import { NodeJsSyncHost } from '@angular-devkit/core/node';
+
 import { serialHooks } from 'electron-packager/src/hooks';
 import { Options as ElectronPackagerOptions } from 'electron-packager';
 import electronPackager from 'electron-packager';
@@ -9,10 +11,9 @@ import { sync as removeSync } from 'rimraf';
 import { writeFile, readFile, readFileSync, statSync, readdirSync } from 'fs';
 import { promisify } from 'util';
 
-import { Observable, from, of } from 'rxjs';
-import { map, concatMap, tap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, concatMap } from 'rxjs/operators';
 import { normalizePackagingOptions } from '../../utils/normalize';
-import { NodeJsSyncHost } from '@angular-devkit/core/node';
 
 try {
   require('dotenv').config();
@@ -24,19 +25,17 @@ const readFileAsync = (path: string) => promisify(readFile)(path);
 export interface PackageElectronBuilderOptions extends ElectronPackagerOptions {
   name: string;
   frontendProject: string;
+  out?: string;
 }
 
 export interface PackageElectronBuilderOutput extends BuilderOutput {
-  target?: any,
+  target?: any;
   outputPath: string | string[];
 }
 
 export default createBuilder<JsonObject & PackageElectronBuilderOptions>(run);
 
-function run(
-  options: JsonObject & PackageElectronBuilderOptions,
-  context: BuilderContext
-): Observable<PackageElectronBuilderOutput> {
+function run(options: JsonObject & PackageElectronBuilderOptions, context: BuilderContext): Observable<PackageElectronBuilderOutput> {
   return from(getSourceRoot(context)).pipe(
     map(sourceRoot =>
       normalizePackagingOptions(options, context.workspaceRoot, sourceRoot)
