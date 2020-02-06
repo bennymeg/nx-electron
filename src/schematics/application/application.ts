@@ -69,6 +69,17 @@ function getPackageConfig(options: NormalizedSchema) {
   };
 }
 
+function getMakeConfig(options: NormalizedSchema) {
+  return {
+    builder: 'nx-electron:make',
+    options: {
+      name: options.name,
+      frontendProject: options.frontendProject,
+      out: 'dist/executables'
+    }
+  };
+}
+
 function updateWorkspaceJson(options: NormalizedSchema): Rule {
   return updateWorkspaceInTree(workspaceJson => {
     const project = {
@@ -83,6 +94,7 @@ function updateWorkspaceJson(options: NormalizedSchema): Rule {
     project.architect.build = getBuildConfig(project, options);
     project.architect.serve = getServeConfig(options);
     project.architect.package = getPackageConfig(options);
+    project.architect.make = getMakeConfig(options);
     project.architect.lint = generateProjectLint(
       normalize(project.root),
       join(normalize(project.root), 'tsconfig.app.json'),

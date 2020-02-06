@@ -2,6 +2,7 @@ import { Path, normalize } from '@angular-devkit/core';
 import { resolve, dirname, relative, basename } from 'path';
 import { BuildBuilderOptions } from './types';
 import { Options as ElectronPackagerOptions } from 'electron-packager'; 
+import { Configuration as ElectronMakerOptions } from 'electron-builder';
 import { statSync } from 'fs';
 
 export interface FileReplacement {
@@ -30,6 +31,14 @@ export function normalizePackagingOptions<T extends ElectronPackagerOptions>(opt
     ...options,
     dir: root,
     sourceRoot: sourceRoot
+  };
+}
+
+export function normalizeMakingOptions<T extends ElectronMakerOptions>(options: T, root: string, sourceRoot: string): T {
+  return {
+    ...options,
+    root,
+    sourceRoot
   };
 }
 

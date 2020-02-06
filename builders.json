@@ -1,5 +1,5 @@
 {
-  "$schema": "@angular-devkit/architect/src/builders-schema.json",
+  "$schema": "./node_modules/@angular-devkit/architect/src/builders-schema.json",
   "builders": {
     "build": {
       "implementation": "./src/builders/build/build.impl",
@@ -15,6 +15,11 @@
       "implementation": "./src/builders/package/package.impl",
       "schema": "./src/builders/package/schema.json",
       "description": "Package an Electron application"
+    },
+    "make": {
+      "implementation": "./src/builders/make/make.impl",
+      "schema": "./src/builders/make/schema.json",
+      "description": "Make an Electron application"
     }
   }
 }
