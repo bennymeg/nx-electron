@@ -23,10 +23,21 @@
       "description": "Pack app inside an asar file."
     },
     "platform": {
-      "type": "string",
-      "default": "windows",
-      "enum": ["windows", "mac", "linux"],
-      "description": "Target package platform."
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["windows", "mac", "linux"]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["windows", "mac", "linux"]
+          }
+        }
+      ],
+      "default": null,
+      "description": "Target platform/s."
     },
     "arch": {
       "type": "string",
@@ -35,5 +46,5 @@
       "description": "Package architecture."
     }
   },
-  "required": ["name", "frontendProject", "platform"]
+  "required": ["name", "frontendProject"]
 }

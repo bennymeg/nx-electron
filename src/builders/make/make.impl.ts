@@ -2,7 +2,7 @@ import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/ar
 import { JsonObject, workspaces } from '@angular-devkit/core';
 import { NodeJsSyncHost } from '@angular-devkit/core/node';
 
-import { build, Configuration, Platform, Arch, archFromString } from 'electron-builder';
+import { build, Configuration, Platform, Arch, createTargets } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
@@ -10,6 +10,7 @@ import { promisify } from 'util';
 import { Observable, from } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
 import { normalizeMakingOptions } from '../../utils/normalize';
+import { platform } from 'os';
 
 try {
   require('dotenv').config();
@@ -20,7 +21,7 @@ const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path
 export interface MakeElectronBuilderOptions extends Configuration {
   name: string;
   frontendProject: string;
-  platform: string;
+  platform: string | string[];
   arch: string;
   asar: boolean;
   root: string;
@@ -36,8 +37,8 @@ export default createBuilder<JsonObject & MakeElectronBuilderOptions>(run);
 
 function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderContext): Observable<MakeElectronBuilderOutput> { 
   const baseConfig: Configuration = _createBaseConfig(options, context);
-  const targets: Map<Platform, Map<Arch, string[]>> = 
-    options.arch ? _createTargets([options.platform], archFromString(options.arch)) : _createTargets([options.platform]);
+  const platforms: Platform[] = _createPlatforms(options.platform);
+  const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
 
   return from(getSourceRoot(context)).pipe(
     map(sourceRoot =>
@@ -64,40 +65,38 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
   );
 }
 
-function _createTargets(platforms: string[], ...archs: Array<Arch>): Map<Platform, Map<Arch, string[]>> {
-  const targets = new Map<Platform, Map<Arch, string[]>>();
+function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
+  const platforms: Platform[] = [];
 
-  if (platforms.includes(Platform.WINDOWS.name)) {
-    const target: Map<Platform, Map<Arch, string[]>> = 
-      archs ? Platform.WINDOWS.createTarget(null, ...archs) : Platform.WINDOWS.createTarget();
+  if (!rawPlatforms) {
+    const platformMap: Map<string, string> = new Map([['win32', 'windows'], ['darwin', 'mac'], ['linux', 'linux']]); 
 
-    targets.set(
-      target.entries().next().value[0],
-      target.entries().next().value[1]
-    );
+    rawPlatforms = platformMap.get(platform());
   }
 
-  if (platforms.includes(Platform.MAC.name)) {
-    const target: Map<Platform, Map<Arch, string[]>> = 
-      archs ? Platform.MAC.createTarget(null, ...archs): Platform.MAC.createTarget();
-
-    targets.set(
-      target.entries().next().value[0],
-      target.entries().next().value[1]
-    );
+  if (typeof rawPlatforms === 'string') {
+    rawPlatforms = [rawPlatforms];
   }
 
-  if (platforms.includes(Platform.LINUX.name)) {
-    const target: Map<Platform, Map<Arch, string[]>> = 
-      archs ? Platform.LINUX.createTarget(null, ...archs) : Platform.LINUX.createTarget();
+  if (Array.isArray(rawPlatforms)) {
+    if (rawPlatforms.includes(Platform.WINDOWS.name)) {
+      platforms.push(Platform.WINDOWS);
+    }
 
-    targets.set(
-      target.entries().next().value[0],
-      target.entries().next().value[1]
-    );
+    if (rawPlatforms.includes(Platform.MAC.name)) {
+      platforms.push(Platform.MAC);
+    }
+
+    if (rawPlatforms.includes(Platform.LINUX.name)) {
+      platforms.push(Platform.LINUX);
+    }
   }
 
-  return targets;
+  return platforms;
+}
+
+function _createTargets(platforms: Platform[], type: string, arch: string): Map<Platform, Map<Arch, string[]>> {
+  return createTargets(platforms, null, arch);
 }
 
 function _createBaseConfig(options: MakeElectronBuilderOptions, context: BuilderContext): Configuration {
