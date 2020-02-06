@@ -50,16 +50,16 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
       addMissingDefaultOptions(options)
     ),
     concatMap(async (options) => {
-      const config = Object.assign(options, baseConfig);
-
       await promisify(writeFile)(
         join(context.workspaceRoot, 'dist', 'apps', options.name, 'index.js'),
         `const Main = require('./${options.name}/main.js');`,
         { encoding: 'utf8' }
       );
-      await build({ targets, config });
+        
+      const config = _createConfigFromOptions(options, baseConfig);
+      const outputPath = await build({ targets, config });
 
-      return { success: true, outputPath: join(context.workspaceRoot, options.out) };
+      return { success: true, outputPath };
     })
   );
 }
@@ -125,6 +125,22 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
     ],
     asar: options.asar || false
   };
+}
+
+function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfig: Configuration): Configuration {
+  const config = Object.assign(options, baseConfig);
+      
+  delete config.name;
+  delete config.frontendProject;
+  delete config.platform;
+  delete config.arch;
+  // delete config.asar;
+  delete config.root;
+  delete config['sourceRoot'];
+  delete config['$schema'];
+  delete config.out;
+
+  return config;
 }
 
 async function getSourceRoot(context: BuilderContext) {
