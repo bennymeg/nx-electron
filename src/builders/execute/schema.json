@@ -24,7 +24,7 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["inspect", "inspect-brk"]
+          "enum": ["inspect", "inspect-brk", "inspect-brk-node"]
         },
         {
           "type": "boolean"
