@@ -1,6 +1,5 @@
 import { BuilderContext, createBuilder, BuilderOutput } from '@angular-devkit/architect';
-import { JsonObject, workspaces } from '@angular-devkit/core';
-import { NodeJsSyncHost } from '@angular-devkit/core/node';
+import { JsonObject } from '@angular-devkit/core';
 
 import { serialHooks } from 'electron-packager/src/hooks';
 import { Options as ElectronPackagerOptions } from 'electron-packager';
@@ -11,9 +10,11 @@ import { sync as removeSync } from 'rimraf';
 import { writeFile, readFile, readFileSync, statSync, readdirSync } from 'fs';
 import { promisify } from 'util';
 
+import { getSourceRoot } from '../../utils/workspace';
+import { normalizePackagingOptions } from '../../utils/normalize';
+
 import { Observable, from, of } from 'rxjs';
 import { map, concatMap, catchError } from 'rxjs/operators';
-import { normalizePackagingOptions } from '../../utils/normalize';
 
 try {
   require('dotenv').config();
@@ -84,23 +85,6 @@ function run(options: JsonObject & PackageElectronBuilderOptions, context: Build
       return of({ success: false, outputPath: null });
     })
   );
-}
-
-async function getSourceRoot(context: BuilderContext) {
-  const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
-  const { workspace } = await workspaces.readWorkspace(
-    context.workspaceRoot,
-    workspaceHost
-  );
-
-  if (workspace.projects.get(context.target.project).sourceRoot) {
-    return workspace.projects.get(context.target.project).sourceRoot;
-  } else {
-    context.reportStatus('Error');
-    const message = `${context.target.project} does not have a sourceRoot. Please define one.`;
-    context.logger.error(message);
-    throw new Error(message);
-  }
 }
 
 function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {

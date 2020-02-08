@@ -1,15 +1,16 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
-import { JsonObject, workspaces } from '@angular-devkit/core';
-import { NodeJsSyncHost } from '@angular-devkit/core/node';
+import { JsonObject } from '@angular-devkit/core';
 
 import { build, Configuration, Platform, Arch, BeforeBuildContext, createTargets } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
 
+import { getSourceRoot } from '../../utils/workspace';
+import { normalizeMakingOptions } from '../../utils/normalize';
+
 import { Observable, from, of } from 'rxjs';
 import { map, concatMap, catchError } from 'rxjs/operators';
-import { normalizeMakingOptions } from '../../utils/normalize';
 import { platform } from 'os';
 
 try {
@@ -144,23 +145,6 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.out;
 
   return config;
-}
-
-async function getSourceRoot(context: BuilderContext) {
-  const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
-  const { workspace } = await workspaces.readWorkspace(
-    context.workspaceRoot,
-    workspaceHost
-  );
-
-  if (workspace.projects.get(context.target.project).sourceRoot) {
-    return workspace.projects.get(context.target.project).sourceRoot;
-  } else {
-    context.reportStatus('Error');
-    const message = `${context.target.project} does not have a sourceRoot. Please define one.`;
-    context.logger.error(message);
-    throw new Error(message);
-  }
 }
 
 function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {
