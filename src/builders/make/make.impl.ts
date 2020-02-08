@@ -2,13 +2,13 @@ import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/ar
 import { JsonObject, workspaces } from '@angular-devkit/core';
 import { NodeJsSyncHost } from '@angular-devkit/core/node';
 
-import { build, Configuration, Platform, Arch, createTargets } from 'electron-builder';
+import { build, Configuration, Platform, Arch, BeforeBuildContext, createTargets } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
 
-import { Observable, from } from 'rxjs';
-import { map, concatMap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { map, concatMap, catchError } from 'rxjs/operators';
 import { normalizeMakingOptions } from '../../utils/normalize';
 import { platform } from 'os';
 
@@ -51,16 +51,15 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
       addMissingDefaultOptions(options)
     ),
     concatMap(async (options) => {
-      await promisify(writeFile)(
-        join(context.workspaceRoot, 'dist', 'apps', options.name, 'index.js'),
-        `const Main = require('./${options.name}/main.js');`,
-        { encoding: 'utf8' }
-      );
-        
       const config = _createConfigFromOptions(options, baseConfig);
       const outputPath = await build({ targets, config });
 
       return { success: true, outputPath };
+    }),
+    catchError(error => {
+      console.error(error);
+
+      return of({ success: false, outputPath: null });
     })
   );
 }
@@ -122,7 +121,12 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           filter: ['index.js']
       }
     ],
-    asar: options.asar || false
+    asar: options.asar || false,
+    beforeBuild: (buildContext: BeforeBuildContext) => promisify(writeFile)(            
+      join(buildContext.appDir, 'dist', 'apps', options.name, 'index.js'),
+      `const Main = require('./${options.name}/main.js');`,
+      { encoding: 'utf8' }
+    )
   };
 }
 
