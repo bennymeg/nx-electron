@@ -11,8 +11,8 @@ import { sync as removeSync } from 'rimraf';
 import { writeFile, readFile, readFileSync, statSync, readdirSync } from 'fs';
 import { promisify } from 'util';
 
-import { Observable, from } from 'rxjs';
-import { map, concatMap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { map, concatMap, catchError } from 'rxjs/operators';
 import { normalizePackagingOptions } from '../../utils/normalize';
 
 try {
@@ -77,6 +77,11 @@ function run(options: JsonObject & PackageElectronBuilderOptions, context: Build
     }
 
       return await packagerWrapper();
+    }),
+    catchError(error => {
+      console.error(error);
+
+      return of({ success: false, outputPath: null });
     })
   );
 }
