@@ -35,12 +35,14 @@
     "arch": {
       "type": "string",
       "default": "",
+      "enum": ["ia32", "x64", "armv7l", "arm64", "mips64el", "all"],
       "description": "Package architecture."
     },
     "platform": {
       "type": "string",
       "default": "",
-      "description": "Target package platform."
+      "enum": ["darwin", "linux", "mas", "win32", "all"],
+      "description": "Target platform."
     },
     "ignore": {
       "type": "string",
