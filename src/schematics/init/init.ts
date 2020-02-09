@@ -10,9 +10,9 @@ function addDependencies(): Rule {
     {
       'nx-electron': nxElectronVersion,
       'electron': electronVersion,
-      'electron-packager': electronPackagerVersion,
-      'electron-builder': electronBuilderVersion,
-      'rimraf': rimrafVersion
+      // 'electron-packager': electronPackagerVersion,
+      // 'electron-builder': electronBuilderVersion,
+      // 'rimraf': rimrafVersion
     }
   );
 }
@@ -23,9 +23,9 @@ function moveDependency(): Rule {
 
     delete json.dependencies['nx-electron'];
     delete json.dependencies['electron'];
-    delete json.dependencies['electron-packager'];
-    delete json.dependencies['electron-builder'];
-    delete json.dependencies['rimraf'];
+    // delete json.dependencies['electron-packager'];
+    // delete json.dependencies['electron-builder'];
+    // delete json.dependencies['rimraf'];
 
     return json;
   });
