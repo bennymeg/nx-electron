@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "test": "jest --maxWorkers=1 .*.spec.js",
-    "compile": "npm run clear:all && tsc && npm run copy:all && npm run permission",
+    "compile": "tsc",
+    "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish",
     "permission": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./scripts/make_build_public.ps1",
     "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence",
