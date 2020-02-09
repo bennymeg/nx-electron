@@ -1,7 +1,11 @@
 {
   "extends": "<%= offset %>tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@benny/nx-electron/schema/packager": ["node_modules/nx-electron/src/validation/packager.schema.json"],
+      "@benny/nx-electron/schema/maker": ["node_modules/nx-electron/src/validation/maker.schema.json"]
+    }
   },
   "include": ["**/*.ts"]
 }
