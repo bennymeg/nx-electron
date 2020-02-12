@@ -27,6 +27,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Live Update**: Provides continuos live reload for your backend code.
 - **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events. 🆕
 - **Packaging**: Packages your frontend and backend webpack bundles into single electron package. 🆕
+- **Making**: Makes your frontend and backend webpack bundles into single executable. 🆕
 
 # Getting Started
 
@@ -64,11 +65,22 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (using the beta version or newer).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (**v8.0.0 or newer**).
 
 ### Configuring static packaging options
 
 It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\packager.options.json`_.
+**Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
+
+## Making Electron Application
+
+- Run `nx run <electron-app-name>:make [--options]` to make your application.
+
+The options that can be passed are described [here](https://www.electron.build/configuration/configuration). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (**v9.0.0 or newer**).
+
+### Configuring static making options
+
+It is possible to configure all the making that are describes above in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_.
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
 ## Testing Electron Application
@@ -116,7 +128,7 @@ This repository follows the semantic versioning rules while adhering to Nx and A
 ## Attribution ## 
 
 This project is highly inspired by (and dependent on) Nrwl [Nx](https://nx.dev) platform.
-Under the hood, we use [Electron Packager](https://github.com/electron/electron-packager) to package the electron application.
+Under the hood, we use [Electron Packager](https://github.com/electron/electron-packager) to package the electron application and [Electron Builder](https://github.com/electron-userland/electron-builder) to make executables.
 
 </br><hr>
 **Author:** Benny Megidish.
