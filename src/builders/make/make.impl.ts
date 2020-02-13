@@ -105,16 +105,16 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
       output: join(context.workspaceRoot, options.out)
     },
     files: [
-      '**/package.json',
+      './package.json',
       {
           from: `./dist/apps/${options.frontendProject}`,
           to: options.frontendProject,
-          filter: ['*.*']
+          filter: ['*.*', 'assets']
       },
       {
           from: `./dist/apps/${options.name}`,
           to: options.name,
-          filter: ['main.js']
+          filter: ['main.js', 'assets']
       },
       {
           from: `./dist/apps/${options.name}`,
