@@ -1,5 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
-import { rendererAppName } from './constants';
+import { rendererAppName, rendererAppPort } from './constants';
 import { join } from 'path';
 import { format } from 'url';
 
@@ -92,7 +92,7 @@ export default class App {
     private static loadMainWindow() {
         // load the index.html of the app.
         if (App.isDevelopmentMode()) {
-            App.mainWindow.loadURL(`http://localhost:4200`);
+            App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
         } else {
             App.mainWindow.loadURL(format({
                 pathname: join(__dirname, '..', rendererAppName, 'index.html'),

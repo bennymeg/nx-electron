@@ -34,7 +34,7 @@ export interface BuildBuilderOptions {
   progress?: boolean;
   statsJson?: boolean;
   extractLicenses?: boolean;
-  obfuscate?: boolean;  // todo add support
+  obfuscate?: boolean;
   verbose?: boolean;
 
   webpackConfig?: string;

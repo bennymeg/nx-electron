@@ -1,7 +1,7 @@
-import * as webpack from 'webpack';
-import { Configuration, ProgressPlugin, Stats } from 'webpack';
+import { Configuration, ProgressPlugin, Stats, Plugin, DefinePlugin } from 'webpack';
 
 import * as ts from 'typescript';
+import { join } from 'path';
 
 import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -64,6 +64,10 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
         tsconfig: options.tsConfig,
         workers: options.maxWorkers || ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
         useTypescriptIncrementalApi: false // FIXME: disabled incremental api in favour of max workers until it will be supported
+      }),
+      new DefinePlugin({
+        __BUILD_VERSION__: JSON.stringify(require(join(options.root, "package.json")).version),
+        __BUILD_DATE__: Date.now()
       })
     ],
     watch: options.watch,
@@ -73,7 +77,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     stats: getStatsConfig(options)
   };
 
-  const extraPlugins: webpack.Plugin[] = [];
+  const extraPlugins: Plugin[] = [];
 
   if (options.progress) {
     extraPlugins.push(new ProgressPlugin());
