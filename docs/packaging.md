@@ -10,7 +10,7 @@ It is possible to configure all the packaging that are describes above in _`.\ap
 Example static packaging options file (_`.\apps\<electron-app-name>\src\app\options\packager.options.json`_):
 ```json
 {
-  "$schema": "./packager.schema.json",
+  "$schema": "../../../../../node_modules/nx-electron/src/validation/packager.schema.json",
   "prune": true,
   "executableName": "Awesome App",
   "appCopyright": "Copyright (c) Benny Megidish. All rights reserved.",

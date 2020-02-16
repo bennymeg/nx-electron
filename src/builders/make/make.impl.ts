@@ -106,6 +106,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
     },
     files: [
       './package.json',
+      '!**/*.js.map',
       {
           from: `./dist/apps/${options.frontendProject}`,
           to: options.frontendProject,

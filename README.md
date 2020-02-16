@@ -65,7 +65,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (**v8.0.0 or newer**).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either [migrate](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md) your project manually or create a new project (**v8.0.0 or newer**).
 
 ### Configuring static packaging options
 
@@ -76,12 +76,17 @@ It is possible to configure all the packaging that are describes above in _`.\ap
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
-The options that can be passed are described [here](https://www.electron.build/configuration/configuration). **Notice:** in order to use the packaging features you will have to either migrate you project (_coming soon_) or create a new project (**v9.0.0 or newer**).
+The [options](https://www.electron.build/configuration/configuration) that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either [migrate](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md) your project manually or create a new project (**v9.0.0 or newer**).
 
 ### Configuring static making options
 
 It is possible to configure all the making that are describes above in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_.
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
+
+## Migrating Electron Application ##
+You can find detailed information in the following articles:
+- [v8.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md)
+- [v9.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md)
 
 ## Testing Electron Application
 
