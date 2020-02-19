@@ -27,19 +27,16 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
       minimize: true,
       minimizer: [
         new TerserPlugin({
-          chunkFilter: (chunk) => {
-            // Exclude uglification for the `vendor` chunk
-            if (chunk.name === 'vendor') {
-              return false;
-            }
-  
-            return true;
-          },
+          // Exclude uglification for the `vendor` chunk
+          chunkFilter: (chunk) => chunk.name !== 'vendor',
           parallel: true,
           terserOptions: {
             mangle: true,
             keep_fnames: false,
             toplevel: true,
+            output: {
+              comments: false
+            }
           }
         }),
       ],
