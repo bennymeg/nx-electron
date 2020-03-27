@@ -317,6 +317,10 @@
             "description": "The Electron version with which the app is built (without the leading 'v') - for example, 1.4.13",
             "type": "string"
         },
+        "electronZipDir": {
+            "description": "The local path to a directory containing Electron ZIP files for Electron Packager to unzip, instead of downloading them. The ZIP filenames should be in the same format as the ones downloaded from the Electron releases site.\nNote: Setting this option prevents the download sub-options from being used, as the functionality gets skipped over.",
+            "type": "string"
+        },
         "executableName": {
             "description": "The name of the executable file, sans file extension. Defaults to the value for the name parameter",
             "type": "string"
