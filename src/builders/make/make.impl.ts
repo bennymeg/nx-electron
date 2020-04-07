@@ -1,7 +1,7 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 
-import { build, Configuration, Platform, Arch, BeforeBuildContext, createTargets } from 'electron-builder';
+import { build, Configuration, Platform, Arch, createTargets } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
@@ -17,7 +17,7 @@ try {
   require('dotenv').config();
 } catch (e) {}
 
-const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path, data);
+const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path, data, { encoding: 'utf8' });
 
 export interface MakeElectronBuilderOptions extends Configuration {
   name: string;
@@ -53,6 +53,7 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
     ),
     concatMap(async (options) => {
       const config = _createConfigFromOptions(options, baseConfig);
+      await beforeBuild(options.root, options.name);
       const outputPath = await build({ targets, config });
 
       return { success: true, outputPath };
@@ -63,6 +64,10 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
       return of({ success: false, outputPath: null });
     })
   );
+}
+
+async function beforeBuild(appDir: string, appName: string) {
+  await writeFileAsync(join(appDir, 'dist', 'apps', appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
 }
 
 function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
@@ -123,12 +128,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           filter: ['index.js']
       }
     ],
-    asar: options.asar || false,
-    beforeBuild: (buildContext: BeforeBuildContext) => promisify(writeFile)(            
-      join(buildContext.appDir, 'dist', 'apps', options.name, 'index.js'),
-      `const Main = require('./${options.name}/main.js');`,
-      { encoding: 'utf8' }
-    )
+    asar: options.asar || false
   };
 }
 
