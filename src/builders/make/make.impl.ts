@@ -51,9 +51,9 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
     map(options => 
       addMissingDefaultOptions(options)
     ),
-    concatMap(async (options) => {
-      const config = _createConfigFromOptions(options, baseConfig);
-      await beforeBuild(options.root, options.name);
+    concatMap(async (opts) => {
+      const config = _createConfigFromOptions(opts, baseConfig);
+      await beforeBuild(context.workspaceRoot, options.name);
       const outputPath = await build({ targets, config });
 
       return { success: true, outputPath };
