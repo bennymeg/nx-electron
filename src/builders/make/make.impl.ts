@@ -51,9 +51,10 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
     map(options => 
       addMissingDefaultOptions(options)
     ),
-    concatMap(async (opts) => {
-      const config = _createConfigFromOptions(opts, baseConfig);
-      await beforeBuild(context.workspaceRoot, options.name);
+    concatMap(async (options) => {
+      await beforeBuild(options.root, options.name);
+
+      const config = _createConfigFromOptions(options, baseConfig);
       const outputPath = await build({ targets, config });
 
       return { success: true, outputPath };
@@ -133,7 +134,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
 }
 
 function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfig: Configuration): Configuration {
-  const config = Object.assign(options, baseConfig);
+  const config = Object.assign({}, options, baseConfig);
       
   delete config.name;
   delete config.frontendProject;
@@ -149,7 +150,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
 }
 
 function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {
-  // lead preset options file
+  // load preset options file
   const externalOptionsPath: string = join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
 
   if (statSync(externalOptionsPath).isFile()) {
