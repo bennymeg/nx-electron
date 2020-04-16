@@ -2,7 +2,8 @@ import { InspectType, ElectronExecuteBuilderOptions, electronExecuteBuilderHandl
 import { of, from } from 'rxjs';
 import electron from 'electron';
 import * as devkitArchitect from '@angular-devkit/architect';
-import { MockBuilderContext, getMockContext } from '../../utils/testing';
+import { MockBuilderContext } from '@nrwl/workspace/testing';
+import { getMockContext } from '../../utils/testing';
 import { EventEmitter } from 'events';
 
 jest.mock('child_process');

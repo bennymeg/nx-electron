@@ -163,9 +163,7 @@ function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBu
 }
 
 function addMissingDefaultOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {
-  //todo: add appVersion
-
-  // remove unset options (use electron packager default where possible)
+  // remove unset options (use electron builder default values where possible)
   Object.keys(options).forEach((key) => (options[key] === '') && delete options[key]);
 
   return options;
