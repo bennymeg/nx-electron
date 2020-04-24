@@ -52,6 +52,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ```
 **NOTE:** You should add a frontend project to you workspace prior to invoking this command.
 
+**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to change the baseHref field to "./", and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
 ## Building Electron Application
 
@@ -94,7 +95,7 @@ You can find detailed information in the following articles:
 
 ## Debugging Electron Application
 
-- Follow [this instruction](https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md) in order to configure the debugger your IDE.
+- Follow [this instructions](https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md) in order to configure the debugger your IDE.
 
 ## Minimal Project Structure
 Regardless of what framework you chose, the resulting file tree will look like this:
