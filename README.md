@@ -92,6 +92,10 @@ You can find detailed information in the following articles:
 
 - Run `nx test <electron-app-name>` to test your application.
 
+## Debugging Electron Application
+
+- Follow (this instruction)[https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md] in order to configure the debugger your IDE.
+
 ## Minimal Project Structure
 Regardless of what framework you chose, the resulting file tree will look like this:
 
@@ -117,7 +121,6 @@ Regardless of what framework you chose, the resulting file tree will look like t
 
 ## Support ##
 If you're having any problem, please [raise an issue](https://github.com/bennymeg/nx-electron/issues/new) on GitHub and we'll be happy to help.
-
 
 ## Contribute ##
 
