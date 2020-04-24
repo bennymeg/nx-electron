@@ -94,7 +94,7 @@ You can find detailed information in the following articles:
 
 ## Debugging Electron Application
 
-- Follow (this instruction)[https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md] in order to configure the debugger your IDE.
+- Follow [this instruction](https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md) in order to configure the debugger your IDE.
 
 ## Minimal Project Structure
 Regardless of what framework you chose, the resulting file tree will look like this:
