@@ -37,10 +37,6 @@ export interface MakeElectronBuilderOutput extends BuilderOutput {
 export default createBuilder<JsonObject & MakeElectronBuilderOptions>(run);
 
 function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderContext): Observable<MakeElectronBuilderOutput> { 
-  const baseConfig: Configuration = _createBaseConfig(options, context);
-  const platforms: Platform[] = _createPlatforms(options.platform);
-  const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
-
   return from(getSourceRoot(context)).pipe(
     map(sourceRoot =>
       normalizeMakingOptions(options, context.workspaceRoot, sourceRoot)
@@ -54,6 +50,9 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
     concatMap(async (options) => {
       await beforeBuild(options.root, options.name);
 
+      const platforms: Platform[] = _createPlatforms(options.platform);
+      const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
+      const baseConfig: Configuration = _createBaseConfig(options, context);
       const config = _createConfigFromOptions(options, baseConfig);
       const outputPath = await build({ targets, config });
 
@@ -108,6 +107,7 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 function _createBaseConfig(options: MakeElectronBuilderOptions, context: BuilderContext): Configuration {
   return {
     directories: {
+      ...options.directories,
       output: join(context.workspaceRoot, options.out)
     },
     files: [
