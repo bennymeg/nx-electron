@@ -24,7 +24,6 @@ export interface MakeElectronBuilderOptions extends Configuration {
   frontendProject: string;
   platform: string | string[];
   arch: string;
-  asar: boolean;
   root: string;
   out: string;
 }
@@ -128,8 +127,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           to: '',
           filter: ['index.js']
       }
-    ],
-    asar: options.asar || false
+    ]
   };
 }
 
@@ -140,7 +138,6 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.frontendProject;
   delete config.platform;
   delete config.arch;
-  // delete config.asar;
   delete config.root;
   delete config['sourceRoot'];
   delete config['$schema'];
