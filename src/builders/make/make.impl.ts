@@ -1,7 +1,7 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 
-import { build, Configuration, Platform, Arch, createTargets } from 'electron-builder';
+import { build, Configuration, PublishOptions, Platform, Arch, createTargets } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
@@ -26,6 +26,7 @@ export interface MakeElectronBuilderOptions extends Configuration {
   arch: string;
   root: string;
   out: string;
+  publishPolicy?: PublishOptions["publish"];
 }
 
 export interface MakeElectronBuilderOutput extends BuilderOutput {
@@ -35,10 +36,10 @@ export interface MakeElectronBuilderOutput extends BuilderOutput {
 
 export default createBuilder<JsonObject & MakeElectronBuilderOptions>(run);
 
-function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderContext): Observable<MakeElectronBuilderOutput> { 
+function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: BuilderContext): Observable<MakeElectronBuilderOutput> { 
   return from(getSourceRoot(context)).pipe(
     map(sourceRoot =>
-      normalizeMakingOptions(options, context.workspaceRoot, sourceRoot)
+      normalizeMakingOptions(rawOptions, context.workspaceRoot, sourceRoot)
     ),
     map(options => 
       mergePresetOptions(options)
@@ -53,7 +54,7 @@ function run(options: JsonObject & MakeElectronBuilderOptions, context: BuilderC
       const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
       const baseConfig: Configuration = _createBaseConfig(options, context);
       const config = _createConfigFromOptions(options, baseConfig);
-      const outputPath = await build({ targets, config });
+      const outputPath = await build({ targets, config, publish: rawOptions.publishPolicy || null });
 
       return { success: true, outputPath };
     }),
@@ -141,6 +142,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.root;
   delete config['sourceRoot'];
   delete config['$schema'];
+  delete config["publishPolicy"];
   delete config.out;
 
   return config;
