@@ -61,9 +61,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: options.tsConfig,
-        workers: options.maxWorkers || ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
-        useTypescriptIncrementalApi: false // FIXME: disabled incremental api in favour of max workers until it will be supported
+        tsconfig: options.tsConfig
       }),
       new DefinePlugin({
         __BUILD_VERSION__: JSON.stringify(require(join(options.root, "package.json")).version),

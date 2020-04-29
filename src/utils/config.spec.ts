@@ -261,20 +261,6 @@ describe('getBaseWebpackPartial', () => {
     });
   });
 
-  describe('the max workers option', () => {
-    it('should set the maximum workers for the type checker', () => {
-      const result = getBaseWebpackPartial({
-        ...input,
-        maxWorkers: 1
-      });
-
-      const typeCheckerPlugin = result.plugins.find(
-        plugin => plugin instanceof ForkTsCheckerWebpackPlugin
-      ) as ForkTsCheckerWebpackPlugin;
-      expect(typeCheckerPlugin.options.workers).toEqual(1);
-    });
-  });
-
   describe('the assets option', () => {
     it('should add a copy-webpack-plugin', () => {
       const result = getBaseWebpackPartial({
