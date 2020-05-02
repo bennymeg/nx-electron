@@ -25,7 +25,6 @@ export interface BuildBuilderOptions {
   sourceMap?: boolean | SourceMapOptions;
   optimization?: boolean | OptimizationOptions;
   showCircularDependencies?: boolean;
-  maxWorkers?: number;
   poll?: number;
 
   fileReplacements: FileReplacement[];

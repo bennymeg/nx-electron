@@ -88,10 +88,6 @@
       "description": "Show circular dependency warnings on builds.",
       "default": true
     },
-    "maxWorkers": {
-      "type": "number",
-      "description": "Number of workers to use for type checking. (defaults to # of CPUS - 2)"
-    },
     "fileReplacements": {
       "description": "Replace files with other files in the build.",
       "type": "array",
