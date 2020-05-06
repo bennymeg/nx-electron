@@ -1,5 +1,5 @@
 import { normalize, JsonObject, workspaces } from '@angular-devkit/core';
-import { join } from 'path';
+import { join, resolve } from 'path';
 jest.mock('tsconfig-paths-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { BuildElectronBuilderOptions } from './build.impl';
@@ -17,9 +17,9 @@ describe('ElectronBuildBuilder', () => {
     [architect] = await getTestArchitect();
 
     testOptions = {
-      main: 'apps/electronapp/src/main.ts',
-      tsConfig: 'apps/electronapp/tsconfig.app.json',
-      outputPath: 'dist/apps/electronapp',
+      main: 'apps/electron-app/src/main.ts',
+      tsConfig: 'apps/electron-app/tsconfig.app.json',
+      outputPath: 'dist/apps/electron-app',
       externalDependencies: 'all',
       fileReplacements: [
         {
@@ -32,7 +32,8 @@ describe('ElectronBuildBuilder', () => {
         }
       ],
       assets: [],
-      statsJson: false
+      statsJson: false,
+      root: join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'src')
     };
     runWebpack = jest.fn().mockImplementation((config, context, options) => {
       options.logging({
@@ -47,7 +48,7 @@ describe('ElectronBuildBuilder', () => {
       workspace: {
         projects: {
           get: () => ({
-            sourceRoot: 'C:\\root\\apps\\electronapp\\src'
+            sourceRoot: join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'src')
           })
         }
       }
@@ -80,7 +81,7 @@ describe('ElectronBuildBuilder', () => {
       await run.stop();
 
       expect(output.success).toEqual(true);
-      expect(output.outfile).toEqual('C:\\root\\dist\\apps\\electronapp\\main.js');
+      expect(output.outfile).toEqual(join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'dist', 'apps', 'electron-app', 'main.js'));
     });
 
     describe('webpackConfig option', () => {
@@ -89,13 +90,13 @@ describe('ElectronBuildBuilder', () => {
           config: 'config'
         }));
         jest.mock(
-          join(normalize('C:\\root'), 'apps\\electronapp\\webpack.config.js'),
+          join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'webpack.config.js'),
           () => mockFunction,
           {
             virtual: true
           }
         );
-        testOptions.webpackConfig = 'apps/electronapp/webpack.config.js';
+        testOptions.webpackConfig = 'apps/electron-app/webpack.config.js';
         const run = await architect.scheduleBuilder(
           'nx-electron:build',
           testOptions

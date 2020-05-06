@@ -9,6 +9,7 @@ jest.mock('tsconfig-paths-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { ProgressPlugin } from 'webpack';
 import { BuildBuilderOptions } from './types';
+import { resolve } from 'path';
 
 describe('getBaseWebpackPartial', () => {
   let input: BuildBuilderOptions;
@@ -18,7 +19,7 @@ describe('getBaseWebpackPartial', () => {
       outputPath: 'dist',
       tsConfig: 'tsconfig.json',
       fileReplacements: [],
-      root: getSystemPath(normalize('/root')),
+      root: getSystemPath(normalize(resolve(__dirname).replace(/build.*$/, ''))),
       statsJson: false
     };
     (<any>TsConfigPathsPlugin).mockImplementation(
