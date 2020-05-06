@@ -1,7 +1,7 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 
-import { build, Configuration, PublishOptions, Platform, Arch, createTargets } from 'electron-builder';
+import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
@@ -105,12 +105,15 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 }
 
 function _createBaseConfig(options: MakeElectronBuilderOptions, context: BuilderContext): Configuration {
+  const files: Array<FileSet | string> = options.files ?
+   (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+
   return {
     directories: {
       ...options.directories,
       output: join(context.workspaceRoot, options.out)
     },
-    files: [
+    files: files.concat([
       './package.json',
       '!**/*.js.map',
       {
@@ -128,7 +131,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           to: '',
           filter: ['index.js']
       }
-    ]
+    ])
   };
 }
 
