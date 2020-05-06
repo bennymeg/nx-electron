@@ -2,6 +2,7 @@
 
 Nx Electron uses behind th scene Electron Builder.
 You can find a detailed description of all of its available options [here](https://www.electron.build/configuration/configuration).
+**Note:** in order to avoid confusion, the cli `publish` parameter have been renamed to `publishPolicy`.
 
 ## Configuring static making options
 
