@@ -10,6 +10,7 @@ import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nrwl/workspace';
 import { BuildBuilderOptions } from './types';
+import { HostDirEntry } from '@angular-devkit/schematics';
 
 export const OUT_FILENAME = 'main.js';
 
@@ -20,13 +21,13 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     compilerOptions.target !== ts.ScriptTarget.ES5;
   const mainFields = [...(supportsEs2015 ? ['es2015'] : []), 'module', 'main'];
   const extensions = ['.ts', '.tsx', '.mjs', '.js', '.jsx'];
-  const webpackEntries: Array<Entry | string> = options.files ?
-  (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+  const webpackEntries = <Entry> {
+      ...options.webpackEntries,
+      main: options.main,
+
+  }
   const webpackConfig: Configuration = {
-    entry: {
-        ...options.webpackEntries??Array.from<Entry>([]),
-        main: options.main
-    },
+    entry: webpackEntries,
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
     output: {

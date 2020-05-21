@@ -38,7 +38,7 @@ export interface BuildBuilderOptions {
   verbose?: boolean;
 
   webpackConfig?: string;
-  webpackEntries?: string | string[] | Entry | EntryFunc;
+  webpackEntries?: Entry;
 
   root?: string;
   sourceRoot?: Path;
