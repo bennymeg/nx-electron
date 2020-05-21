@@ -1,5 +1,5 @@
 import { Path } from '@angular-devkit/core';
-import { Entry, EntryFunc } from 'webpack';
+import { Entry } from 'webpack';
 
 export interface FileReplacement {
   replace: string;
