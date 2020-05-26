@@ -22,7 +22,8 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
   const extensions = ['.ts', '.tsx', '.mjs', '.js', '.jsx'];
   const webpackConfig: Configuration = {
     entry: {
-      main: [options.main]
+      ...options.webpackEntries,
+      main: options.main
     },
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
