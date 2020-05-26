@@ -11,8 +11,6 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nrwl/workspace';
 import { BuildBuilderOptions } from './types';
 
-export const OUT_FILENAME = 'main.js';
-
 export function getBaseWebpackPartial(options: BuildBuilderOptions): Configuration {
   const { options: compilerOptions } = readTsConfig(options.tsConfig);
   const supportsEs2015 =
@@ -29,7 +27,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     mode: options.optimization ? 'production' : 'development',
     output: {
       path: options.outputPath,
-      filename: OUT_FILENAME
+      filename: '[name].js'
     },
     module: {
       rules: [

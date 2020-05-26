@@ -4,7 +4,6 @@ import { runWebpack, BuildResult } from '@angular-devkit/build-webpack';
 
 import { getSourceRoot } from '../../utils/workspace';
 import { getElectronWebpackConfig } from '../../utils/electron.config';
-import { OUT_FILENAME } from '../../utils/config';
 import { BuildBuilderOptions } from '../../utils/types';
 import { normalizeBuildOptions } from '../../utils/normalize';
 
@@ -15,6 +14,8 @@ import { map, concatMap } from 'rxjs/operators';
 try {
   require('dotenv').config();
 } catch (e) {}
+
+const MAIN_OUTPUT_FILENAME = 'main.js';
 
 export interface BuildElectronBuilderOptions extends BuildBuilderOptions {
   optimization?: boolean;
@@ -57,7 +58,7 @@ function run(
       buildEvent.outfile = resolve(
         context.workspaceRoot,
         options.outputPath,
-        OUT_FILENAME
+        MAIN_OUTPUT_FILENAME
       );
       return buildEvent as ElectronBuildEvent;
     })
