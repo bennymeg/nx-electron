@@ -8,6 +8,7 @@ Electron builders and schematics for Nrwl Nx platform.
 [![licence](https://img.shields.io/github/license/bennymeg/nx-electron.svg)](https://github.com/bennymeg/nx-electron/blob/master/LICENSE)
 [![npm version](https://img.shields.io/npm/v/nx-electron.svg)](https://www.npmjs.com/package/nx-electron)
 [![Dependencies status](https://david-dm.org/bennymeg/nx-electron/status.svg)](https://david-dm.org/bennymeg/nx-electron)
+![Downloads](https://img.shields.io/npm/dt/nx-electron)
 <!-- [![github version](https://img.shields.io/github/package-json/v/badges/shields.svg)](https://github.com/bennymeg/nx-electron) -->
 <!-- ![GitHub repository size in bytes](https://img.shields.io/github/languages/code-size/badges/shields.svg) -->
 
@@ -15,18 +16,16 @@ Electron builders and schematics for Nrwl Nx platform.
 
 <hr></br>
 
-<!-- > **NOTE**: This repository is still in ***beta***. -->
-
 # Features
 
 Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
 - **Schematics**: Provides schematics for developing cross platform apps in a mono repo environment.
 - **Typescript**: Uses Typescript to help reduce errors, and create more structured code.
-- **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it). 🆕
+- **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it).
 - **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
 - **Live Update**: Provides continuos live reload for your backend code.
-- **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events. 🆕
-- **Packaging**: Packages your frontend and backend webpack bundles into single electron package. 🆕
+- **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events.
+- **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
 - **Making**: Makes your frontend and backend webpack bundles into single executable. 🆕
 
 # Getting Started
