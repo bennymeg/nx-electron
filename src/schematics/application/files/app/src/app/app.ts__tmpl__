@@ -55,7 +55,8 @@ export default class App {
     }
 
     private static initMainWindow() {
-        const { screen } = require('electron');
+        import { screen } from 'electron';
+
         const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
         const width = Math.min(1280, workAreaSize.width || 1280);
         const height = Math.min(720, workAreaSize.height || 720);
