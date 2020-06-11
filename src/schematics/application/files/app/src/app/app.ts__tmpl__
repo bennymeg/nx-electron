@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { join } from 'path';
 import { format } from 'url';
@@ -55,8 +55,6 @@ export default class App {
     }
 
     private static initMainWindow() {
-        import { screen } from 'electron';
-
         const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
         const width = Math.min(1280, workAreaSize.width || 1280);
         const height = Math.min(720, workAreaSize.height || 720);
