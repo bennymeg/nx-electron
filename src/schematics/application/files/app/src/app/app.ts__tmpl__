@@ -1,5 +1,6 @@
 import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
+import { environment } from '../environments/environments';
 import { join } from 'path';
 import { format } from 'url';
 
@@ -14,7 +15,7 @@ export default class App {
         const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
         const getFromEnvironment: boolean = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
 
-        return isEnvironmentSet ? getFromEnvironment : !App.application.isPackaged;
+        return isEnvironmentSet ? getFromEnvironment : !environment.production;
     }
 
     private static onWindowAllClosed() {
@@ -90,7 +91,7 @@ export default class App {
 
     private static loadMainWindow() {
         // load the index.html of the app.
-        if (App.isDevelopmentMode()) {
+        if (!App.application.isPackaged) {
             App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
         } else {
             App.mainWindow.loadURL(format({
