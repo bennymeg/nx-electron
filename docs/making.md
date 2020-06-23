@@ -15,7 +15,9 @@ Example static packaging options file (_`.\apps\<electron-app-name>\src\app\opti
   "$schema": "../../../../../node_modules/nx-electron/src/validation/maker.schema.json",
   "productName": "Awesome App",
   "copyright": "Copyright © 2020 Benny Megidish",
+  "electronCompile": false,
   "npmRebuild": false,
+  "asar": true,
   "win": {
     "target": "appx",
     "icon": "relative\\path\\to\\app_icon.ico",
