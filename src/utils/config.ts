@@ -60,7 +60,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: options.tsConfig
+        typescript: { configFile: options.tsConfig }
       }),
       new DefinePlugin({
         __BUILD_VERSION__: JSON.stringify(require(join(options.root, "package.json")).version),
