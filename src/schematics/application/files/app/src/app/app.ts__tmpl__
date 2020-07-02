@@ -1,6 +1,6 @@
 import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
-import { environment } from '../environments/environments';
+import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
 
@@ -11,7 +11,7 @@ export default class App {
     static application: Electron.App;
     static BrowserWindow;
 
-    public static isDevelopmentMode() { 
+    public static isDevelopmentMode() {
         const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
         const getFromEnvironment: boolean = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
 
@@ -59,12 +59,12 @@ export default class App {
         const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
         const width = Math.min(1280, workAreaSize.width || 1280);
         const height = Math.min(720, workAreaSize.height || 720);
-    
+
         // Create the browser window.
         App.mainWindow = new BrowserWindow({ width: width, height: height, show: false, webPreferences: {
                 nodeIntegration: true,
                 backgroundThrottling: false
-            } 
+            }
         });
         App.mainWindow.setMenu(null);
         App.mainWindow.center();
@@ -73,7 +73,7 @@ export default class App {
         App.mainWindow.once('ready-to-show', () => {
             App.mainWindow.show();
         });
-        
+
         // handle all external redirects in a new browser window
         // App.mainWindow.webContents.on('will-navigate', App.onRedirect);
         // App.mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
@@ -103,10 +103,10 @@ export default class App {
     }
 
     static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
-        // we pass the Electron.App object and the  
-        // Electron.BrowserWindow into this function 
-        // so this class has no dependencies. This 
-        // makes the code easier to write tests for 
+        // we pass the Electron.App object and the
+        // Electron.BrowserWindow into this function
+        // so this class has no dependencies. This
+        // makes the code easier to write tests for
 
         App.BrowserWindow = browserWindow;
         App.application = app;
