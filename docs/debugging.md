@@ -18,7 +18,7 @@ In this document we will describe how to configure you IDE to debug your nx-elec
 ```
 
 - package.json script
-`"serve:main": "nx serve --inspect=inspeck-brk {electron-app-name}"`
+`"serve:main": "nx serve --inspect=inspect-brk {electron-app-name}"`
 
 - Invocation:
   - Run this command before attaching the debugger:
