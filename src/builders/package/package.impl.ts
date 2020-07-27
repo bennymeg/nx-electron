@@ -16,6 +16,8 @@ import { normalizePackagingOptions } from '../../utils/normalize';
 import { Observable, from, of } from 'rxjs';
 import { map, concatMap, catchError } from 'rxjs/operators';
 
+import stripJsonComments from 'strip-json-comments';
+
 try {
   require('dotenv').config();
 } catch (e) {}
@@ -93,7 +95,7 @@ function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElec
 
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')
-    const externalOptions = JSON.parse(rawData);
+    const externalOptions = JSON.parse(stripJsonComments(rawData));
     options = Object.assign(normalizeIgnoreOptions(options), normalizeIgnoreOptions(externalOptions));
   }
 
