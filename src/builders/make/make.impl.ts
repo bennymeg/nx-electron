@@ -116,12 +116,10 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
       output: join(context.workspaceRoot, options.out)
     },
     files: files.concat([
-      './package.json',
-      '!**/*.js.map',
       {
           from: `./dist/apps/${options.frontendProject}`,
           to: options.frontendProject,
-          filter: ['*.*', 'assets']
+          filter: ['**/!(*.js.map)', 'assets']
       },
       {
           from: `./dist/apps/${options.name}`,
@@ -132,7 +130,9 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           from: `./dist/apps/${options.name}`,
           to: '',
           filter: ['index.js']
-      }
+      },      
+      './package.json',
+      '!(**/*.js.map)',
     ])
   };
 }
