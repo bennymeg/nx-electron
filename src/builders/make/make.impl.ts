@@ -13,6 +13,8 @@ import { Observable, from, of } from 'rxjs';
 import { map, concatMap, catchError } from 'rxjs/operators';
 import { platform } from 'os';
 
+import stripJsonComments from 'strip-json-comments';
+
 try {
   require('dotenv').config();
 } catch (e) {}
@@ -157,7 +159,7 @@ function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBu
 
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')
-    const externalOptions = JSON.parse(rawData);
+    const externalOptions = JSON.parse(stripJsonComments(rawData));
     options = Object.assign(options, externalOptions);
   }
 
