@@ -119,7 +119,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
       {
           from: `./dist/apps/${options.frontendProject}`,
           to: options.frontendProject,
-          filter: ['**/!(*.js.map)', 'assets']
+          filter: ['**/!(*.+(js|css).map)', 'assets']
       },
       {
           from: `./dist/apps/${options.name}`,
@@ -132,7 +132,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
           filter: ['index.js']
       },      
       './package.json',
-      '!(**/*.js.map)',
+      '!(**/*.+(js|css).map)',
     ])
   };
 }
