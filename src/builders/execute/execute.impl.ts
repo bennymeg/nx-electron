@@ -127,7 +127,7 @@ function killProcess(context: BuilderContext): Observable<void | Error> {
   );
 }
 
-function startBuild(options: ElectronExecuteBuilderOptions, context: BuilderContext): Observable<ElectronBuildEvent> {
+function startBuild(options: ElectronExecuteBuilderOptions, context: BuilderContext): Observable<BuilderOutput> {
   const target = targetFromTargetString(options.buildTarget);
 
   return from(
@@ -154,7 +154,7 @@ function startBuild(options: ElectronExecuteBuilderOptions, context: BuilderCont
       () =>
         scheduleTargetAndForget(context, target, {
           watch: true
-        }) as Observable<ElectronBuildEvent>
+        })
     )
   );
 }
@@ -167,8 +167,8 @@ function runWaitUntilTargets(options: ElectronExecuteBuilderOptions, context: Bu
   return zip(
     ...options.waitUntilTargets.map(b => {
       return scheduleTargetAndForget(context, targetFromTargetString(b)).pipe(
-        filter(e => e.success !== undefined),
-        first()
+        // filter(e => e.success !== undefined), // todo fix
+        // first()
       );
     })
   ).pipe(
