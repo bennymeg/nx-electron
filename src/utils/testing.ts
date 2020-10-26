@@ -8,15 +8,29 @@ import { TestingArchitectHost } from '@angular-devkit/architect/testing';
 import { MockBuilderContext } from '@nrwl/workspace/testing';
 
 const testRunner = new SchematicTestRunner(
-  'nx-electron',
+  '@nrwl/node',
   join(__dirname, '../../collection.json')
 );
 
-export function runSchematic(schematicName: string, options: any, tree: Tree) {
+testRunner.registerCollection(
+  '@nrwl/jest',
+  join(__dirname, '../../../jest/collection.json')
+);
+
+testRunner.registerCollection(
+  '@nrwl/workspace',
+  join(__dirname, '../../../workspace/collection.json')
+);
+
+export function runSchematic<T = any>(
+  schematicName: string,
+  options: T,
+  tree: Tree
+) {
   return testRunner.runSchematicAsync(schematicName, options, tree).toPromise();
 }
 
-export function callRule(rule: Rule, tree: Tree): Promise<Tree> {
+export function callRule(rule: Rule, tree: Tree) {
   return testRunner.callRule(rule, tree).toPromise();
 }
 
@@ -37,6 +51,6 @@ export async function getMockContext() {
 
   const context = new MockBuilderContext(architect, architectHost);
   await context.addBuilderFromPackage(join(__dirname, '../..'));
-  
+
   return context;
 }
