@@ -38,7 +38,8 @@ export function normalizeMakingOptions<T extends ElectronMakerOptions>(options: 
   return {
     ...options,
     root,
-    sourceRoot
+    sourceRoot,
+    out: resolve(root, (options as any).outputPath) // resolve path the same way normalizeBuildOptions does
   };
 }
 
