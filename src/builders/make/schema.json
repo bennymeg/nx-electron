@@ -19,7 +19,7 @@
     },
     "outputPath": {
       "type": "string",
-      "description": "The output path for built electron application. If a relative path is supplied, it will be relative from the directory in which the command is run. If this parameter is not supplied, the output path from angular.json will be used."
+      "description": "The full path for the new output directory, relative to the current workspace. If this parameter is not supplied, the 'out' path from angular.json will be used."
     },
     "platform": {
       "oneOf": [
