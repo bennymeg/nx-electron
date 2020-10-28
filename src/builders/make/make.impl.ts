@@ -27,6 +27,7 @@ export interface MakeElectronBuilderOptions extends Configuration {
   platform: string | string[];
   arch: string;
   root: string;
+  sourceRoot: string;
   outputPath: string;
   publishPolicy?: PublishOptions["publish"];
 }
@@ -145,7 +146,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.platform;
   delete config.arch;
   delete config.root;
-  delete config['sourceRoot'];
+  delete config.sourceRoot;
   delete config['$schema'];
   delete config["publishPolicy"];
   delete config.outputPath;
@@ -155,7 +156,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
 
 function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {
   // load preset options file
-  const externalOptionsPath: string = join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
+  const externalOptionsPath: string = join(options.root, options.sourceRoot, 'app', 'options', 'maker.options.json');
 
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')

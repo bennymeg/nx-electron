@@ -1,9 +1,10 @@
-import { Path, normalize } from '@angular-devkit/core';
+import { Path, normalize, JsonObject } from '@angular-devkit/core';
 import { resolve, dirname, relative, basename } from 'path';
 import { BuildBuilderOptions } from './types';
 import { Options as ElectronPackagerOptions } from 'electron-packager'; 
 import { Configuration as ElectronMakerOptions } from 'electron-builder';
 import { statSync } from 'fs';
+import { MakeElectronBuilderOptions } from 'src/builders/make/make.impl';
 
 export interface FileReplacement {
   replace: string;
@@ -34,12 +35,12 @@ export function normalizePackagingOptions<T extends ElectronPackagerOptions>(opt
   };
 }
 
-export function normalizeMakingOptions<T extends ElectronMakerOptions>(options: T, root: string, sourceRoot: string): T {
+export function normalizeMakingOptions(options: MakeElectronBuilderOptions, root: string, sourceRoot: string): MakeElectronBuilderOptions {
   return {
     ...options,
     root,
     sourceRoot,
-    out: resolve(root, (options as any).outputPath) // resolve path the same way normalizeBuildOptions does
+    outputPath: resolve(root, options.outputPath) // resolve path the same way normalizeBuildOptions does
   };
 }
 
