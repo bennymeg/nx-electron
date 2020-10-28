@@ -27,7 +27,7 @@ export interface MakeElectronBuilderOptions extends Configuration {
   platform: string | string[];
   arch: string;
   root: string;
-  out: string;
+  outputPath: string;
   publishPolicy?: PublishOptions["publish"];
 }
 
@@ -113,7 +113,7 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
   return {
     directories: {
       ...options.directories,
-      output: join(context.workspaceRoot, options.out)
+      output: join(context.workspaceRoot, options.outputPath)
     },
     files: files.concat([
       {
@@ -148,7 +148,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config['sourceRoot'];
   delete config['$schema'];
   delete config["publishPolicy"];
-  delete config.out;
+  delete config.outputPath;
 
   return config;
 }
