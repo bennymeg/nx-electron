@@ -4,7 +4,7 @@ This file is a derivative of electron packager options. It states all the availa
 
 ## Configuring static packaging options
 
-It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\packager.options.json`_.
+It is possible to configure all the packaging that are described above in _`.\apps\<electron-app-name>\src\app\options\packager.options.json`_.
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
 Example static packaging options file (_`.\apps\<electron-app-name>\src\app\options\packager.options.json`_):
