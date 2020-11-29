@@ -1,15 +1,15 @@
+import { join, resolve } from 'path';
+import { from, Observable } from 'rxjs';
+import { concatMap, map } from 'rxjs/operators';
+
 import { BuilderContext, createBuilder } from '@angular-devkit/architect';
+import { BuildResult, runWebpack } from '@angular-devkit/build-webpack';
 import { JsonObject } from '@angular-devkit/core';
-import { runWebpack, BuildResult } from '@angular-devkit/build-webpack';
 
-import { getSourceRoot } from '../../utils/workspace';
 import { getElectronWebpackConfig } from '../../utils/electron.config';
-import { BuildBuilderOptions } from '../../utils/types';
 import { normalizeBuildOptions } from '../../utils/normalize';
-
-import { Observable, from } from 'rxjs';
-import { resolve } from 'path';
-import { map, concatMap } from 'rxjs/operators';
+import { BuildBuilderOptions } from '../../utils/types';
+import { getSourceRoot } from '../../utils/workspace';
 
 try {
   require('dotenv').config();
@@ -45,6 +45,7 @@ function run(
           configuration: context.target.configuration
         });
       }
+      config.entry['preload'] = join(options.sourceRoot, 'app/api/preload.ts');
       return config;
     }),
     concatMap(config =>
