@@ -18,6 +18,7 @@ describe('MakeElectronBuilder', () => {
       asar: true,
       name: 'electronapp',
       frontendProject: 'frontend',
+      sourcePath: 'dist/apps',
       outputPath: 'dist/packages',
     };
   });

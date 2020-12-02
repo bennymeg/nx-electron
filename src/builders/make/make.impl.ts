@@ -3,7 +3,7 @@ import { JsonObject } from '@angular-devkit/core';
 
 import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { promisify } from 'util';
 
 import { getSourceRoot } from '../../utils/workspace';
@@ -27,6 +27,7 @@ export interface MakeElectronBuilderOptions extends Configuration {
   platform: string | string[];
   arch: string;
   root: string;
+  sourcePath: string;
   outputPath: string;
   publishPolicy?: PublishOptions["publish"];
 }
@@ -50,7 +51,7 @@ function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: Build
       addMissingDefaultOptions(options)
     ),
     concatMap(async (options) => {
-      await beforeBuild(options.root, options.name);
+      await beforeBuild(options.root, options.sourcePath, options.name);
 
       const platforms: Platform[] = _createPlatforms(options.platform);
       const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
@@ -68,8 +69,8 @@ function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: Build
   );
 }
 
-async function beforeBuild(appDir: string, appName: string) {
-  await writeFileAsync(join(appDir, 'dist', 'apps', appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
+async function beforeBuild(projectRoot: string, sourcePath: string, appName: string) {
+  await writeFileAsync(join(projectRoot, sourcePath, appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
 }
 
 function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
@@ -117,17 +118,17 @@ function _createBaseConfig(options: MakeElectronBuilderOptions, context: Builder
     },
     files: files.concat([
       {
-          from: `./dist/apps/${options.frontendProject}`,
+          from: resolve(options.sourcePath, options.frontendProject),
           to: options.frontendProject,
           filter: ['**/!(*.+(js|css).map)', 'assets']
       },
       {
-          from: `./dist/apps/${options.name}`,
+          from: resolve(options.sourcePath, options.name),
           to: options.name,
           filter: ['main.js', 'assets']
       },
       {
-          from: `./dist/apps/${options.name}`,
+          from: resolve(options.sourcePath, options.name),
           to: '',
           filter: ['index.js']
       },      
@@ -148,6 +149,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config['sourceRoot'];
   delete config['$schema'];
   delete config["publishPolicy"];
+  delete config.sourcePath;
   delete config.outputPath;
 
   return config;
