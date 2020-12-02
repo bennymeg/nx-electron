@@ -1,7 +1,7 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 
-import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet } from 'electron-builder';
+import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet, CliOptions } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { promisify } from 'util';
@@ -27,6 +27,7 @@ export interface MakeElectronBuilderOptions extends Configuration {
   platform: string | string[];
   arch: string;
   root: string;
+  prepackageOnly: boolean;
   sourcePath: string;
   outputPath: string;
   publishPolicy?: PublishOptions["publish"];
@@ -56,8 +57,9 @@ function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: Build
       const platforms: Platform[] = _createPlatforms(options.platform);
       const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
       const baseConfig: Configuration = _createBaseConfig(options, context);
-      const config = _createConfigFromOptions(options, baseConfig);
-      const outputPath = await build({ targets, config, publish: rawOptions.publishPolicy || null });
+      const config: Configuration = _createConfigFromOptions(options, baseConfig);
+      const normalizedOptions: CliOptions = _normalizeBuilderOptions(targets, config, rawOptions);
+      const outputPath = await build(normalizedOptions);
 
       return { success: true, outputPath };
     }),
@@ -110,11 +112,13 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 function _createBaseConfig(options: MakeElectronBuilderOptions, context: BuilderContext): Configuration {
   const files: Array<FileSet | string> = options.files ?
    (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+  const outputPath = options.prepackageOnly ? 
+    options.outputPath.replace('executables', 'packages') : options.outputPath;
 
   return {
     directories: {
       ...options.directories,
-      output: join(context.workspaceRoot, options.outputPath)
+      output: join(context.workspaceRoot, outputPath)
     },
     files: files.concat([
       {
@@ -146,6 +150,7 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.platform;
   delete config.arch;
   delete config.root;
+  delete config.prepackageOnly;
   delete config['sourceRoot'];
   delete config['$schema'];
   delete config["publishPolicy"];
@@ -153,6 +158,18 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.outputPath;
 
   return config;
+}
+
+function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: JsonObject & MakeElectronBuilderOptions): CliOptions {
+  let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+
+  if (rawOptions.prepackageOnly) {
+    normalizedOptions.dir = true;
+  } else {
+    normalizedOptions.targets = targets
+  }
+
+  return normalizedOptions;
 }
 
 function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {
