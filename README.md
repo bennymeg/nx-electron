@@ -70,23 +70,19 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ## Packaging Electron Application
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
+- Or `nx run <electron-app-name>:make --prepackgeOnly` to package your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md). **Notice:** in order to use the packaging features you will have to either [migrate](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md) your project manually or create a new project (**v8.0.0 or newer**).
-
-### Configuring static packaging options
-
-It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\packager.options.json`_.
-**Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/make/schema.json).
 
 ## Making Electron Application
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
-The [options](https://www.electron.build/configuration/configuration) that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/docs/making.md). **Notice:** in order to use the making features you will have to either [migrate](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md) your project manually or create a new project (**v9.0.0 or newer**).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/make/schema.json).
 
-### Configuring static making options
+## Configuring static packaging / making options
 
-It is possible to configure all the making that are describes above in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_.
+It is possible to configure all the packaging / making [options](https://www.electron.build/configuration/configuration) in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_. For more information [read this article](https://github.com/bennymeg/nx-electron/blob/master/docs/making.md).
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
 ## Migrating Electron Application

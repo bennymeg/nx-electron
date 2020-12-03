@@ -1,9 +1,9 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 
-import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet } from 'electron-builder';
+import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet, CliOptions } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { promisify } from 'util';
 
 import { getSourceRoot } from '../../utils/workspace';
@@ -27,7 +27,9 @@ export interface MakeElectronBuilderOptions extends Configuration {
   platform: string | string[];
   arch: string;
   root: string;
-  out: string;
+  prepackageOnly: boolean;
+  sourcePath: string;
+  outputPath: string;
   publishPolicy?: PublishOptions["publish"];
 }
 
@@ -50,13 +52,14 @@ function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: Build
       addMissingDefaultOptions(options)
     ),
     concatMap(async (options) => {
-      await beforeBuild(options.root, options.name);
+      await beforeBuild(options.root, options.sourcePath, options.name);
 
       const platforms: Platform[] = _createPlatforms(options.platform);
       const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
       const baseConfig: Configuration = _createBaseConfig(options, context);
-      const config = _createConfigFromOptions(options, baseConfig);
-      const outputPath = await build({ targets, config, publish: rawOptions.publishPolicy || null });
+      const config: Configuration = _createConfigFromOptions(options, baseConfig);
+      const normalizedOptions: CliOptions = _normalizeBuilderOptions(targets, config, rawOptions);
+      const outputPath = await build(normalizedOptions);
 
       return { success: true, outputPath };
     }),
@@ -68,8 +71,8 @@ function run(rawOptions: JsonObject & MakeElectronBuilderOptions, context: Build
   );
 }
 
-async function beforeBuild(appDir: string, appName: string) {
-  await writeFileAsync(join(appDir, 'dist', 'apps', appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
+async function beforeBuild(projectRoot: string, sourcePath: string, appName: string) {
+  await writeFileAsync(join(projectRoot, sourcePath, appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
 }
 
 function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
@@ -109,25 +112,27 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 function _createBaseConfig(options: MakeElectronBuilderOptions, context: BuilderContext): Configuration {
   const files: Array<FileSet | string> = options.files ?
    (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+  const outputPath = options.prepackageOnly ? 
+    options.outputPath.replace('executables', 'packages') : options.outputPath;
 
   return {
     directories: {
       ...options.directories,
-      output: join(context.workspaceRoot, options.out)
+      output: join(context.workspaceRoot, outputPath)
     },
     files: files.concat([
       {
-          from: `./dist/apps/${options.frontendProject}`,
+          from: resolve(options.sourcePath, options.frontendProject),
           to: options.frontendProject,
           filter: ['**/!(*.+(js|css).map)', 'assets']
       },
       {
-          from: `./dist/apps/${options.name}`,
+          from: resolve(options.sourcePath, options.name),
           to: options.name,
           filter: ['main.js', 'assets']
       },
       {
-          from: `./dist/apps/${options.name}`,
+          from: resolve(options.sourcePath, options.name),
           to: '',
           filter: ['index.js']
       },      
@@ -145,12 +150,26 @@ function _createConfigFromOptions(options: MakeElectronBuilderOptions, baseConfi
   delete config.platform;
   delete config.arch;
   delete config.root;
+  delete config.prepackageOnly;
   delete config['sourceRoot'];
   delete config['$schema'];
   delete config["publishPolicy"];
-  delete config.out;
+  delete config.sourcePath;
+  delete config.outputPath;
 
   return config;
+}
+
+function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: JsonObject & MakeElectronBuilderOptions): CliOptions {
+  let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+
+  if (rawOptions.prepackageOnly) {
+    normalizedOptions.dir = true;
+  } else {
+    normalizedOptions.targets = targets
+  }
+
+  return normalizedOptions;
 }
 
 function mergePresetOptions(options: MakeElectronBuilderOptions): MakeElectronBuilderOptions {

@@ -12,8 +12,8 @@
       "description": "Execute an Electron application"
     },
     "package": {
-      "implementation": "./src/builders/package/package.impl",
-      "schema": "./src/builders/package/schema.json",
+      "implementation": "./src/builders/make/make.impl",
+      "schema": "./src/builders/make/schema.json",
       "description": "Package an Electron application"
     },
     "make": {

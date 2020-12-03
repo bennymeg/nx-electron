@@ -4,6 +4,9 @@ Nx Electron uses behind th scene Electron Builder.
 You can find a detailed description of all of its available options [here](https://www.electron.build/configuration/configuration).
 **Note:** in order to avoid confusion, the cli `publish` parameter have been renamed to `publishPolicy`.
 
+## CLI options
+The CLI options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/make/schema.json).
+
 ## Configuring static making options
 
 It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_.
