@@ -12,13 +12,13 @@
       "description": "Execute an Electron application"
     },
     "package": {
-      "implementation": "./src/builders/make/make.impl",
-      "schema": "./src/builders/make/schema.json",
+      "implementation": "./src/builders/package/package.impl",
+      "schema": "./src/builders/package/schema.json",
       "description": "Package an Electron application"
     },
     "make": {
-      "implementation": "./src/builders/make/make.impl",
-      "schema": "./src/builders/make/schema.json",
+      "implementation": "./src/builders/package/package.impl",
+      "schema": "./src/builders/package/schema.json",
       "description": "Make an Electron application"
     }
   }

@@ -1,5 +1,4 @@
 import { getElectronWebpackConfig } from './electron.config';
-import { BannerPlugin } from 'webpack';
 jest.mock('tsconfig-paths-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { BuildElectronBuilderOptions } from '../builders/build/build.impl';
