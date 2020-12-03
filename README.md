@@ -87,6 +87,7 @@ It is possible to configure all the packaging / making [options](https://www.ele
 
 ## Migrating Electron Application
 
+To migrate automaticlly run `ng update nx-electron@<version>`.
 You can find detailed information in the following articles:
 
 - [v8.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md)

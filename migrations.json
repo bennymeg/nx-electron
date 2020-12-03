@@ -1,3 +1,24 @@
 {
-  "schematics": {}
+  "schematics": {
+    "add-packager-config": {
+      "version": "8.0.0",
+      "description": "Add packager config.",
+      "factory": "./src/migrations/update-8-0-0/add-packager-config"
+    },
+    "add-maker-config": {
+      "version": "9.0.0",
+      "description": "Add maker config.",
+      "factory": "./src/migrations/update-9-0-0/add-maker-config"
+    },
+    "add-context-isolation": {
+      "version": "10.0.0",
+      "description": "Add context isolation.",
+      "factory": "./src/migrations/update-10-0-0/add-context-isolation"
+    },
+    "migrate-packager": {
+      "version": "10.0.0",
+      "description": "Migrate packager to electron-builder.",
+      "factory": "./src/migrations/update-10-0-0/migrate-packager"
+    }
+  }
 }
