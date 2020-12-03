@@ -1,4 +1,4 @@
-# Packaging Options
+# Packaging Options (Deprecated: see [making options](https://github.com/bennymeg/nx-electron/blob/master/docs/making.md))
 
 This file is a derivative of electron packager options. It states all the available options that can be used when packaging you app using nx electron. Fundamentally, all of the electron packager options are available except the functions hooks (afterCopy, afterExtract, afterPrune). In addition, you can pass the --ignoreSourceMap option in order to ignore all the source map files in your package.
 

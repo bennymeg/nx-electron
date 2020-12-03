@@ -64,7 +64,8 @@ function getPackageConfig(options: NormalizedSchema) {
     options: {
       name: options.name,
       frontendProject: options.frontendProject,
-      out: 'dist/packages'
+      outputPath: 'dist/packages',
+      prepackageOnly: true
     }
   };
 }
@@ -75,7 +76,7 @@ function getMakeConfig(options: NormalizedSchema) {
     options: {
       name: options.name,
       frontendProject: options.frontendProject,
-      out: 'dist/executables'
+      outputPath: 'dist/executables'
     }
   };
 }
