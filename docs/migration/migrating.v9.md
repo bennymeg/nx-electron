@@ -27,4 +27,4 @@ export const packageVersion = __BUILD_VERSION__;
 
 ...
 ```
-**Note**: In new projects the version variable will bw placed in the `environment.ts` module
+**Note**: In new projects the version variable will be placed in the `environment.ts` module
