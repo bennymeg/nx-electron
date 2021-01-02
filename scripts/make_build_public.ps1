@@ -1,1 +1,0 @@
-(Get-content package.json) | Foreach-Object {$_ -replace '"private": true,', '"private": false,'} | Set-Content build/package.json
