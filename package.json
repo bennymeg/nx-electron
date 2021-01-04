@@ -8,6 +8,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "lint": "jshint .",
     "test": "jest --maxWorkers=1 .*.spec.js",
     "compile": "tsc",
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
