@@ -74,7 +74,6 @@
     "@angular-devkit/schematics": "^10.1.6",
     "@nrwl/jest": "^10.3.0",
     "@nrwl/linter": "^10.3.0",
-    "@nrwl/workspace": "^10.3.0",
     "circular-dependency-plugin": "^5.0.2",
     "copy-webpack-plugin": "^5.1.2",
     "electron-builder": "^22.9.1",
@@ -93,6 +92,7 @@
     "webpack-node-externals": "1.7.2"
   },
   "devDependencies": {
+    "@nrwl/workspace": "^10.3.0",
     "@types/circular-dependency-plugin": "^5.0.1",
     "@types/copy-webpack-plugin": "^5.0.2",
     "@types/jest": "^26.0.14",
