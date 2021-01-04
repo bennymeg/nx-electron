@@ -132,10 +132,7 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 
 ## Contribute
 
-Before submitting a pull request, please make sure that you include tests and lints runs without any warnings.
-
-- 👾 [Issue Tracker](https://github.com/bennymeg/nx-electron/issues),
-- 📦 [Source Code](https://github.com/bennymeg/nx-electron/)
+- Follow [this instructions](https://github.com/bennymeg/nx-electron/blob/master/CONTRIBUTING.md) in order to learn how to contribute to this project.
 
 ## Versioning
 

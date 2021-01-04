@@ -8,23 +8,24 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "lint": "jshint .",
     "test": "jest --maxWorkers=1 .*.spec.js",
     "compile": "tsc",
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish --tag beta",
-    "permission": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./scripts/make_build_public.ps1",
+    "permission": "node ./scripts/make_build_public.js",
     "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence && npm run copy:ignore",
-    "copy:ts": "xcopy \"src\" \"build/src/\" /F /Y /S",
-    "copy:json": "xcopy \"*.json\" \"build/\" /F /Y",
-    "copy:readme": "xcopy \"README.md\" \"build/\" /F /Y",
-    "copy:licence": "xcopy \"LICENSE\" \"build/\" /F /Y",
-    "copy:ignore": "xcopy \".*ignore\" \"build/\" /F /Y",
+    "copy:ts": "shx cp -rf src build/",
+    "copy:json": "shx cp -rf *.json build/",
+    "copy:readme": "shx cp -rf README.md build/",
+    "copy:licence": "shx cp -rf LICENSE build/",
+    "copy:ignore": "shx cp -rf .*ignore build/",
     "clear:all": "npm run clear:ts && npm run clear:json && npm run clear:readme && npm run clear:licence && npm run clear:ignore",
-    "clear:ts": "rmdir \".\\build\\src\\\" /q /s",
-    "clear:json": "del \".\\build\\*.json\"",
-    "clear:readme": "del \".\\build\\README.md\"",
-    "clear:licence": "del \".\\build\\LICENSE\"",
-    "clear:ignore": "del \".\\build\\.*ignore\""
+    "clear:ts": "shx rm -rf ./build/src",
+    "clear:json": "shx rm -f ./build/*.json",
+    "clear:readme": "shx rm -f ./build/README.md",
+    "clear:licence": "shx rm -f ./build/LICENSE",
+    "clear:ignore": "shx rm -f ./build/.*ignore"
   },
   "repository": {
     "type": "git",
@@ -106,6 +107,7 @@
     "electron": "^9.3.2",
     "jest": "^26.5.3",
     "prettier": "^2.1.2",
+    "shx": "^0.3.3",
     "typescript": "^3.9.7",
     "utf-8-validate": "^5.0.2"
   }
