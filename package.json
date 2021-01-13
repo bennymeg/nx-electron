@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "10.0.2",
+  "version": "10.0.3",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
