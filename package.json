@@ -92,7 +92,7 @@
     "webpack-node-externals": "1.7.2"
   },
   "devDependencies": {
-    "@nrwl/workspace": "^10.3.0",
+    "@nrwl/workspace": "^11.1.5",
     "@types/circular-dependency-plugin": "^5.0.1",
     "@types/copy-webpack-plugin": "^5.0.2",
     "@types/jest": "^26.0.14",
