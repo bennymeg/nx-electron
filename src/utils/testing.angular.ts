@@ -1,7 +1,9 @@
 import { join } from 'path';
+
+import { externalSchematic, Rule, Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
-import { Tree, Rule, externalSchematic } from '@angular-devkit/schematics';
-import { names, toFileName } from '@nrwl/workspace/src/utils/name-utils';
+import { names } from '@nrwl/devkit';
+import { toFileName } from '@nrwl/workspace';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 
 const testRunner = new SchematicTestRunner(

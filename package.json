@@ -93,6 +93,7 @@
   },
   "devDependencies": {
     "@nrwl/workspace": "^11.1.5",
+    "@nrwl/devkit": "^11.1.5",
     "@types/circular-dependency-plugin": "^5.0.1",
     "@types/copy-webpack-plugin": "^5.0.2",
     "@types/jest": "^26.0.14",
@@ -108,7 +109,7 @@
     "jest": "^26.5.3",
     "prettier": "^2.1.2",
     "shx": "^0.3.3",
-    "typescript": "^3.9.7",
+    "typescript": "~4.0.3",
     "utf-8-validate": "^5.0.2"
   }
 }
