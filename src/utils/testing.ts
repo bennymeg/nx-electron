@@ -30,7 +30,7 @@ export function runSchematic<T = any>(
   return testRunner.runSchematicAsync(schematicName, options, tree).toPromise();
 }
 
-export function callRule(rule: Rule, tree: Tree) {
+export function callRule(rule: Rule, tree: Tree): Promise<Tree> {
   return testRunner.callRule(rule, tree).toPromise();
 }
 
