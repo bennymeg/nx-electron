@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "10.0.4",
+  "version": "11.0.0-alpha.0",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
@@ -12,7 +12,7 @@
     "test": "jest --maxWorkers=1 .*.spec.js",
     "compile": "tsc",
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
-    "publish": "cd build && npm publish",
+    "publish": "cd build && npm publish --tag alpha",
     "permission": "node ./scripts/make_build_public.js",
     "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence && npm run copy:ignore",
     "copy:ts": "shx cp -rf src build/",
