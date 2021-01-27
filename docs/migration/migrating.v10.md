@@ -20,6 +20,9 @@
     },
 ```
 
+### The steps below are only necessary if you are using contextIsolation in the BrowserWindow
+--> Read more about Electron Context Isolation [here](https://www.electronjs.org/docs/tutorial/context-isolation).
+
 **2.** Add folder and file `.\apps\<electron-app-name>\src\app\api\preload.ts` with the following contents:
 
 ```typescript
@@ -31,7 +34,7 @@ contextBridge.exposeInMainWorld('electron', {
 });
 ```
 
-**3.** Update file `.\apps\<electron-app-name>\src\app\app.ts` to include preload entry:
+**3.** Update file `.\apps\<electron-app-name>\src\app\app.ts` to include preload entry and use contextIsolation:
 
 ```typescript
 ...
