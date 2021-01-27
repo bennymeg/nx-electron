@@ -20,8 +20,7 @@
     },
 ```
 
-### The steps below are only necessary if you are using contextIsolation in the BrowserWindow
---> Read more about Electron Context Isolation [here](https://www.electronjs.org/docs/tutorial/context-isolation).
+> **💡  The steps below are only necessary if you are using [Context Isolation](https://www.electronjs.org/docs/tutorial/context-isolation).**
 
 **2.** Add folder and file `.\apps\<electron-app-name>\src\app\api\preload.ts` with the following contents:
 
