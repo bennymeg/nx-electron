@@ -104,7 +104,7 @@
     "@types/webpack-node-externals": "^1.7.1",
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
-    "electron": "^9.3.2",
+    "electron": "^9.4.0",
     "jest": "^26.5.3",
     "prettier": "^2.1.2",
     "shx": "^0.3.3",
