@@ -38,7 +38,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@10
+npx create-nx-workspace@11
 ```
 
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
