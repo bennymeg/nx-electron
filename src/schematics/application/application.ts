@@ -1,10 +1,9 @@
 import { apply, chain, externalSchematic, mergeWith, move, noop, SchematicContext, template, Tree, url, Rule } from '@angular-devkit/schematics';
 import { join, normalize, Path } from '@angular-devkit/core';
 import { Schema } from './schema';
-import { updateJsonInTree, updateWorkspaceInTree, generateProjectLint, addLintFiles } from '@nrwl/workspace';
-import { toFileName } from '@nrwl/workspace';
-import { getProjectConfig } from '@nrwl/workspace';
-import { offsetFromRoot } from '@nrwl/workspace';
+import { updateJsonInTree, updateWorkspaceInTree, generateProjectLint, addLintFiles, getProjectConfig } from '@nrwl/workspace';
+import { appsDir } from '@nrwl/workspace/src/utils/ast-utils';
+import { offsetFromRoot, names } from '@nrwl/devkit';
 import init from '../init/init';
 
 interface NormalizedSchema extends Schema {
@@ -88,7 +87,6 @@ function updateWorkspaceJson(options: NormalizedSchema): Rule {
       sourceRoot: join(options.appProjectRoot, 'src'),
       projectType: 'application',
       prefix: options.name,
-      schematics: {},
       architect: <any>{}
     };
 
@@ -168,7 +166,7 @@ function addProxy(options: NormalizedSchema): Rule {
 
 export default function(schema: Schema): Rule {
   return (host: Tree, context: SchematicContext) => {
-    const options = normalizeOptions(schema);
+    const options = normalizeOptions(host, schema);
     return chain([
       init({
         skipFormat: true
@@ -190,14 +188,14 @@ export default function(schema: Schema): Rule {
   };
 }
 
-function normalizeOptions(options: Schema): NormalizedSchema {
+function normalizeOptions(host: Tree, options: Schema): NormalizedSchema {
   const appDirectory = options.directory
-    ? `${toFileName(options.directory)}/${toFileName(options.name)}`
-    : toFileName(options.name);
+    ? `${names(options.directory).fileName}/${names(options.name).fileName}`
+    : names(options.name).fileName;
 
   const appProjectName = appDirectory.replace(new RegExp('/', 'g'), '-');
 
-  const appProjectRoot = join(normalize('apps'), appDirectory);
+  const appProjectRoot = join(normalize(appsDir(host)), appDirectory);
 
   const parsedTags = options.tags
     ? options.tags.split(',').map(s => s.trim())
@@ -205,9 +203,9 @@ function normalizeOptions(options: Schema): NormalizedSchema {
 
   return {
     ...options,
-    name: toFileName(appProjectName),
+    name: names(appProjectName).fileName,
     frontendProject: options.frontendProject
-      ? toFileName(options.frontendProject)
+      ? names(options.frontendProject).fileName
       : undefined,
     appProjectRoot,
     parsedTags
