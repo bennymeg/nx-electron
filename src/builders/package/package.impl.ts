@@ -10,9 +10,10 @@ import { getSourceRoot } from '../../utils/workspace';
 import { normalizePackgingOptions } from '../../utils/normalize';
 
 import { Observable, from, of } from 'rxjs';
-import { map, concatMap, catchError } from 'rxjs/operators';
+import { map, tap, concatMap, catchError } from 'rxjs/operators';
 import { platform } from 'os';
 
+import { stripIndents } from '@angular-devkit/core/src/utils/literals';
 import stripJsonComments from 'strip-json-comments';
 
 try {
@@ -42,6 +43,13 @@ export default createBuilder<JsonObject & PackageElectronBuilderOptions>(run);
 
 function run(rawOptions: JsonObject & PackageElectronBuilderOptions, context: BuilderContext): Observable<PackageElectronBuilderOutput> { 
   return from(getSourceRoot(context)).pipe(
+    tap(_ => {
+      context.logger.warn(stripIndents`
+        *********************************************************
+        DO NOT FORGET TO REBUILD YOUR FORNTEND & BACKEND PROJECTS
+        FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
+        *********************************************************`);
+    }),
     map(sourceRoot =>
       normalizePackgingOptions(rawOptions, context.workspaceRoot, sourceRoot)
     ),
