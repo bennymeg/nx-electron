@@ -50,7 +50,7 @@ function run(rawOptions: JsonObject & PackageElectronBuilderOptions, context: Bu
         FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
         *********************************************************`);
     }),
-    map(sourceRoot =>
+    map(({ sourceRoot, projectRoot }) =>
       normalizePackgingOptions(rawOptions, context.workspaceRoot, sourceRoot)
     ),
     map(options => 
