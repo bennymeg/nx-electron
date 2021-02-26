@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "lint": "jshint .",
-    "test": "jest --maxWorkers=1 .*.spec.js",
+    "test": "jest --maxWorkers=1 .*.spec.ts",
     "compile": "tsc",
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish --tag beta",
@@ -48,21 +48,6 @@
   "ng-update": {
     "requirements": {},
     "migrations": "./migrations.json"
-  },
-  "jest": {
-    "modulePathIgnorePatterns": [
-      "tmp",
-      "<rootDir>/test",
-      "<rootDir>/src",
-      "collection/.*/files"
-    ],
-    "testPathIgnorePatterns": [
-      "node_modules"
-    ],
-    "coverageReporters": [
-      "html"
-    ],
-    "coverageDirectory": "coverage"
   },
   "peerDependencies": {
     "@nrwl/workspace": "*"
