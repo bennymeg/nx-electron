@@ -4,7 +4,6 @@ module.exports = {
   modulePathIgnorePatterns: [
     "tmp",
     "<rootDir>/test",
-    "<rootDir>/src",
     "collection/.*/files"
   ],
   testPathIgnorePatterns: [
@@ -13,5 +12,5 @@ module.exports = {
   coverageReporters: [
     "html"
   ],
-  coverageDirectory: "coverage",
+  coverageDirectory: "coverage"
 };
