@@ -38,7 +38,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@10
+npx create-nx-workspace@11
 ```
 
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
@@ -49,7 +49,7 @@ You should also create a frontend project in you workspace (in any nx supported 
 npm install -D nx-electron
 ```
 
-## Creating Electron Application
+## Creating Nx Electron Application
 
 ```bash
 nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
@@ -59,22 +59,22 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 **NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to change the baseHref field to "./", and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
-## Building Electron Application
+## Building Nx Electron Application
 
 - Run `nx build <electron-app-name>` to build your application.
 
-## Serving Electron Application
+## Serving Nx Electron Application
 
 - Run `nx serve <electron-app-name>` to serve your application.
 
-## Packaging Electron Application
+## Packaging Nx Electron Application
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 - Or `nx run <electron-app-name>:make --prepackgeOnly` to package your application.
 
 The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/package/schema.json).
 
-## Making Electron Application
+## Making Nx Electron Application
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
@@ -85,7 +85,7 @@ The options that can be passed are described [here](https://github.com/bennymeg/
 It is possible to configure all the packaging / making [options](https://www.electron.build/configuration/configuration) in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_. For more information [read this article](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md).
 **Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
-## Migrating Electron Application
+## Migrating Nx Electron Application
 
 To migrate automaticlly run `ng update nx-electron@<version>`.
 You can find detailed information in the following articles:
@@ -94,11 +94,11 @@ You can find detailed information in the following articles:
 - [v9.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md)
 - [v10.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v10.md)
 
-## Testing Electron Application
+## Testing Nx Electron Application
 
 - Run `nx test <electron-app-name>` to test your application.
 
-## Debugging Electron Application
+## Debugging Nx Electron Application
 
 - Follow [this instructions](https://github.com/bennymeg/nx-electron/blob/master/docs/debugging.md) in order to configure the debugger your IDE.
 

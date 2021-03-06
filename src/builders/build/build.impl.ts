@@ -1,21 +1,24 @@
 import { join, resolve } from 'path';
 import { from, Observable } from 'rxjs';
-import { concatMap, map } from 'rxjs/operators';
+import { concatMap, map, tap } from 'rxjs/operators';
 
 import { BuilderContext, createBuilder } from '@angular-devkit/architect';
 import { BuildResult, runWebpack } from '@angular-devkit/build-webpack';
 import { JsonObject } from '@angular-devkit/core';
 
+import { createProjectGraph } from '@nrwl/workspace/src/core/project-graph';
+import { calculateProjectDependencies, checkDependentProjectsHaveBeenBuilt, createTmpTsConfig } from '@nrwl/workspace/src/utils/buildable-libs-utils';
+
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
 import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
+import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
+import { generatePackageJson } from '../../utils/generate-package-json';
 
 try {
   require('dotenv').config();
 } catch (e) {}
-
-const MAIN_OUTPUT_FILENAME = 'main.js';
 
 export interface BuildElectronBuilderOptions extends BuildBuilderOptions {
   optimization?: boolean;
@@ -29,14 +32,37 @@ export type ElectronBuildEvent = BuildResult & {
 
 export default createBuilder<JsonObject & BuildElectronBuilderOptions>(run);
 
-function run(
-  options: JsonObject & BuildElectronBuilderOptions,
-  context: BuilderContext
-): Observable<ElectronBuildEvent> {
+function run( options: JsonObject & BuildElectronBuilderOptions, context: BuilderContext): Observable<ElectronBuildEvent> {
+  const projGraph = createProjectGraph();
+
+  if (!options.buildLibsFromSource) {
+    const { target, dependencies } = calculateProjectDependencies( projGraph, context);
+
+    options.tsConfig = createTmpTsConfig(
+      join(context.workspaceRoot, options.tsConfig),
+      context.workspaceRoot,
+      target.data.root,
+      dependencies
+    );
+
+    if (!checkDependentProjectsHaveBeenBuilt(context, dependencies)) {
+      return { success: false } as any;
+    }
+  }
+
   return from(getSourceRoot(context)).pipe(
-    map(sourceRoot =>
-      normalizeBuildOptions(options, context.workspaceRoot, sourceRoot)
+    map(({ sourceRoot, projectRoot }) =>
+      normalizeBuildOptions(options, context.workspaceRoot, sourceRoot, projectRoot)
     ),
+    tap((normalizedOptions) => {
+      if (normalizedOptions.generatePackageJson) {
+        generatePackageJson(
+          context.target.project,
+          projGraph,
+          normalizedOptions
+        );
+      }
+    }),
     map(options => {
       let config = getElectronWebpackConfig(options);
       if (options.webpackConfig) {

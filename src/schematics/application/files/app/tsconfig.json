@@ -1,5 +1,5 @@
 {
-  "extends": "<%= offset %>tsconfig.json",
+  "extends": "<%= offset %>tsconfig.base.json",
   "compilerOptions": {
     "types": ["node"]
   },

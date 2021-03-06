@@ -1,4 +1,4 @@
-import { Configuration, ProgressPlugin, Stats, Plugin, DefinePlugin } from 'webpack';
+import { Configuration, ProgressPlugin, DefinePlugin, Stats, Plugin } from 'webpack';
 
 import * as ts from 'typescript';
 import { join } from 'path';
@@ -10,6 +10,8 @@ import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nrwl/workspace';
 import { BuildBuilderOptions } from './types';
+
+export const MAIN_OUTPUT_FILENAME = 'main.js';
 
 export function getBaseWebpackPartial(options: BuildBuilderOptions): Configuration {
   const { options: compilerOptions } = readTsConfig(options.tsConfig);
@@ -101,11 +103,11 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
         context: asset.input,
         // Now we remove starting slash to make Webpack place it from the output root.
         to: asset.output,
-        ignore: asset.ignore,
-        from: {
-          glob: asset.glob,
+        globOptions: {
+          ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db'].concat(asset.ignore || []),
           dot: true
-        }
+        },
+        from: asset.glob,
       };
     });
 
@@ -113,10 +115,10 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
       ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db']
     };
 
-    const copyWebpackPluginInstance = new CopyWebpackPlugin(
-      copyWebpackPluginPatterns,
-      copyWebpackPluginOptions
-    );
+    const copyWebpackPluginInstance = new CopyWebpackPlugin({
+      patterns: copyWebpackPluginPatterns,
+      // options: copyWebpackPluginOptions
+    });
     extraPlugins.push(copyWebpackPluginInstance);
   }
 

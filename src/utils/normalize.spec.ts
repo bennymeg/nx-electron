@@ -8,6 +8,7 @@ describe('normalizeBuildOptions', () => {
   let testOptions: BuildBuilderOptions;
   let root: string;
   let sourceRoot: Path;
+  let projectRoot: string;
 
   beforeEach(() => {
     testOptions = {
@@ -29,24 +30,25 @@ describe('normalizeBuildOptions', () => {
     };
     root = 'C:\\root';
     sourceRoot = normalize('apps\\electronapp\\src');
+    projectRoot = 'apps\\nodeapp';
   });
   it('should add the root', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot);
+    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
     expect(result.root).toEqual('C:\\root');
   });
 
   it('should resolve main from root', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot);
+    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
     expect(result.main).toEqual('C:\\root\\apps\\electronapp\\src\\main.ts');
   });
 
   it('should resolve the output path', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot);
+    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
     expect(result.outputPath).toEqual('C:\\root\\dist\\apps\\electronapp');
   });
 
   it('should resolve the tsConfig path', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot);
+    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
     expect(result.tsConfig).toEqual('C:\\root\\apps\\electronapp\\tsconfig.app.json');
   });
 
@@ -69,7 +71,8 @@ describe('normalizeBuildOptions', () => {
         ]
       },
       root,
-      sourceRoot
+      sourceRoot,
+      projectRoot
     );
     expect(result.assets).toEqual([
       {
@@ -87,7 +90,7 @@ describe('normalizeBuildOptions', () => {
   });
 
   it('should resolve the file replacement paths', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot);
+    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
     expect(result.fileReplacements).toEqual([
       {
         replace: 'C:\\root\\apps\\environment\\environment.ts',

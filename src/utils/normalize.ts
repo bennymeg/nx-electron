@@ -1,19 +1,15 @@
-import { Path, normalize } from '@angular-devkit/core';
+import { normalize } from '@angular-devkit/core';
 import { resolve, dirname, relative, basename } from 'path';
-import { BuildBuilderOptions } from './types';
+import { BuildBuilderOptions, FileReplacement } from './types';
 import { Configuration as ElectronPackagerOptions } from 'electron-builder';
 import { statSync } from 'fs';
 
-export interface FileReplacement {
-  replace: string;
-  with: string;
-}
-
-export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T, root: string, sourceRoot: string): T {
+export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T, root: string, sourceRoot: string, projectRoot: string): T {
   return {
     ...options,
-    root: root,
-    sourceRoot: sourceRoot,
+    root,
+    sourceRoot,
+    projectRoot,
     main: resolve(root, options.main),
     outputPath: resolve(root, options.outputPath),
     tsConfig: resolve(root, options.tsConfig),

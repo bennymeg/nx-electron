@@ -26,6 +26,7 @@ export interface BuildBuilderOptions {
   sourceMap?: boolean | SourceMapOptions;
   optimization?: boolean | OptimizationOptions;
   showCircularDependencies?: boolean;
+  memoryLimit?: number;
   poll?: number;
 
   fileReplacements: FileReplacement[];
@@ -42,4 +43,5 @@ export interface BuildBuilderOptions {
 
   root?: string;
   sourceRoot?: Path;
+  projectRoot?: string; 
 }
