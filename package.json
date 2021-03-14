@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "description": "Electron Plugin for Nx",
   "main": "index.js",
   "types": "index.d.ts",
@@ -38,10 +38,13 @@
     "nx",
     "electron",
     "forge",
-    "jest",
-    "cypress",
+    "package",
+    "make",
+    "bundle",
     "monorepo",
-    "schematics"
+    "schematics",
+    "generators",
+    "builders"
   ],
   "schematics": "./collection.json",
   "builders": "./builders.json",
