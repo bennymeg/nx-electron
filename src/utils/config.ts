@@ -97,7 +97,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
   }
 
   // process asset entries
-  if (options.assets) {
+  if (options.assets && options.assets.length >= 1) {
     const copyWebpackPluginPatterns = options.assets.map((asset: any) => {
       return {
         context: asset.input,
