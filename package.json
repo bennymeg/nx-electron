@@ -57,10 +57,10 @@
     "@nrwl/workspace": "*"
   },
   "dependencies": {
-    "@angular-devkit/architect": "~0.1100.1",
-    "@angular-devkit/build-webpack": "~0.1100.1",
-    "@angular-devkit/core": "~11.0.1",
-    "@angular-devkit/schematics": "~11.0.1",
+    "@angular-devkit/architect": "~0.1102.4",
+    "@angular-devkit/build-webpack": "~0.1102.4",
+    "@angular-devkit/core": "~11.2.4",
+    "@angular-devkit/schematics": "~11.2.4",
     "@nrwl/jest": "^11.2.6",
     "@nrwl/linter": "^11.2.6",
     "circular-dependency-plugin": "^5.2.2",
