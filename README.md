@@ -140,7 +140,7 @@ This repository follows the semantic versioning rules while adhering to Nx and A
 ## Attribution
 
 This project is highly inspired by (and dependent on) Nrwl [Nx](https://nx.dev) platform.
-Under the hood, we use [Electron Packager](https://github.com/electron/electron-packager) to package the electron application and [Electron Builder](https://github.com/electron-userland/electron-builder) to make executables.
+Under the hood, we use [Electron Builder](https://github.com/electron-userland/electron-builder) to package and make electron application executables.
 
 </br><hr>
 **Author:** Benny Megidish.
