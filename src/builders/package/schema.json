@@ -46,18 +46,15 @@
           }
         }
       ],
-      "default": null,
       "description": "Target platform/s."
     },
     "arch": {
       "type": "string",
-      "default": null,
       "enum": ["x64", "ia32", "armv7l", "arm64"],
       "description": "Package architecture."
     },
     "publishPolicy": {
       "type": "string",
-      "default": null,
       "enum": ["onTag", "onTagOrDraft", "always", "never"],
       "description": "Package publish policy."
     }
