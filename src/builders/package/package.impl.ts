@@ -7,7 +7,7 @@ import { join, resolve } from 'path';
 import { promisify } from 'util';
 
 import { getSourceRoot } from '../../utils/workspace';
-import { normalizePackgingOptions } from '../../utils/normalize';
+import { normalizePackagingOptions } from '../../utils/normalize';
 
 import { Observable, from, of } from 'rxjs';
 import { map, tap, concatMap, catchError } from 'rxjs/operators';
@@ -46,12 +46,12 @@ function run(rawOptions: JsonObject & PackageElectronBuilderOptions, context: Bu
     tap(_ => {
       context.logger.warn(stripIndents`
         *********************************************************
-        DO NOT FORGET TO REBUILD YOUR FORNTEND & BACKEND PROJECTS
+        DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
         FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
         *********************************************************`);
     }),
     map(({ sourceRoot, projectRoot }) =>
-      normalizePackgingOptions(rawOptions, context.workspaceRoot, sourceRoot)
+      normalizePackagingOptions(rawOptions, context.workspaceRoot, sourceRoot)
     ),
     map(options => 
       mergePresetOptions(options)

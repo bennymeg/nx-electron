@@ -21,7 +21,7 @@ export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T,
   };
 }
 
-export function normalizePackgingOptions<T extends ElectronPackagerOptions>(options: T, root: string, sourceRoot: string): T {
+export function normalizePackagingOptions<T extends ElectronPackagerOptions>(options: T, root: string, sourceRoot: string): T {
   return {
     ...options,
     root,
