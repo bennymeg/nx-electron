@@ -65,9 +65,16 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ## Serving Nx Electron Application
 
 - Run `nx serve <electron-app-name>` to serve your application.
+- Or run `nx run-many --target=serve --projects=<frontend-app-name>,<electron-app-name>  --parallel` to serve your electron application with frontend application running inside.
 
 ## Packaging Nx Electron Application
 
+**NOTE**: Before packaging you have to build your frontend and electron application like this:
+```bash
+nx build <electron-app-name> --prod
+nx build <frontend-app-name> --prod --baseHref="./"
+```
+Then you can package application as follows:
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 - Or `nx run <electron-app-name>:make --prepackgeOnly` to package your application.
 
