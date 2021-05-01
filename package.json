@@ -15,7 +15,7 @@
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
     "publish": "cd build && npm publish",
     "release": "standard-version",
-    "postrelease": "git push --follow-tags && npm run publish",
+    "postrelease": "git push --follow-tags && npm run build && npm run publish",
     "permission": "node ./scripts/make_build_public.js",
     "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence && npm run copy:ignore",
     "copy:ts": "shx cp -rf src build/",
@@ -59,10 +59,10 @@
     "@nrwl/workspace": "*"
   },
   "dependencies": {
-    "@angular-devkit/architect": "~0.1102.4",
-    "@angular-devkit/build-webpack": "~0.1102.4",
-    "@angular-devkit/core": "~11.2.4",
-    "@angular-devkit/schematics": "~11.2.4",
+    "@angular-devkit/architect": "^0.1100.7",
+    "@angular-devkit/build-webpack": "^0.1100.7",
+    "@angular-devkit/core": "^11.0.7",
+    "@angular-devkit/schematics": "^11.0.7",
     "@nrwl/jest": "^11.2.6",
     "@nrwl/linter": "^11.2.6",
     "circular-dependency-plugin": "^5.2.2",
