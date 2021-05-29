@@ -60,11 +60,15 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 ## Building Nx Electron Application
 
-- Run `nx build <electron-app-name>` to build your application.
+- Run `nx run-many --target=build --projects=<frontend-app-name>,<electron-app-name> --parallel` to build your application.
+
+**NOTE:** To build your application in production mode use the `--prod` option.
+
+**NOTE:** On some frameworks you might need to use the `--baseHref="./"` option to configure your application routing correctly. This might require you to build your frontend and backend applications separately.
 
 ## Serving Nx Electron Application
 
-- Run `nx serve <electron-app-name>` to serve your application.
+- Run `nx run-many --target=serve --projects=<frontend-app-name>,<electron-app-name> --parallel` to serve your application.
 
 ## Packaging Nx Electron Application
 
@@ -73,11 +77,15 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/package/schema.json).
 
+**NOTE**: You have to build your application before invoking this command.
+
 ## Making Nx Electron Application
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
 The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/package/schema.json).
+
+**NOTE**: You have to build your application before invoking this command.
 
 ## Configuring static packaging / making options
 
@@ -86,7 +94,7 @@ It is possible to configure all the packaging / making [options](https://www.ele
 
 ## Migrating Nx Electron Application
 
-To migrate automaticlly run `ng update nx-electron@<version>`.
+To migrate automatically run `ng update nx-electron@<version>`.
 You can find detailed information in the following articles:
 
 - [v8.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md)
@@ -95,7 +103,7 @@ You can find detailed information in the following articles:
 
 ## Testing Nx Electron Application
 
-- Run `nx test <electron-app-name>` to test your application.
+- Run `nx run-many --target=test --projects=<frontend-app-name>,<electron-app-name> --parallel` to test your application.
 
 ## Debugging Nx Electron Application
 
