@@ -10,6 +10,7 @@ describe('getElectronPartial', () => {
       main: 'main.ts',
       outputPath: 'dist',
       tsConfig: 'tsconfig.json',
+      implicitDependencies: [],
       externalDependencies: 'all',
       fileReplacements: [],
       statsJson: false

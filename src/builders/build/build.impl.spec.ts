@@ -21,6 +21,7 @@ describe('ElectronBuildBuilder', () => {
       tsConfig: 'apps/electron-app/tsconfig.app.json',
       outputPath: 'dist/apps/electron-app',
       externalDependencies: 'all',
+      implicitDependencies: [],
       fileReplacements: [
         {
           replace: 'apps/environment/environment.ts',

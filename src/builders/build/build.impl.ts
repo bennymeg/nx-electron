@@ -23,7 +23,8 @@ try {
 export interface BuildElectronBuilderOptions extends BuildBuilderOptions {
   optimization?: boolean;
   sourceMap?: boolean;
-  externalDependencies: 'all' | 'none' | string[];
+  implicitDependencies: Array<string>;
+  externalDependencies: 'all' | 'none' | Array<string>;
 }
 
 export type ElectronBuildEvent = BuildResult & {

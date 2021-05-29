@@ -1,7 +1,7 @@
 import { ProjectGraph, readJsonFile } from '@nrwl/workspace';
 import { BuildElectronBuilderOptions } from '../builders/build/build.impl';
 import { writeJsonFile } from '@nrwl/workspace/src/utilities/fileutils';
-import { MAIN_OUTPUT_FILENAME } from './config';
+import { INDEX_OUTPUT_FILENAME } from './config';
 
 /**
  * Creates a package.json in the output directory for support  to install dependencies within containers.
@@ -18,16 +18,16 @@ export function generatePackageJson(
   graph: ProjectGraph,
   options: BuildElectronBuilderOptions
 ) {
-  const npmDeps = findAllNpmDeps(projectName, graph);
   // default package.json if one does not exist
   let packageJson = {
     name: projectName,
     version: '0.0.1',
-    main: MAIN_OUTPUT_FILENAME,
+    main: INDEX_OUTPUT_FILENAME,
     dependencies: {},
   };
 
   try {
+    // try loading local project package json
     packageJson = readJsonFile(`${options.projectRoot}/package.json`);
     if (!packageJson.dependencies) {
       packageJson.dependencies = {};
@@ -35,8 +35,18 @@ export function generatePackageJson(
   } catch (e) {}
 
   const rootPackageJson = readJsonFile(`${options.root}/package.json`);
+  const npmDeps = findAllNpmDeps(projectName, graph);
+  const implicitDeps = findAllNpmImplicitDeps(rootPackageJson, options.implicitDependencies);
+  const dependencies = Object.assign({}, implicitDeps, npmDeps);
 
-  Object.entries(npmDeps).forEach(([packageName, version]) => {
+  packageJson.version = rootPackageJson.version || '0.0.0';
+  packageJson['author'] = rootPackageJson.author || '';
+  packageJson['description'] = rootPackageJson.description || '';
+  packageJson['license'] = rootPackageJson.license || 'UNLICENSED';
+  packageJson['private'] = rootPackageJson.private || true;
+
+  // update dependencies
+  Object.entries(dependencies).forEach(([packageName, version]) => {
     // don't include devDeps
     if (rootPackageJson.devDependencies?.[packageName]) {
       return;
@@ -70,4 +80,14 @@ function findAllNpmDeps(
   });
 
   return list;
+}
+
+ function findAllNpmImplicitDeps(packageJson, implicitDeps: Array<string>) {
+
+  const dependencies = implicitDeps.reduce((acc, dep) => {
+    acc[dep] = packageJson.dependencies[dep];
+    return acc;
+  }, {});
+
+  return dependencies;
 }

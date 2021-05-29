@@ -12,6 +12,8 @@ import { readTsConfig } from '@nrwl/workspace';
 import { BuildBuilderOptions } from './types';
 
 export const MAIN_OUTPUT_FILENAME = 'main.js';
+export const INDEX_OUTPUT_FILENAME = 'index.js';
+export const DEFAULT_APPS_DIR = 'apps';
 
 export function getBaseWebpackPartial(options: BuildBuilderOptions): Configuration {
   const { options: compilerOptions } = readTsConfig(options.tsConfig);

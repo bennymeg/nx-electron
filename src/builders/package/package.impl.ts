@@ -142,7 +142,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Buil
       {
           from: resolve(options.sourcePath, options.name),
           to: '',
-          filter: ['index.js']
+          filter: ['index.js', 'package.json']
       },      
       './package.json',
       '!(**/*.+(js|css).map)',
