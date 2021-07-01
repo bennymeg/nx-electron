@@ -70,6 +70,11 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 - Run `nx run-many --target=serve --projects=<frontend-app-name>,<electron-app-name> --parallel` to serve your application.
 
+In case you see a blank application, that happens due to that the electron app was served before the frontend was served. In that case, there are couple of possible solutions:
+1. Refrash you application when it has been served (i.e. with [electron-debug](https://github.com/sindresorhus/electron-debug)).
+2. Mannually serve the backend and frontend with to seperate commands (e.g. serve the backend only after the frontend was served).
+3. Automatically serve the backend after the frontend was served (i.e. this [script](https://github.com/bennymeg/nx-electron/issues/103)).
+
 ## Packaging Nx Electron Application
 
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
