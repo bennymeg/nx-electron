@@ -100,6 +100,7 @@ You can find detailed information in the following articles:
 - [v8.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md)
 - [v9.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md)
 - [v10.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v10.md)
+- [v11.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v11.md)
 
 ## Testing Nx Electron Application
 
