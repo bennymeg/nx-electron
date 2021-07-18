@@ -34,7 +34,10 @@ function addScripts(): Rule {
   return updateJsonInTree('package.json', json => {
     json.scripts = json.scripts || {};
 
-    json.scripts["postinstall"] = "exitzero electron-builder install-app-deps";
+    const postinstall = json.scripts["postinstall"];
+    json.scripts["postinstall"] = (postinstall && postinstall !== '') ?
+                                  `${postinstall} && exitzero electron-builder install-app-deps` :
+                                  "exitzero electron-builder install-app-deps";
 
     return json;
   });
