@@ -57,6 +57,10 @@
       "type": "string",
       "enum": ["onTag", "onTagOrDraft", "always", "never"],
       "description": "Package publish policy."
+    },
+    "makerOptionsPath": {
+      "type": "string",
+      "description": "Overrides the {sourceRoot}/app/options/maker.options.json path."
     }
   },
   "required": ["name", "frontendProject"]
