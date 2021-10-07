@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.3.0](https://github.com/bennymeg/nx-electron/compare/v11.1.3...v11.3.0) (2021-10-07)
+
+
+### Features
+
+* **package:** add option for overriding make options file ([d569054](https://github.com/bennymeg/nx-electron/commit/d5690549194e64ff4929ad231b4ce153df8e971d))
+
+
+### Bug Fixes
+
+* update post install script instead of overwriting it. closes [#97](https://github.com/bennymeg/nx-electron/issues/97) ([b3a8846](https://github.com/bennymeg/nx-electron/commit/b3a8846425058a0a9ed6fbf6d8e8ce6bad2f75b0))
+
 ### [11.1.3](https://github.com/bennymeg/nx-electron/compare/v11.1.2...v11.1.3) (2021-07-02)
 
 ### [11.1.2](https://github.com/bennymeg/nx-electron/compare/v11.1.1...v11.1.2) (2021-05-29)
