@@ -71,7 +71,7 @@ function run( options: JsonObject & BuildElectronBuilderOptions, context: Builde
           configuration: context.target.configuration
         });
       }
-      config.entry['preload'] = join(options.sourceRoot, 'app/api/preload.ts');
+      config.entry['preload'] = join(options.root, options.sourceRoot, 'app/api/preload.ts');
       return config;
     }),
     concatMap(config =>
