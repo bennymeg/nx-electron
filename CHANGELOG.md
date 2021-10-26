@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.4.0](https://github.com/bennymeg/nx-electron/compare/v11.3.0...v11.4.0) (2021-10-26)
+
+
+### Features
+
+* added multi preload scripts support as per [#118](https://github.com/bennymeg/nx-electron/issues/118) ([16f9b9d](https://github.com/bennymeg/nx-electron/commit/16f9b9ded8bf95790677cc99aff5fa7ba1b79845))
+
 ## [11.3.0](https://github.com/bennymeg/nx-electron/compare/v11.1.3...v11.3.0) (2021-10-07)
 
 
