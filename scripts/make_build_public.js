@@ -3,7 +3,7 @@
 const { join } = require('path');
 const { writeFileSync } = require('fs');
 const originalPkgJson = require(join(__dirname, '../package.json'));
-const updatedPkgJson = { ...originalPkgJson, private: false };
+const updatedPkgJson = { ...originalPkgJson, private: false, scripts: {} };
 
 writeFileSync(
   join(__dirname, '../build/package.json'),

@@ -13,7 +13,7 @@
     "test": "jest --maxWorkers=1 .*.spec.ts",
     "compile": "tsc",
     "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
-    "publish": "npm publish build",
+    "publish": "cd build && npm publish",
     "release": "standard-version",
     "postrelease": "git push --follow-tags && npm run build && npm run publish",
     "permission": "node ./scripts/make_build_public.js",
