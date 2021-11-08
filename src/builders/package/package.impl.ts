@@ -138,7 +138,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Buil
       {
           from: resolve(options.sourcePath, options.name),
           to: options.name,
-          filter: ['main.js', 'preload.(.+\.)?js', 'assets']
+          filter: ['main.js', 'preload?(.*).js', 'assets']
       },
       {
           from: resolve(options.sourcePath, options.name),
