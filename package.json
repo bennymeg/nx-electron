@@ -98,7 +98,7 @@
     "@typescript-eslint/parser": "^4.17.0",
     "bufferutil": "^4.0.3",
     "canvas": "^2.6.1",
-    "electron": "9.4.2",
+    "electron": "11.5.0",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.3.1",
     "jest": "^26.6.3",
