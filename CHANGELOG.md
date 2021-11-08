@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.4.1](https://github.com/bennymeg/nx-electron/compare/v11.4.0...v11.4.1) (2021-11-08)
+
+
+### Bug Fixes
+
+* preload file regex pattern as per [#121](https://github.com/bennymeg/nx-electron/issues/121) ([285f196](https://github.com/bennymeg/nx-electron/commit/285f19657c93bba45e2a2876b5465fbbb68e0ddf))
+
 ## [11.4.0](https://github.com/bennymeg/nx-electron/compare/v11.3.0...v11.4.0) (2021-10-26)
 
 
