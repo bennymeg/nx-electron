@@ -1,19 +1,19 @@
-import { Configuration, ProgressPlugin, DefinePlugin, Stats, Plugin } from 'webpack';
+import { Configuration, ProgressPlugin, DefinePlugin, Stats, Plugin, WebpackPluginInstance } from 'webpack';
 
 import * as ts from 'typescript';
 import { join } from 'path';
 
 import { LicenseWebpackPlugin } from 'license-webpack-plugin';
-import CircularDependencyPlugin = require('circular-dependency-plugin');
 import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import { readTsConfig } from '@nrwl/workspace';
+import { readTsConfig } from '@nrwl/workspace/src/utilities/typescript';
 import { BuildBuilderOptions } from './types';
 
 export const MAIN_OUTPUT_FILENAME = 'main.js';
 export const INDEX_OUTPUT_FILENAME = 'index.js';
 export const DEFAULT_APPS_DIR = 'apps';
+export const OUT_FILENAME_TEMPLATE = '[name].js';
 
 export function getBaseWebpackPartial(options: BuildBuilderOptions): Configuration {
   const { options: compilerOptions } = readTsConfig(options.tsConfig);
@@ -22,31 +22,43 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     compilerOptions.target !== ts.ScriptTarget.ES5;
   const mainFields = [...(supportsEs2015 ? ['es2015'] : []), 'module', 'main'];
   const extensions = ['.ts', '.tsx', '.mjs', '.js', '.jsx'];
-  const webpackConfig: Configuration = {
+
+  const additionalEntryPoints = options.additionalEntryPoints?.reduce(
+    (obj, current) => ({ ...obj, [current.entryName]: current.entryPath }), {} as { [entryName: string]: string }) ?? {};
+  
+    const webpackConfig: Configuration = {
     entry: {
-      ...options.webpackEntries,
-      main: options.main
+      main: [options.main],
+      ...additionalEntryPoints,
     },
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
     output: {
       path: options.outputPath,
-      filename: '[name].js'
+      filename:
+        options.additionalEntryPoints?.length > 0
+          ? OUT_FILENAME_TEMPLATE
+          : options.outputFileName,
+      hashFunction: 'xxhash64',
+      // Disabled for performance
+      pathinfo: false,
     },
     module: {
+      // Enabled for performance
+      // unsafeCache: true,
       rules: [
         {
-          test: /\.(j|t)sx?$/,
-          loader: `ts-loader`,
+          test: /\.([jt])sx?$/,
+          loader: require.resolve(`ts-loader`),
           exclude: /node_modules/,
           options: {
             configFile: options.tsConfig,
             transpileOnly: true,
             // https://github.com/TypeStrong/ts-loader/pull/685
-            experimentalWatchApi: true
-          }
-        }
-      ]
+            experimentalWatchApi: true,
+          },
+        },
+      ],
     },
     resolve: {
       extensions,
@@ -65,7 +77,11 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        typescript: { configFile: options.tsConfig }
+        typescript: { 
+          enabled: true, 
+          configFile: options.tsConfig, 
+          memoryLimit: options.memoryLimit || 2018 
+        }
       }),
       new DefinePlugin({
         __BUILD_VERSION__: JSON.stringify(require(join(options.root, "package.json")).version),
@@ -79,7 +95,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     stats: getStatsConfig(options)
   };
 
-  const extraPlugins: Plugin[] = [];
+  const extraPlugins: WebpackPluginInstance[] = [];
 
   if (options.progress) {
     extraPlugins.push(new ProgressPlugin());
@@ -94,42 +110,52 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
         },
         perChunkOutput: false,
         outputFilename: `3rdpartylicenses.txt`
-      }) as any
+      }) as unknown as WebpackPluginInstance
     );
   }
 
   // process asset entries
-  if (options.assets && options.assets.length >= 1) {
-    const copyWebpackPluginPatterns = options.assets.map((asset: any) => {
-      return {
-        context: asset.input,
-        // Now we remove starting slash to make Webpack place it from the output root.
-        to: asset.output,
-        globOptions: {
-          ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db'].concat(asset.ignore || []),
-          dot: true
-        },
-        from: asset.glob,
-      };
+  if (Array.isArray(options.assets) && options.assets.length > 0) {
+    const copyWebpackPluginInstance = new CopyWebpackPlugin({
+      patterns: options.assets.map((asset) => {
+        return {
+          context: asset.input,
+          // Now we remove starting slash to make Webpack place it from the output root.
+          to: asset.output,
+          from: asset.glob,
+          globOptions: {
+            ignore: [
+              '.gitkeep',
+              '**/.DS_Store',
+              '**/Thumbs.db',
+              ...(asset.ignore ?? []),
+            ],
+            dot: true,
+          },
+        };
+      }),
     });
 
-    const copyWebpackPluginOptions = {
-      ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db']
-    };
-
-    const copyWebpackPluginInstance = new CopyWebpackPlugin({
-      patterns: copyWebpackPluginPatterns,
-      // options: copyWebpackPluginOptions
+    new CopyWebpackPlugin({
+      patterns: options.assets.map((asset: any) => {
+        return {
+          context: asset.input,
+          // Now we remove starting slash to make Webpack place it from the output root.
+          to: asset.output,
+          from: asset.glob,
+          globOptions: {
+            ignore: [
+              '.gitkeep',
+              '**/.DS_Store',
+              '**/Thumbs.db',
+              ...(asset.ignore ?? []),
+            ],
+            dot: true,
+          },
+        };
+      }),
     });
     extraPlugins.push(copyWebpackPluginInstance);
-  }
-
-  if (options.showCircularDependencies) {
-    extraPlugins.push(
-      new CircularDependencyPlugin({
-        exclude: /[\\\/]node_modules[\\\/]/
-      })
-    );
   }
 
   webpackConfig.plugins = [...webpackConfig.plugins, ...extraPlugins];

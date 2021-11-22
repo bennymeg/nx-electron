@@ -1,14 +1,10 @@
-import { BuilderContext, createBuilder, BuilderOutput, targetFromTargetString, scheduleTargetAndForget } from '@angular-devkit/architect';
+import { runExecutor, stripIndents, parseTargetString, ExecutorContext, logger, readTargetOptions } from '@nrwl/devkit';
 import { ChildProcess, spawn } from 'child_process';
+import { promisify } from 'util';
 import electron from 'electron';
 import treeKill from 'tree-kill';
 
-import { Observable, bindCallback, of, zip, from } from 'rxjs';
-import { concatMap, tap, mapTo, first, map, filter } from 'rxjs/operators';
-
 import { ElectronBuildEvent } from '../build/executor';
-import { stripIndents } from '@angular-devkit/core/src/utils/literals';
-import { JsonObject } from '@angular-devkit/core';
 
 try {
   require('dotenv').config();
@@ -18,65 +14,66 @@ export const enum InspectType {
   Inspect = 'inspect',
   InspectBrk = 'inspect-brk',
   InspectBrkNode = 'inspect-brk-node',
-  //InspectBrkElectron = 'inspect-brk-electron'
+  InspectBrkElectron = 'inspect-brk-electron'
 }
 
-export interface ElectronExecuteBuilderOptions extends JsonObject {
+export interface ElectronExecuteBuilderOptions {
   inspect: boolean | InspectType;
   port: number;
   args: string[];
   waitUntilTargets: string[];
+  buildTargetOptions: Record<string, any>;
   buildTarget: string;
+  watch: boolean;
 }
 
-export default createBuilder<ElectronExecuteBuilderOptions>(
-  electronExecuteBuilderHandler
-);
+let subProcess: ChildProcess = null;
 
-let subProcess: ChildProcess;
+export async function* executor(options: ElectronExecuteBuilderOptions, context: ExecutorContext) {
+  process.on('SIGTERM', () => {
+    subProcess?.kill();
+    process.exit(128 + 15);
+  });
 
-export function electronExecuteBuilderHandler(options: ElectronExecuteBuilderOptions, context: BuilderContext): Observable<BuilderOutput> {
-  return runWaitUntilTargets(options, context).pipe(
-    concatMap(v => {
-      if (!v.success) {
-        context.logger.error(
-          `One of the tasks specified in waitUntilTargets failed`
+  process.on('exit', (code) => {
+    process.exit(code);
+  });
+
+  if (options.waitUntilTargets && options.waitUntilTargets.length > 0) {
+    const results = await runWaitUntilTargets(options, context);
+    for (const [i, result] of results.entries()) {
+      if (!result.success) {
+        console.log('throw');
+        throw new Error(
+          `Wait until target failed: ${options.waitUntilTargets[i]}.`
         );
-        return of({ success: false });
       }
+    }
+  }
 
-      return startBuild(options, context).pipe(
-        concatMap((event: ElectronBuildEvent) => {
-          if (event.success) {
-            return restartProcess(event.outfile, options, context).pipe(
-              mapTo(event)
-            );
-          } else {
-            context.logger.error(
-              'There was an error with the build. See above.'
-            );
-            context.logger.info(`${event.outfile} was not restarted.`);
-            return of(event);
-          }
-        })
-      );
-    })
-  );
+  for await (const event of startBuild(options, context)) {
+    if (!event.success) {
+      logger.error('There was an error with the build. See above.');
+      logger.info(`${event.outfile} was not restarted.`);
+    }
+    await handleBuildEvent(event, options);
+    yield event;
+  }
 }
 
-function runProcess(file: string, options: ElectronExecuteBuilderOptions, context: BuilderContext) {
+function runProcess(event: ElectronBuildEvent, options: ElectronExecuteBuilderOptions) {
   if (subProcess) {
     throw new Error('Already running');
   }
 
-  subProcess = spawn(String(electron), normalizeArgs(file, options));
+  subProcess = spawn(String(electron), normalizeArgs(event.outfile, options));
 
   subProcess.stdout.on('data', (data) => {
-    context.logger.info(data.toString());
+    logger.info(data.toString());
   });
 
   subProcess.stderr.on('data', (data) => {
-    context.logger.error(data.toString());
+    logger.error(data.toString());
   });
 }
 
@@ -97,50 +94,41 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
   return args;
 }
 
-function restartProcess(file: string, options: ElectronExecuteBuilderOptions, context: BuilderContext) {
-  return killProcess(context).pipe(
-    tap(() => {
-      runProcess(file, options, context);
-    })
-  );
+async function handleBuildEvent(event: ElectronBuildEvent, options: ElectronExecuteBuilderOptions) {
+  if ((!event.success || options.watch) && subProcess) {
+    await killProcess();
+  }
+  
+  runProcess(event, options);
 }
 
-function killProcess(context: BuilderContext): Observable<void | Error> {
+async function killProcess() {
   if (!subProcess) {
-    return of(undefined);
+    return;
   }
 
-  const observableTreeKill = bindCallback<number, string, Error>(treeKill);
-  return observableTreeKill(subProcess.pid, 'SIGTERM').pipe(
-    tap(error => {
-      subProcess = null;
-
-      if (error) {
-        if (Array.isArray(error) && error[0] && error[2]) {
-          const errorMessage = error[2];
-          context.logger.error(errorMessage);
-        } else if (error.message) {
-          context.logger.error(error.message);
-        }
-      }
-    })
-  );
+  const promisifiedTreeKill: (pid: number, signal: string) => Promise<void> =
+    promisify(treeKill);
+  try {
+    await promisifiedTreeKill(subProcess.pid, 'SIGTERM');
+  } catch (err) {
+    if (Array.isArray(err) && err[0] && err[2]) {
+      const errorMessage = err[2];
+      logger.error(errorMessage);
+    } else if (err.message) {
+      logger.error(err.message);
+    }
+  } finally {
+    subProcess = null;
+  }
 }
 
-function startBuild(options: ElectronExecuteBuilderOptions, context: BuilderContext): Observable<BuilderOutput> {
-  const target = targetFromTargetString(options.buildTarget);
+async function* startBuild(options: ElectronExecuteBuilderOptions, context: ExecutorContext) {
+  const buildTarget = parseTargetString(options.buildTarget);
+  const buildOptions = readTargetOptions<ElectronExecuteBuilderOptions>(buildTarget, context);
 
-  return from(
-    Promise.all([
-      context.getTargetOptions(target),
-      context.getBuilderNameForTarget(target)
-    ]).then(([options, builderName]) =>
-      context.validateOptions(options, builderName)
-    )
-  ).pipe(
-    tap(options => {
-      if (options.optimization) {
-        context.logger.warn(stripIndents`
+  if (buildOptions['optimization']) {
+    logger.warn(stripIndents`
             ************************************************
             This is a simple process manager for use in
             testing or debugging Electron applications locally.
@@ -148,32 +136,38 @@ function startBuild(options: ElectronExecuteBuilderOptions, context: BuilderCont
             You should look into proper means of deploying
             your electron application to production.
             ************************************************`);
-      }
-    }),
-    concatMap(
-      () =>
-        scheduleTargetAndForget(context, target, {
-          watch: true
-        })
-    )
-  );
-}
-
-function runWaitUntilTargets(options: ElectronExecuteBuilderOptions, context: BuilderContext): Observable<BuilderOutput> {
-  if (!options.waitUntilTargets || options.waitUntilTargets.length === 0) {
-    return of({ success: true });
   }
 
-  return zip(
-    ...options.waitUntilTargets.map(b => {
-      return scheduleTargetAndForget(context, targetFromTargetString(b)).pipe(
-        // filter(e => e.success !== undefined), // todo fix
-        // first()
-      );
-    })
-  ).pipe(
-    map(results => {
-      return { success: !results.some(r => !r.success) };
+  yield* await runExecutor<ElectronBuildEvent>(
+    buildTarget,
+    {
+      ...options.buildTargetOptions,
+      watch: options.watch,
+    },
+    context
+  );
+}
+
+function runWaitUntilTargets(
+  options: ElectronExecuteBuilderOptions,
+  context: ExecutorContext
+): Promise<{ success: boolean }[]> {
+  return Promise.all(
+    options.waitUntilTargets.map(async (waitUntilTarget) => {
+      const target = parseTargetString(waitUntilTarget);
+      const output = await runExecutor(target, {}, context);
+      return new Promise<{ success: boolean }>(async (resolve) => {
+        let event = await output.next();
+        // Resolve after first event
+        resolve(event.value as { success: boolean });
+
+        // Continue iterating
+        while (!event.done) {
+          event = await output.next();
+        }
+      });
     })
   );
 }
+
+export default executor;

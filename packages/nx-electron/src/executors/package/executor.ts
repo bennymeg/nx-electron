@@ -1,5 +1,4 @@
-import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
-import { JsonObject } from '@angular-devkit/core';
+import { ExecutorContext, logger, stripIndents } from '@nrwl/devkit';
 
 import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet, CliOptions } from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
@@ -13,7 +12,6 @@ import { Observable, from, of } from 'rxjs';
 import { map, tap, concatMap, catchError } from 'rxjs/operators';
 import { platform } from 'os';
 
-import { stripIndents } from '@angular-devkit/core/src/utils/literals';
 import stripJsonComments from 'strip-json-comments';
 
 try {
@@ -34,24 +32,23 @@ export interface PackageElectronBuilderOptions extends Configuration {
   publishPolicy?: PublishOptions["publish"];
 }
 
-export interface PackageElectronBuilderOutput extends BuilderOutput {
+export interface PackageElectronBuilderOutput {
   target?: any;
+  success: boolean;
   outputPath: string | string[];
 }
 
-export default createBuilder<JsonObject & PackageElectronBuilderOptions>(run);
-
-function run(rawOptions: JsonObject & PackageElectronBuilderOptions, context: BuilderContext): Observable<PackageElectronBuilderOutput> { 
-  return from(getSourceRoot(context)).pipe(
+export function executor(rawOptions: PackageElectronBuilderOptions, context: ExecutorContext): Observable<PackageElectronBuilderOutput> { 
+  return from(of(getSourceRoot(context))).pipe(
     tap(_ => {
-      context.logger.warn(stripIndents`
+      logger.warn(stripIndents`
         *********************************************************
         DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
         FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
         *********************************************************`);
     }),
     map(({ sourceRoot, projectRoot }) =>
-      normalizePackagingOptions(rawOptions, context.workspaceRoot, sourceRoot)
+      normalizePackagingOptions(rawOptions, context.root, sourceRoot)
     ),
     map(options => 
       mergePresetOptions(options)
@@ -117,7 +114,7 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
   return createTargets(platforms, null, arch);
 }
 
-function _createBaseConfig(options: PackageElectronBuilderOptions, context: BuilderContext): Configuration {
+function _createBaseConfig(options: PackageElectronBuilderOptions, context: ExecutorContext): Configuration {
   const files: Array<FileSet | string> = options.files ?
    (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
   const outputPath = options.prepackageOnly ? 
@@ -126,7 +123,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Buil
   return {
     directories: {
       ...options.directories,
-      output: join(context.workspaceRoot, outputPath)
+      output: join(context.root, outputPath)
     },
     files: files.concat([
       {
@@ -168,7 +165,7 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
   return config;
 }
 
-function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: JsonObject & PackageElectronBuilderOptions): CliOptions {
+function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: PackageElectronBuilderOptions): CliOptions {
   let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
 
   if (rawOptions.prepackageOnly) {
@@ -199,3 +196,5 @@ function addMissingDefaultOptions(options: PackageElectronBuilderOptions): Packa
 
   return options;
 }
+
+export default executor;

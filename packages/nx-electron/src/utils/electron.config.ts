@@ -1,5 +1,6 @@
+import { appRootPath } from '@nrwl/tao/src/utils/app-root';
 import { Configuration } from 'webpack';
-import mergeWebpack from 'webpack-merge';
+import { merge } from 'webpack-merge';
 import nodeExternals from 'webpack-node-externals';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -50,22 +51,23 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
   }
 
   if (options.externalDependencies === 'all') {
-    webpackConfig.externals = [nodeExternals()];
+    const modulesDir = `${appRootPath}/node_modules`;
+    webpackConfig.externals = [nodeExternals({ modulesDir })];
   } else if (Array.isArray(options.externalDependencies)) {
     webpackConfig.externals = [
-      function(context, request, callback: Function) {
-        if (options.externalDependencies.includes(request)) {
+      function (context, callback: Function) {
+        if (options.externalDependencies.includes(context.request)) {
           // not bundled
-          return callback(null, 'commonjs ' + request);
+          return callback(null, `commonjs ${context.request}`);
         }
         // bundled
         callback();
-      }
+      },
     ];
   }
   return webpackConfig;
 }
 
 export function getElectronWebpackConfig(options: BuildElectronBuilderOptions) {
-  return mergeWebpack(getBaseWebpackPartial(options), getElectronPartial(options)); // was array
+  return merge([getBaseWebpackPartial(options), getElectronPartial(options)]);
 }

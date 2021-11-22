@@ -67,6 +67,8 @@
     "fork-ts-checker-webpack-plugin": "^6.1.0",
     "license-webpack-plugin": "^2.3.11",
     "rimraf": "^3.0.2",
+    "rxjs": "^7.4.0",
+    "rxjs-for-await": "^1.0.0",
     "source-map-support": "^0.5.19",
     "strip-json-comments": "^3.1.1",
     "terser-webpack-plugin": "^4.2.3",

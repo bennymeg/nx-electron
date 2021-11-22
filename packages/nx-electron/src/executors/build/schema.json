@@ -2,6 +2,7 @@
   "title": "Electron Application Build Target",
   "description": "Electron application build target options for Build Facade",
   "type": "object",
+  "cli": "nx",
   "properties": {
     "main": {
       "type": "string",

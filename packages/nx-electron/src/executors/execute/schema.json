@@ -2,10 +2,21 @@
   "title": "Schema for Executing Electron apps",
   "description": "Electron execution options",
   "type": "object",
+  "cli": "nx",
   "properties": {
     "buildTarget": {
       "type": "string",
       "description": "The target to run to build you the app"
+    },
+    "buildTargetOptions": {
+      "type": "object",
+      "description": "Additional options to pass into the build target.",
+      "default": {}
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Run build when files change",
+      "default": true
     },
     "waitUntilTargets": {
       "type": "array",

@@ -1,13 +1,11 @@
 import { join, resolve } from 'path';
-import { from, Observable } from 'rxjs';
-import { concatMap, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { eachValueFrom } from 'rxjs-for-await';
 
-import { BuilderContext, createBuilder } from '@angular-devkit/architect';
-import { BuildResult, runWebpack } from '@angular-devkit/build-webpack';
-import { JsonObject } from '@angular-devkit/core';
-
+import { ExecutorContext } from '@nrwl/devkit';
+import { runWebpack } from '@nrwl/workspace/src/utilities/run-webpack';
 import { readCachedProjectGraph } from '@nrwl/workspace/src/core/project-graph';
-import { calculateProjectDependencies, checkDependentProjectsHaveBeenBuilt, createTmpTsConfig } from '@nrwl/workspace/src/utils/buildable-libs-utils';
+import { calculateProjectDependencies, checkDependentProjectsHaveBeenBuilt, createTmpTsConfig } from '@nrwl/workspace/src/utilities/buildable-libs-utils';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
@@ -15,80 +13,74 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
+import webpack from 'webpack';
 
 try {
   require('dotenv').config();
 } catch (e) {}
 
+export type ElectronBuildEvent = {
+  outfile: string;
+  success: boolean;
+};
+
 export interface BuildElectronBuilderOptions extends BuildBuilderOptions {
   optimization?: boolean;
   sourceMap?: boolean;
+  buildLibsFromSource?: boolean;
+  generatePackageJson?: boolean;
   implicitDependencies: Array<string>;
   externalDependencies: 'all' | 'none' | Array<string>;
 }
 
-export type ElectronBuildEvent = BuildResult & {
-  outfile: string;
-};
+export interface NormalizedBuildElectronBuilderOptions extends BuildElectronBuilderOptions {
+  webpackConfig: string;
+}
 
-export default createBuilder<JsonObject & BuildElectronBuilderOptions>(run);
 
-function run( options: JsonObject & BuildElectronBuilderOptions, context: BuilderContext): Observable<ElectronBuildEvent> {
+export function executor(rawOptions: BuildElectronBuilderOptions, context: ExecutorContext): AsyncIterableIterator<ElectronBuildEvent> {
+  const { sourceRoot, projectRoot } = getSourceRoot(context);
+  const normalizedOptions = normalizeBuildOptions( rawOptions, context.root, sourceRoot, projectRoot);
   const projGraph = readCachedProjectGraph();
 
-  if (!options.buildLibsFromSource) {
-    const { target, dependencies } = calculateProjectDependencies( projGraph, context);
+  if (!normalizedOptions.buildLibsFromSource) {
+    const { target, dependencies } = 
+      calculateProjectDependencies(projGraph, context.root, context.projectName, context.targetName, context.configurationName);
 
-    options.tsConfig = createTmpTsConfig(
-      join(context.workspaceRoot, options.tsConfig),
-      context.workspaceRoot,
-      target.data.root,
-      dependencies
-    );
+    normalizedOptions.tsConfig = createTmpTsConfig(normalizedOptions.tsConfig, context.root, target.data.root, dependencies);
 
-    if (!checkDependentProjectsHaveBeenBuilt(context, dependencies)) {
+    if (!checkDependentProjectsHaveBeenBuilt(context.root, context.projectName, context.targetName, dependencies)) {
       return { success: false } as any;
     }
   }
 
-  return from(getSourceRoot(context)).pipe(
-    map(({ sourceRoot, projectRoot }) =>
-      normalizeBuildOptions(options, context.workspaceRoot, sourceRoot, projectRoot)
-    ),
-    tap((normalizedOptions) => {
-      if (normalizedOptions.generatePackageJson) {
-        generatePackageJson(
-          context.target.project,
-          projGraph,
-          normalizedOptions
-        );
-      }
-    }),
-    map(options => {
-      let config = getElectronWebpackConfig(options);
-      if (options.webpackConfig) {
-        config = require(options.webpackConfig)(config, {
-          options,
-          configuration: context.target.configuration
-        });
-      }
-      config.entry['preload'] = join(options.sourceRoot, 'app/api/preload.ts');
-      return config;
-    }),
-    concatMap(config =>
-      runWebpack(config, context, {
-        logging: stats => {
-          context.logger.info(stats.toString(config.stats));
-        }
+  if (normalizedOptions.generatePackageJson) {
+    generatePackageJson(context.projectName, projGraph, normalizedOptions);
+  }
+
+  let config = getElectronWebpackConfig(normalizedOptions);
+  if (normalizedOptions.webpackConfig) {
+    config = require(normalizedOptions.webpackConfig)(config, {
+      normalizedOptions,
+      configuration: context.configurationName,
+    });
+  }
+  config.entry['preload'] = join(normalizedOptions.sourceRoot, 'app/api/preload.ts');
+
+
+  return eachValueFrom(
+    runWebpack(config, webpack).pipe(
+      tap((stats) => {
+        console.info(stats.toString(config.stats));
+      }),
+      map((stats) => {
+        return {
+          success: !stats.hasErrors(),
+          outfile: resolve(context.root, normalizedOptions.outputPath, MAIN_OUTPUT_FILENAME)
+        } as ElectronBuildEvent;
       })
-    ),
-    map((buildEvent: BuildResult) => {
-      buildEvent.outfile = resolve(
-        context.workspaceRoot,
-        options.outputPath,
-        MAIN_OUTPUT_FILENAME
-      );
-      return buildEvent as ElectronBuildEvent;
-    })
+    )
   );
 }
+
+export default executor;

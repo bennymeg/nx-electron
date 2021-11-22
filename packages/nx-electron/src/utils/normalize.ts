@@ -1,10 +1,15 @@
-import { normalize } from '@angular-devkit/core';
 import { resolve, dirname, relative, basename } from 'path';
-import { BuildBuilderOptions, FileReplacement } from './types';
-import { Configuration as ElectronPackagerOptions } from 'electron-builder';
+import { AdditionalEntryPoint} from './types';
+import { BuildElectronBuilderOptions, NormalizedBuildElectronBuilderOptions} from '../executors/build/executor';
+import { PackageElectronBuilderOptions } from '../executors/package/executor';
 import { statSync } from 'fs';
 
-export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T, root: string, sourceRoot: string, projectRoot: string): T {
+export interface FileReplacement {
+  replace: string;
+  with: string;
+}
+
+export function normalizeBuildOptions( options: BuildElectronBuilderOptions, root: string, sourceRoot: string, projectRoot: string): NormalizedBuildElectronBuilderOptions {
   return {
     ...options,
     root,
@@ -15,13 +20,16 @@ export function normalizeBuildOptions<T extends BuildBuilderOptions>(options: T,
     tsConfig: resolve(root, options.tsConfig),
     fileReplacements: normalizeFileReplacements(root, options.fileReplacements),
     assets: normalizeAssets(options.assets, root, sourceRoot),
-    webpackConfig: options.webpackConfig
-      ? resolve(root, options.webpackConfig)
-      : options.webpackConfig
+    webpackConfig: options.webpackConfig ? resolve(root, options.webpackConfig) : options.webpackConfig,
+    additionalEntryPoints: normalizeAdditionalEntries(
+      root,
+      options.additionalEntryPoints ?? []
+    ),
+    outputFileName: options.outputFileName ?? 'main.js',
   };
 }
 
-export function normalizePackagingOptions<T extends ElectronPackagerOptions>(options: T, root: string, sourceRoot: string): T {
+export function normalizePackagingOptions<T extends PackageElectronBuilderOptions>(options: T, root: string, sourceRoot: string): T {
   return {
     ...options,
     root,
@@ -29,11 +37,17 @@ export function normalizePackagingOptions<T extends ElectronPackagerOptions>(opt
   };
 }
 
-function normalizeAssets(assets: any[], root: string, sourceRoot: string): any[] {
-  return assets.map(asset => {
+function normalizeAssets(
+  assets: any[],
+  root: string,
+  sourceRoot: string
+): any[] {
+  if (!Array.isArray(assets)) {
+    return [];
+  }
+  return assets.map((asset) => {
     if (typeof asset === 'string') {
-      const assetPath = normalize(asset);
-      const resolvedAssetPath = resolve(root, assetPath);
+      const resolvedAssetPath = resolve(root, asset);
       const resolvedSourceRoot = resolve(root, sourceRoot);
 
       if (!resolvedAssetPath.startsWith(resolvedSourceRoot)) {
@@ -51,7 +65,7 @@ function normalizeAssets(assets: any[], root: string, sourceRoot: string): any[]
       return {
         input,
         output,
-        glob
+        glob,
       };
     } else {
       if (asset.output.startsWith('..')) {
@@ -60,21 +74,44 @@ function normalizeAssets(assets: any[], root: string, sourceRoot: string): any[]
         );
       }
 
-      const assetPath = normalize(asset.input);
-      const resolvedAssetPath = resolve(root, assetPath);
+      const resolvedAssetPath = resolve(root, asset.input);
       return {
         ...asset,
         input: resolvedAssetPath,
         // Now we remove starting slash to make Webpack place it from the output root.
-        output: asset.output.replace(/^\//, '')
+        output: asset.output.replace(/^\//, ''),
       };
     }
   });
 }
 
-function normalizeFileReplacements(root: string, fileReplacements: FileReplacement[]): FileReplacement[] {
-  return fileReplacements.map(fileReplacement => ({
+function normalizeFileReplacements(
+  root: string,
+  fileReplacements: FileReplacement[]
+): FileReplacement[] {
+  return fileReplacements.map((fileReplacement) => ({
     replace: resolve(root, fileReplacement.replace),
-    with: resolve(root, fileReplacement.with)
+    with: resolve(root, fileReplacement.with),
   }));
+}
+
+function normalizePluginPath(path: string, root: string) {
+  try {
+    return require.resolve(path);
+  } catch {
+    return resolve(root, path);
+  }
+}
+
+function normalizeAdditionalEntries(
+  root: string,
+  additionalEntries: AdditionalEntryPoint[]
+) {
+  return additionalEntries.map(
+    ({ entryName, entryPath }) =>
+      ({
+        entryName,
+        entryPath: resolve(root, entryPath),
+      } as AdditionalEntryPoint)
+  );
 }

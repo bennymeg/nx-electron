@@ -1,6 +1,3 @@
-import { Path } from '@angular-devkit/core';
-import { Entry } from 'webpack';
-
 export interface FileReplacement {
   replace: string;
   with: string;
@@ -18,6 +15,11 @@ export interface SourceMapOptions {
   hidden: boolean;
 }
 
+export interface AdditionalEntryPoint {
+  entryName: string;
+  entryPath: string;
+}
+
 export interface BuildBuilderOptions {
   main: string;
   outputPath: string;
@@ -25,7 +27,7 @@ export interface BuildBuilderOptions {
   watch?: boolean;
   sourceMap?: boolean | SourceMapOptions;
   optimization?: boolean | OptimizationOptions;
-  showCircularDependencies?: boolean;
+  maxWorkers?: number;
   memoryLimit?: number;
   poll?: number;
 
@@ -39,9 +41,13 @@ export interface BuildBuilderOptions {
   verbose?: boolean;
 
   webpackConfig?: string;
-  webpackEntries?: Entry;
 
   root?: string;
-  sourceRoot?: Path;
-  projectRoot?: string; 
+  sourceRoot?: string;
+  projectRoot?: string;
+  
+  // tsPlugins?: TsPluginEntry[];
+
+  additionalEntryPoints?: AdditionalEntryPoint[];
+  outputFileName?: string;
 }
