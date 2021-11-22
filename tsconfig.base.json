@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "types": ["node", "jest"],
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "nx-electron": ["packages/nx-electron/src/index.ts"],
+      "@benny/nx-electron/schema/maker": ["node_modules/nx-electron/src/validation/maker.schema.json"]
+    }
+  },
+  "exclude": ["node_modules", "tmp", "build", "packages/*/src/*/files/**/*"]
+}

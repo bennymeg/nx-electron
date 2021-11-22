@@ -1,0 +1,56 @@
+{
+  "root": "packages/nx-electron",
+  "sourceRoot": "packages/nx-electron/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/nx-electron/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/nx-electron"],
+      "options": {
+        "jestConfig": "packages/nx-electron/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/node:package",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/nx-electron",
+        "tsConfig": "packages/nx-electron/tsconfig.lib.json",
+        "packageJson": "packages/nx-electron/package.json",
+        "main": "packages/nx-electron/src/index.ts",
+        "assets": [
+          "packages/nx-electron/*.md",
+          {
+            "input": "./packages/nx-electron/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-electron/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-electron",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/nx-electron",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    }
+  },
+  "tags": []
+}
