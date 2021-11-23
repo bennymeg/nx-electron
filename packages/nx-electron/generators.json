@@ -2,15 +2,33 @@
   "$schema": "http://json-schema.org/schema",
   "name": "nx-electron",
   "version": "0.0.1",
+  "extends": ["@nrwl/workspace"],
   "generators": {
-    "nx-electron": {
+    "application": {
       "factory": "./src/generators/nx-electron/generator",
       "schema": "./src/generators/nx-electron/schema.json",
-      "aliases": ["app, application"],
+      "aliases": ["app"],
+      "x-type": "application",
       "description": "Generate an nx-electron application"
     },
     "init": {
       "factory": "./src/generators/init/generator",
+      "schema": "./src/generators/init/schema.json",
+      "description": "Initialize the nx-electron plugin",
+      "aliases": ["ng-add"],
+      "hidden": true
+    }
+  },
+  "schematics": {
+    "application": {
+      "factory": "./src/generators/nx-electron/generator.compat",
+      "schema": "./src/generators/nx-electron/schema.json",
+      "aliases": ["app"],
+      "x-type": "application",
+      "description": "Generate an nx-electron application"
+    },
+    "init": {
+      "factory": "./src/generators/init/generator.compat",
       "schema": "./src/generators/init/schema.json",
       "description": "Initialize the nx-electron plugin",
       "aliases": ["ng-add"],

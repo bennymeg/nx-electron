@@ -1,12 +1,10 @@
 import {
   addProjectConfiguration,
-  convertNxGenerator,
   formatFiles,
   generateFiles,
   GeneratorCallback,
   getWorkspaceLayout,
   joinPathFragments,
-  logger,
   names,
   offsetFromRoot,
   ProjectConfiguration,
@@ -26,7 +24,7 @@ import { jestProjectGenerator } from '@nrwl/jest';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 
 import { Schema } from './schema';
-import { initGenerator } from '../init/generator';
+import { generator as initGenerator } from '../init/generator';
 
 export interface NormalizedSchema extends Schema {
   appProjectRoot: string;
@@ -210,7 +208,7 @@ export async function addLintingToApplication(
   return lintTask;
 }
 
-export async function applicationGenerator(tree: Tree, schema: Schema) {
+export async function generator(tree: Tree, schema: Schema) {
   const options = normalizeOptions(tree, schema);
 
   const tasks: GeneratorCallback[] = [];
@@ -284,5 +282,4 @@ function normalizeOptions(host: Tree, options: Schema): NormalizedSchema {
   };
 }
 
-export default applicationGenerator;
-export const applicationSchematic = convertNxGenerator(applicationGenerator);
+export default generator;
