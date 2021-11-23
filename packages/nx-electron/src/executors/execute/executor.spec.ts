@@ -1,212 +1,274 @@
-import { InspectType, ElectronExecuteBuilderOptions, electronExecuteBuilderHandler } from './executor';
-import { of, from } from 'rxjs';
-import electron from 'electron';
-import * as devkitArchitect from '@angular-devkit/architect';
-import { MockBuilderContext } from '@nrwl/workspace/testing';
-import { getMockContext } from '../../utils/testing';
-import { EventEmitter } from 'events';
+let buildOptions;
+
+jest.mock('@nrwl/devkit');
+const devkit = require('@nrwl/devkit');
+import { ExecutorContext, logger } from '@nrwl/devkit';
 
 jest.mock('child_process');
-let { spawn } = require('child_process');
+let { fork } = require('child_process');
+
 jest.mock('tree-kill');
 let treeKill = require('tree-kill');
 
+import { executor, InspectType, ElectronExecuteBuilderOptions } from './executor';
+
 describe('ElectronExecuteBuilder', () => {
-  let testOptions: ElectronExecuteBuilderOptions;
-  let context: MockBuilderContext;
-  let scheduleTargetAndForget: jasmine.Spy;
+  let options: ElectronExecuteBuilderOptions;
+  let context: ExecutorContext;
 
   beforeEach(async () => {
-    spawn.mockReturnValue({
-      pid: 123,
-      stdout: new EventEmitter(),
-      stderr: new EventEmitter()
+    buildOptions = {};
+
+    (devkit.runExecutor as any).mockImplementation(function* () {
+      yield { success: true, outfile: 'outfile.js' };
     });
+
+    (devkit.readTargetOptions as any).mockImplementation(() => buildOptions);
+
+    (devkit.parseTargetString as any).mockImplementation(
+      jest.requireActual('@nrwl/devkit').parseTargetString
+    );
+
+    fork.mockImplementation(() => {
+      return {
+        on: (eventName, cb) => {
+          if (eventName === 'exit') {
+            cb();
+          }
+        },
+      };
+    });
+
     treeKill.mockImplementation((pid, signal, callback) => {
       callback();
     });
-    context = await getMockContext();
-    context.addTarget(
-      {
-        project: 'electronapp',
-        target: 'build'
+    context = {
+      root: '/root',
+      cwd: '/root',
+      workspace: {
+        version: 2,
+        projects: {
+          'electron-app': {
+            root: '/root/electron-app',
+            targets: {
+              build: {
+                executor: 'build',
+                options: {},
+              },
+            },
+          },
+        },
       },
-      'nx-electron:build'
-    );
-    testOptions = {
+      isVerbose: false,
+    };
+
+    options = {
       inspect: true,
       args: [],
-      buildTarget: 'electronapp:build',
+      buildTarget: 'electron-app:build',
+      buildTargetOptions: { testOption: true },
       port: 9229,
-      waitUntilTargets: []
+      waitUntilTargets: [],
+      watch: true,
     };
-    scheduleTargetAndForget = spyOn(
-      devkitArchitect,
-      'scheduleTargetAndForget'
-    ).and.returnValue(of({ success: true, outfile: 'outfile.js' }));
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should build the application and start the built file', async () => {
-    await electronExecuteBuilderHandler(testOptions, context).toPromise();
-
-    expect(scheduleTargetAndForget).toHaveBeenCalledWith(
-      context,
+    for await (const event of executor(options, context)) {
+      expect(event.success).toEqual(true);
+    }
+    expect(require('@nrwl/devkit').runExecutor).toHaveBeenCalledWith(
       {
-        project: 'electronapp',
-        target: 'build'
+        project: 'electron-app',
+        target: 'build',
       },
       {
-        watch: true
-      }
+        testOption: true,
+        watch: true,
+      },
+      context
     );
-    expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=9229', 'outfile.js']);
+    expect(fork).toHaveBeenCalledWith('outfile.js', [], {
+      execArgv: [
+        '--inspect=9229',
+      ],
+    });
     expect(treeKill).toHaveBeenCalledTimes(0);
-    expect(spawn).toHaveBeenCalledTimes(1);
+    expect(fork).toHaveBeenCalledTimes(1);
   });
 
   describe('--inspect', () => {
     describe('inspect', () => {
       it('should inspect the process', async () => {
-        await electronExecuteBuilderHandler(
+        for await (const event of executor(
           {
-            ...testOptions,
-            inspect: InspectType.Inspect
+            ...options,
+            inspect: InspectType.Inspect,
           },
           context
-        ).toPromise();
-        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=9229', 'outfile.js']);
+        )) {
+        }
+        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
+          execArgv: [
+            '--inspect=9229',
+          ],
+        });
       });
     });
 
     describe('inspect-brk', () => {
       it('should inspect and break at beginning of execution', async () => {
-        await electronExecuteBuilderHandler(
+        for await (const event of executor(
           {
-            ...testOptions,
-            inspect: InspectType.InspectBrk
+            ...options,
+            inspect: InspectType.InspectBrk,
           },
           context
-        ).toPromise();
-        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect-brk=9229', 'outfile.js']);
+        )) {
+        }
+        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
+          execArgv: [
+            '--inspect-brk=9229',
+          ],
+        });
       });
     });
   });
 
   describe('--port', () => {
-    describe('5858', () => {
-      it('should inspect the process on port 5858', async () => {
-        await electronExecuteBuilderHandler(
+    describe('1234', () => {
+      it('should inspect the process on port 1234', async () => {
+        for await (const event of executor(
           {
-            ...testOptions,
-            port: 5858
+            ...options,
+            port: 1234,
           },
           context
-        ).toPromise();
-        expect(spawn).toHaveBeenCalledWith(String(electron), ['--inspect=5858', 'outfile.js']);
+        )) {
+        }
+        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
+          execArgv: [
+            '--inspect=1234',
+          ],
+        });
       });
     });
   });
 
-  it('should log errors from killing the process', async done => {
+  it('should log errors from killing the process', async () => {
     treeKill.mockImplementation((pid, signal, callback) => {
       callback(new Error('Error Message'));
     });
-    const loggerError = spyOn(context.logger, 'error');
-    scheduleTargetAndForget = scheduleTargetAndForget.and.returnValue(
-      from([
-        { success: true, outfile: 'outfile.js' },
-        { success: true, outfile: 'outfile.js' }
-      ])
-    );
-    electronExecuteBuilderHandler(testOptions, context).subscribe({
-      complete: () => {
-        expect(loggerError.calls.argsFor(1)).toEqual(['Error Message']);
-        done();
-      }
-    });
+
+    const loggerError = jest.spyOn(logger, 'error');
+
+    for await (const event of executor(options, context)) {
+    }
+    expect(loggerError).toHaveBeenCalledWith('Error Message');
   });
 
   it('should log errors from killing the process on windows', async () => {
     treeKill.mockImplementation((pid, signal, callback) => {
       callback([new Error('error'), '', 'Error Message']);
     });
-    const loggerError = spyOn(context.logger, 'error');
-    scheduleTargetAndForget = scheduleTargetAndForget.and.returnValue(
-      from([
-        { success: true, outfile: 'outfile.js' },
-        { success: true, outfile: 'outfile.js' }
-      ])
-    );
-    await electronExecuteBuilderHandler(testOptions, context).toPromise();
-    expect(loggerError.calls.argsFor(1)).toEqual(['Error Message']);
+
+    const loggerError = jest.spyOn(logger, 'error');
+
+    for await (const event of executor(
+      {
+        ...options,
+      },
+      context
+    )) {
+    }
+    expect(loggerError).toHaveBeenLastCalledWith('Error Message');
   });
 
   it('should build the application and start the built file with options', async () => {
-    await electronExecuteBuilderHandler(
+    for await (const event of executor(
       {
-        ...testOptions,
+        ...options,
         inspect: false,
-        args: ['arg1', 'arg2']
+        args: ['arg1', 'arg2'],
       },
       context
-    ).toPromise();
-    expect(spawn).toHaveBeenCalledWith(String(electron), ['outfile.js', 'arg1', 'arg2']);
+    )) {
+    }
+    expect(fork).toHaveBeenCalledWith('outfile.js', ['arg1', 'arg2'], {});
   });
 
   it('should warn users who try to use it in production', async () => {
-    spyOn(context, 'validateOptions').and.returnValue(
-      Promise.resolve({
-        optimization: true
-      })
-    );
-    spyOn(context.logger, 'warn');
-    await electronExecuteBuilderHandler(testOptions, context).toPromise();
-    expect(context.logger.warn).toHaveBeenCalled();
+    buildOptions = {
+      optimization: true,
+    };
+    const loggerWarn = jest.spyOn(logger, 'warn');
+    for await (const event of executor(
+      {
+        ...options,
+        inspect: false,
+        args: ['arg1', 'arg2'],
+      },
+      context
+    )) {
+    }
+    expect(loggerWarn).toHaveBeenCalled();
   });
 
   describe('waitUntilTasks', () => {
     it('should run the tasks before starting the build', async () => {
-      scheduleTargetAndForget = scheduleTargetAndForget.and.returnValue(
-        of({ success: true })
-      );
-      await electronExecuteBuilderHandler(
+      const runExecutor = require('@nrwl/devkit').runExecutor;
+      for await (const event of executor(
         {
-          ...testOptions,
-          waitUntilTargets: ['project1:target1', 'project2:target2']
+          ...options,
+          waitUntilTargets: ['project1:target1', 'project2:target2'],
         },
         context
-      ).toPromise();
+      )) {
+      }
 
-      expect(scheduleTargetAndForget).toHaveBeenCalledTimes(3);
-      expect(scheduleTargetAndForget).toHaveBeenCalledWith(context, {
-        project: 'project1',
-        target: 'target1'
-      });
-      expect(scheduleTargetAndForget).toHaveBeenCalledWith(context, {
-        project: 'project2',
-        target: 'target2'
-      });
+      expect(runExecutor).toHaveBeenCalledTimes(3);
+      expect(runExecutor).toHaveBeenNthCalledWith(
+        1,
+        {
+          project: 'project1',
+          target: 'target1',
+        },
+        {},
+        context
+      );
+      expect(runExecutor).toHaveBeenCalledWith(
+        {
+          project: 'project2',
+          target: 'target2',
+        },
+        {},
+        context
+      );
     });
 
     it('should not run the build if any of the tasks fail', async () => {
-      scheduleTargetAndForget = scheduleTargetAndForget.and.callFake(target =>
-        of({ success: target.target === 'project1' })
-      );
-      const loggerError = spyOn(context.logger, 'error');
+      devkit.runExecutor.mockImplementation(function* () {
+        yield { success: false };
+      });
 
-      const output = await electronExecuteBuilderHandler(
-        {
-          ...testOptions,
-          waitUntilTargets: ['project1:target1', 'project2:target2']
-        },
-        context
-      ).toPromise();
-      expect(output).toEqual(
-        jasmine.objectContaining({
-          success: false
-        })
-      );
-      expect(loggerError).toHaveBeenCalled();
+      try {
+        for await (const event of executor(
+          {
+            ...options,
+            waitUntilTargets: ['project1:target1', 'project2:target2'],
+          },
+          context
+        )) {
+        }
+      } catch (e) {
+        expect(e.message).toMatchInlineSnapshot(
+          `"Wait until target failed: project1:target1."`
+        );
+      }
     });
   });
 });

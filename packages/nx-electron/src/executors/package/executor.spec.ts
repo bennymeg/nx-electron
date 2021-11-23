@@ -1,22 +1,35 @@
-import { JsonObject } from '@angular-devkit/core';
-jest.mock('tsconfig-paths-webpack-plugin');
-import { PackageElectronBuilderOptions } from './executor';
-import { Architect } from '@angular-devkit/architect';
-import { getTestArchitect } from '../../utils/testing';
+import { ExecutorContext } from '@nrwl/devkit';
+import { join } from 'path';
+import { mocked } from 'ts-jest/utils';
+import { executor, PackageElectronBuilderOptions } from './executor';
+
+jest.mock('@nrwl/workspace/src/core/project-graph');
+import * as projectGraph from '@nrwl/workspace/src/core/project-graph';
+import { ProjectGraph, ProjectType } from '@nrwl/workspace/src/core/project-graph';
+
+jest.mock('glob');
+import * as glob from 'glob';
+
+jest.mock('fs-extra');
+import * as fs from 'fs-extra';
+
+jest.mock('@nrwl/workspace/src/utilities/fileutils');
+import * as fsUtility from '@nrwl/workspace/src/utilities/fileutils';
+import * as tsUtils from '@nrwl/workspace/src/utilities/typescript';
+import * as ts from 'typescript';
 
 describe('MakeElectronBuilder', () => {
-  let testOptions: PackageElectronBuilderOptions & JsonObject;
-  let architect: Architect;
+  let context: ExecutorContext;
+  let options: PackageElectronBuilderOptions;
 
   beforeEach(async () => {
-    [architect] = await getTestArchitect();
 
-    testOptions = {
+    options = {
       root: '.',
       platform: 'windows',
       arch: 'x64',
       asar: true,
-      name: 'electronapp',
+      name: 'electron-app',
       frontendProject: 'frontend',
       prepackageOnly: false,
       sourcePath: 'dist/apps',
@@ -28,17 +41,5 @@ describe('MakeElectronBuilder', () => {
     it('should find a way to test application packaging', async () => {
       expect(true).toEqual(true);
     });
-
-    // it('should emit the outfile along with success', async () => {
-    //   const run = await architect.scheduleBuilder(
-    //     'nx-electron:make',
-    //     testOptions
-    //   );
-    //   const output = await run.output.toPromise();
-
-    //   await run.stop();
-
-    //   expect(output.success).toEqual(true);
-    // });
   });
 });

@@ -1,122 +1,110 @@
-import { normalize, JsonObject, workspaces } from '@angular-devkit/core';
-import { join, resolve } from 'path';
-jest.mock('tsconfig-paths-webpack-plugin');
-import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
-import { BuildElectronBuilderOptions } from './executor';
+import { ExecutorContext } from '@nrwl/devkit';
+import * as projectGraph from '@nrwl/workspace/src/core/project-graph';
+import type { ProjectGraph } from '@nrwl/workspace/src/core/project-graph';
 import { of } from 'rxjs';
-import * as buildWebpack from '@angular-devkit/build-webpack';
-import { Architect } from '@angular-devkit/architect';
-import { getTestArchitect } from '../../utils/testing';
+import executor, { BuildElectronBuilderOptions } from './executor';
+
+jest.mock('../../utils/run-webpack', () => ({
+  runWebpack: jest.fn(),
+}));
+
+import { runWebpack } from '../../utils/run-webpack';
 
 describe('ElectronBuildBuilder', () => {
-  let testOptions: BuildElectronBuilderOptions & JsonObject;
-  let architect: Architect;
-  let runWebpack: jest.Mock;
+  let context: ExecutorContext;
+  let options: BuildElectronBuilderOptions;
 
   beforeEach(async () => {
-    [architect] = await getTestArchitect();
+    jest
+      .spyOn(projectGraph, 'readCachedProjectGraph')
+      .mockReturnValue({} as ProjectGraph);
 
-    testOptions = {
+    (<any>runWebpack).mockReturnValue(of({ hasErrors: () => false }));
+
+    context = {
+      root: '/root',
+      cwd: '/root',
+      projectName: 'my-app',
+      targetName: 'build',
+      workspace: {
+        version: 2,
+        projects: {
+          'my-app': <any>{
+            root: 'apps/electron-app',
+            sourceRoot: 'apps/electron-app',
+          },
+        },
+      },
+      isVerbose: false,
+    };
+
+    options = {
       main: 'apps/electron-app/src/main.ts',
-      tsConfig: 'apps/electron-app/tsconfig.app.json',
+      tsConfig: 'apps/electron-app/tsconfig.ts',
       outputPath: 'dist/apps/electron-app',
       externalDependencies: 'all',
       implicitDependencies: [],
-      fileReplacements: [
-        {
-          replace: 'apps/environment/environment.ts',
-          with: 'apps/environment/environment.prod.ts'
-        },
-        {
-          replace: 'module1.ts',
-          with: 'module2.ts'
-        }
-      ],
+      buildLibsFromSource: true,
+      fileReplacements: [],
       assets: [],
       statsJson: false,
-      root: join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'src')
     };
-    runWebpack = jest.fn().mockImplementation((config, context, options) => {
-      options.logging({
-        toJson: () => ({
-          stats: 'stats'
+
+    afterEach(() => jest.clearAllMocks());
+
+    it('should call webpack', async () => {
+      await executor(options, context).next();
+
+      expect(runWebpack).toHaveBeenCalledWith(
+        expect.objectContaining({
+          output: expect.objectContaining({
+            filename: 'main.js',
+            libraryTarget: 'commonjs',
+            path: '/root/dist/apps/electron-app',
+          }),
         })
-      });
-      return of({ success: true });
-    });
-    (buildWebpack as any).runWebpack = runWebpack;
-    spyOn(workspaces, 'readWorkspace').and.returnValue({
-      workspace: {
-        projects: {
-          get: () => ({
-            sourceRoot: join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'src')
-          })
-        }
-      }
-    });
-    (<any>TsConfigPathsPlugin).mockImplementation(
-      function MockPathsPlugin() {}
-    );
-  });
-
-  describe('run', () => {
-    it('should call runWebpack', async () => {
-      const run = await architect.scheduleBuilder(
-        'nx-electron:build',
-        testOptions
       );
-      await run.output.toPromise();
-
-      await run.stop();
-
-      expect(runWebpack).toHaveBeenCalled();
     });
 
-    it('should emit the outfile along with success', async () => {
-      const run = await architect.scheduleBuilder(
-        'nx-electron:build',
-        testOptions
+    it('should use outputFileName if passed in', async () => {
+      await executor(
+        { ...options, outputFileName: 'index.js' },
+        context
+      ).next();
+
+      expect(runWebpack).toHaveBeenCalledWith(
+        expect.objectContaining({
+          output: expect.objectContaining({
+            filename: 'index.js',
+            libraryTarget: 'commonjs',
+            path: '/root/dist/apps/wibble',
+          }),
+        })
       );
-      const output = await run.output.toPromise();
-
-      await run.stop();
-
-      expect(output.success).toEqual(true);
-      expect(output.outfile).toEqual(join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'dist', 'apps', 'electron-app', 'main.js'));
     });
 
-    describe('webpackConfig option', () => {
-      it('should require the specified function and use the return value', async () => {
-        const mockFunction = jest.fn(config => ({
-          config: 'config'
-        }));
+    describe('webpackConfig', () => {
+      it('should handle custom path', async () => {
         jest.mock(
-          join(normalize(resolve(__dirname).replace(/build.*$/, '')), 'apps', 'electron-app', 'webpack.config.js'),
-          () => mockFunction,
-          {
-            virtual: true
-          }
+          '/root/config.js',
+          () => (options) => ({ ...options, prop: 'my-val' }),
+          { virtual: true }
         );
-        testOptions.webpackConfig = 'apps/electron-app/webpack.config.js';
-        const run = await architect.scheduleBuilder(
-          'nx-electron:build',
-          testOptions
-        );
-        await run.output.toPromise();
+        await executor(
+          { ...options, webpackConfig: 'config.js' },
+          context
+        ).next();
 
-        await run.stop();
-
-        expect(mockFunction).toHaveBeenCalled();
         expect(runWebpack).toHaveBeenCalledWith(
-          {
-            config: 'config'
-          },
-          jasmine.anything(),
-          jasmine.anything()
+          expect.objectContaining({
+            output: expect.objectContaining({
+              filename: 'main.js',
+              libraryTarget: 'commonjs',
+              path: '/root/dist/apps/wibble',
+            }),
+            prop: 'my-val',
+          })
         );
-        // expect(runWebpack.calls.first().args[0]).toEqual({
-        //   config: 'config'
-        // });
       });
     });
   });

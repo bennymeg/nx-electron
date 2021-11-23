@@ -1,60 +1,50 @@
-import { Tree } from '@angular-devkit/schematics';
-import { createEmptyWorkspace } from '@nrwl/workspace/testing';
-import { readJsonInTree, updateJsonInTree } from '@nrwl/workspace';
-import { callRule, runSchematic } from '../../utils/testing';
+import { addDependenciesToPackageJson, NxJsonConfiguration, readJson, Tree } from '@nrwl/devkit';
+import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+
+import { nxVersion } from '../../utils/versions';
+import { initGenerator } from './generator';
 
 describe('init', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = Tree.empty();
-    tree = createEmptyWorkspace(tree);
+    tree = createTreeWithEmptyWorkspace();
   });
 
   it('should add dependencies', async () => {
-    const result = await runSchematic('init', {}, tree);
-    const packageJson = readJsonInTree(result, 'package.json');
-    expect(packageJson.dependencies['nx-electron']).toBeUndefined();
-    expect(packageJson.devDependencies['nx-electron']).toBeDefined();
+    const existing = 'existing';
+    const existingVersion = '1.0.0';
+
+    addDependenciesToPackageJson(
+      tree,
+      {
+        '@nrwl/node': nxVersion,
+        [existing]: existingVersion,
+      },
+      {
+        [existing]: existingVersion,
+      }
+    );
+    await initGenerator(tree, { skipFormat: false });
+
+    const packageJson = readJson(tree, 'package.json');
+    expect(packageJson.dependencies['@nrwl/node']).toBeUndefined();
+    expect(packageJson.dependencies['tslib']).toBeDefined();
+    expect(packageJson.dependencies[existing]).toBeDefined();
+    expect(packageJson.devDependencies['@nrwl/node']).toBeDefined();
+    expect(packageJson.devDependencies[existing]).toBeDefined();
   });
 
-  describe('defaultCollection', () => {
-    it('should be set if none was set before', async () => {
-      const result = await runSchematic('init', {}, tree);
-      const workspaceJson = readJsonInTree(result, 'workspace.json');
-      expect(workspaceJson.cli.defaultCollection).toEqual('nx-electron');
-    });
+  // describe('defaultCollection', () => {
+  //   it('should be set if none was set before', async () => {
+  //     await initGenerator(tree, {});
+  //     const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
+  //     expect(nxJson.cli.defaultCollection).toEqual('@nrwl/node');
+  //   });
+  // });
 
-    it('should be set if @nrwl/workspace was set before', async () => {
-      tree = await callRule(
-        updateJsonInTree('workspace.json', json => {
-          json.cli = {
-            defaultCollection: '@nrwl/workspace'
-          };
-
-          return json;
-        }),
-        tree
-      );
-      const result = await runSchematic('init', {}, tree);
-      const workspaceJson = readJsonInTree(result, 'workspace.json');
-      expect(workspaceJson.cli.defaultCollection).toEqual('nx-electron');
-    });
-
-    it('should not be set if something else was set before', async () => {
-      tree = await callRule(
-        updateJsonInTree('workspace.json', json => {
-          json.cli = {
-            defaultCollection: '@nrwl/angular'
-          };
-
-          return json;
-        }),
-        tree
-      );
-      const result = await runSchematic('init', {}, tree);
-      const workspaceJson = readJsonInTree(result, 'workspace.json');
-      expect(workspaceJson.cli.defaultCollection).toEqual('@nrwl/angular');
-    });
+  it('should not add jest config if unitTestRunner is none', async () => {
+    await initGenerator(tree, { skipFormat: false });
+    expect(tree.exists('jest.config.js')).toEqual(false);
   });
 });

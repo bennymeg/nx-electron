@@ -1,74 +1,112 @@
 import { normalizeBuildOptions } from './normalize';
-import { BuildBuilderOptions } from './types';
-import { Path, normalize } from '@angular-devkit/core';
-
+import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import * as fs from 'fs';
 
 describe('normalizeBuildOptions', () => {
-  let testOptions: BuildBuilderOptions;
+  let options: BuildElectronBuilderOptions;
   let root: string;
-  let sourceRoot: Path;
+  let sourceRoot: string;
   let projectRoot: string;
 
   beforeEach(() => {
-    testOptions = {
-      main: 'apps\\electronapp\\src\\main.ts',
-      tsConfig: 'apps\\electronapp\\tsconfig.app.json',
-      outputPath: 'dist\\apps\\electronapp',
+    options = {
+      main: 'apps/electron-app/src/main.ts',
+      tsConfig: 'apps/electron-app/tsconfig.app.json',
+      outputPath: 'dist/apps/electron-app',
+      implicitDependencies: [],
       fileReplacements: [
         {
-          replace: 'apps\\environment\\environment.ts',
-          with: 'apps\\environment\\environment.prod.ts'
+          replace: 'apps/environment/environment.ts',
+          with: 'apps/environment/environment.prod.ts',
         },
         {
           replace: 'module1.ts',
-          with: 'module2.ts'
-        }
+          with: 'module2.ts',
+        },
       ],
       assets: [],
-      statsJson: false
+      statsJson: false,
+      externalDependencies: 'all',
     };
-    root = 'C:\\root';
-    sourceRoot = normalize('apps\\electronapp\\src');
-    projectRoot = 'apps\\nodeapp';
+    root = '/root';
+    sourceRoot = 'apps/electron-app/src';
+    projectRoot = 'apps/electron-app';
   });
+
   it('should add the root', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
-    expect(result.root).toEqual('C:\\root');
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.root).toEqual('/root');
   });
 
   it('should resolve main from root', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
-    expect(result.main).toEqual('C:\\root\\apps\\electronapp\\src\\main.ts');
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.main).toEqual('/root/apps/electron-app/src/main.ts');
+  });
+
+  it('should resolve additional entries from root', () => {
+    const result = normalizeBuildOptions(
+      {
+        ...options,
+        additionalEntryPoints: [
+          { entryName: 'test', entryPath: 'some/path.ts' },
+        ],
+      },
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.additionalEntryPoints[0].entryPath).toEqual(
+      '/root/some/path.ts'
+    );
   });
 
   it('should resolve the output path', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
-    expect(result.outputPath).toEqual('C:\\root\\dist\\apps\\electronapp');
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.outputPath).toEqual('/root/dist/apps/electron-app');
   });
 
   it('should resolve the tsConfig path', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
-    expect(result.tsConfig).toEqual('C:\\root\\apps\\electronapp\\tsconfig.app.json');
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.tsConfig).toEqual('/root/apps/electron-app/tsconfig.app.json');
   });
 
   it('should normalize asset patterns', () => {
-    spyOn(fs, 'statSync').and.returnValue({
-      isDirectory: () => true
-    });
+    jest.spyOn(fs, 'statSync').mockReturnValue({
+      isDirectory: () => true,
+    } as any);
     const result = normalizeBuildOptions(
-      <BuildBuilderOptions>{
-        ...testOptions,
+      {
+        ...options,
         root,
         assets: [
-          'apps\\electronapp\\src\\assets',
+          'apps/electron-app/src/assets',
           {
             input: 'outsideproj',
             output: 'output',
-            glob: '**\\*',
-            ignore: ['**\\*.json']
-          }
-        ]
+            glob: '**/*',
+            ignore: ['**/*.json'],
+          },
+        ],
       },
       root,
       sourceRoot,
@@ -76,30 +114,55 @@ describe('normalizeBuildOptions', () => {
     );
     expect(result.assets).toEqual([
       {
-        input: 'C:\\root\\apps\\electronapp\\src\\assets',
+        input: '/root/apps/electron-app/src/assets',
         output: 'assets',
-        glob: '**\\*'
+        glob: '**/*',
       },
       {
-        input: 'C:\\root\\outsideproj',
+        input: '/root/outsideproj',
         output: 'output',
-        glob: '**\\*',
-        ignore: ['**\\*.json']
-      }
+        glob: '**/*',
+        ignore: ['**/*.json'],
+      },
     ]);
   });
 
   it('should resolve the file replacement paths', () => {
-    const result = normalizeBuildOptions(testOptions, root, sourceRoot, projectRoot);
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
     expect(result.fileReplacements).toEqual([
       {
-        replace: 'C:\\root\\apps\\environment\\environment.ts',
-        with: 'C:\\root\\apps\\environment\\environment.prod.ts'
+        replace: '/root/apps/environment/environment.ts',
+        with: '/root/apps/environment/environment.prod.ts',
       },
       {
-        replace: 'C:\\root\\module1.ts',
-        with: 'C:\\root\\module2.ts'
-      }
+        replace: '/root/module1.ts',
+        with: '/root/module2.ts',
+      },
     ]);
+  });
+
+  it('should resolve outputFileName correctly', () => {
+    const result = normalizeBuildOptions(
+      options,
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.outputFileName).toEqual('main.js');
+  });
+
+  it('should resolve outputFileName to "main.js" if not passed in', () => {
+    const result = normalizeBuildOptions(
+      { ...options, outputFileName: 'index.js' },
+      root,
+      sourceRoot,
+      projectRoot
+    );
+    expect(result.outputFileName).toEqual('index.js');
   });
 });
