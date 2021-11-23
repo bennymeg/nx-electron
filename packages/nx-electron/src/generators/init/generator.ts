@@ -1,11 +1,13 @@
-import { Rule, chain } from '@angular-devkit/schematics';
-import { addDepsToPackageJson, updateJsonInTree, addPackageWithInit, updateWorkspace, formatFiles } from '@nrwl/workspace';
+import { addDependenciesToPackageJson, convertNxGenerator, formatFiles, GeneratorCallback, Tree, updateJson } from '@nrwl/devkit';
 import { Schema } from './schema';
 import { nxElectronVersion, electronVersion, electronBuilderVersion, rimrafVersion, exitZeroVersion } from '../../utils/versions';
-import { JsonObject } from '@angular-devkit/core';
+import { setDefaultCollection } from '@nrwl/workspace/src/utilities/set-default-collection';
+import { jestInitGenerator } from '@nrwl/jest';
 
-function addDependencies(): Rule {
-  return addDepsToPackageJson(
+
+function addDependencies(tree: Tree) {
+  return addDependenciesToPackageJson(
+    tree,
     {},
     {
       'nx-electron': nxElectronVersion,
@@ -17,8 +19,8 @@ function addDependencies(): Rule {
   );
 }
 
-function moveDependency(): Rule {
-  return updateJsonInTree('package.json', json => {
+function moveDependency(tree: Tree) {
+  return updateJson(tree, 'package.json', json => {
     json.dependencies = json.dependencies || {};
 
     delete json.dependencies['nx-electron'];
@@ -30,8 +32,8 @@ function moveDependency(): Rule {
   });
 }
 
-function addScripts(): Rule {
-  return updateJsonInTree('package.json', json => {
+function addScripts(tree: Tree) {
+  return updateJson(tree, 'package.json', json => {
     json.scripts = json.scripts || {};
 
     json.scripts["postinstall"] = "exitzero electron-builder install-app-deps";
@@ -40,27 +42,39 @@ function addScripts(): Rule {
   });
 }
 
-function setDefault(): Rule {
-  return updateWorkspace(workspace => {
-    workspace.extensions.cli = workspace.extensions.cli || {};
+function normalizeOptions(schema: Schema) {
+  return {
+    ...schema,
+    unitTestRunner: schema.unitTestRunner ?? 'jest',
+  };
+}
 
-    const defaultCollection: string =
-      workspace.extensions.cli &&
-      ((workspace.extensions.cli as JsonObject).defaultCollection as string);
+export async function initGenerator(tree: Tree, schema: Schema) {
+  const options = normalizeOptions(schema);
 
-    if (!defaultCollection || defaultCollection === '@nrwl/workspace') {
-      (workspace.extensions.cli as JsonObject).defaultCollection = 'nx-electron';
+  setDefaultCollection(tree, 'nx-electron');
+
+  let jestInstall: GeneratorCallback;
+  if (options.unitTestRunner === 'jest') {
+    jestInstall = await jestInitGenerator(tree, {});
+  }
+
+  const installTask = await addDependencies(tree);
+
+  if (!options.skipFormat) {
+    await formatFiles(tree);
+  }
+
+  return async () => {
+    if (jestInstall) {
+      await jestInstall();
     }
-  });
+
+    await addScripts(tree);
+    await installTask();
+    await moveDependency(tree);
+  };
 }
 
-export default function(schema: Schema) {
-  return chain([
-    setDefault(),
-    addPackageWithInit('@nrwl/jest'),
-    addScripts(),
-    addDependencies(),
-    moveDependency(),
-    formatFiles(schema)
-  ]);
-}
+export default initGenerator;
+export const initSchematic = convertNxGenerator(initGenerator);

@@ -1,4 +1,4 @@
-import { Linter } from '@nrwl/workspace';
+import { Linter } from '@nrwl/linter';
 
 export interface Schema {
   name: string;
@@ -11,4 +11,6 @@ export interface Schema {
   unitTestRunner: 'jest' | 'none';
   linter: Linter;
   tags?: string;
+  setParserOptionsProject?: boolean;
+  standaloneConfig?: boolean;
 }
