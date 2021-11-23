@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "NxElectronInit",
+  "$id": "NxElectronInit",
   "title": "Add Nx Electron Schematics",
   "type": "object",
   "properties": {
