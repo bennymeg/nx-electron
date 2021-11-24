@@ -40,7 +40,7 @@ function addConfigurations(): Rule {
 }
 
 function addConfigurationFile(): Rule {
-  let rules: Rule[] = updateWorkspaceInTree((workspaceJson, context, host) => {
+  let rules: Rule = updateWorkspaceInTree((workspaceJson, context, host) => {
     let workspaceRules: Rule[] = [];
 
     Object.entries<any>(workspaceJson.projects).forEach(
@@ -62,7 +62,7 @@ function addConfigurationFile(): Rule {
     return workspaceRules;
   });
 
-  return chain(rules); 
+  return chain([rules]); 
 }
 
 function writeConfigurationFile(projectSourceRoot: string): Rule {
