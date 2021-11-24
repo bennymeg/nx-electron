@@ -1,6 +1,6 @@
 {
-  "name": "@nx-electron/nx-electron",
-  "version": "12.0.0-alpha.4",
+  "name": "nx-electron",
+  "version": "12.0.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -19,26 +19,12 @@
     "url": "https://github.com/bennymeg/nx-electron/issues"
   },
   "scripts": {
-    "lint": "eslint . --ext .ts",
+    "lint": "nx lint nx-electron",
     "lint:fix": "npm run lint --fix",
-    "test": "jest --maxWorkers=1 .*.spec.ts",
-    "compile": "tsc",
-    "build": "npm run clear:all && tsc && npm run copy:all && npm run permission",
-    "publish": "cd build && npm publish",
+    "test": "nx test nx-electron",
+    "build": "nx build nx-electron",
     "release": "standard-version",
-    "postrelease": "git push --follow-tags && npm run build && npm run publish",
-    "copy:all": "npm run copy:ts && npm run copy:json && npm run copy:readme && npm run copy:licence && npm run copy:ignore",
-    "copy:ts": "shx cp -rf src build/",
-    "copy:json": "shx cp -rf *.json build/",
-    "copy:readme": "shx cp -rf README.md build/",
-    "copy:licence": "shx cp -rf LICENSE build/",
-    "copy:ignore": "shx cp -rf .*ignore build/",
-    "clear:all": "npm run clear:ts && npm run clear:json && npm run clear:readme && npm run clear:licence && npm run clear:ignore",
-    "clear:ts": "shx rm -rf ./build/src",
-    "clear:json": "shx rm -f ./build/*.json",
-    "clear:readme": "shx rm -f ./build/README.md",
-    "clear:licence": "shx rm -f ./build/LICENSE",
-    "clear:ignore": "shx rm -f ./build/.*ignore"
+    "postrelease": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag alpha"
   },
   "keywords": [
     "nx",
