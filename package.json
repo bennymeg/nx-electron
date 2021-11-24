@@ -7,7 +7,9 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "publish": "cd dist/packages/nx-electron && npm publish --tag alpha",
+    "release": "cd packages/nx-electron && npm run release"
   },
   "private": true,
   "devDependencies": {
