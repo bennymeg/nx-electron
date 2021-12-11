@@ -5,9 +5,9 @@
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
   "scripts": {
-    "start": "nx serve",
-    "build": "nx build",
-    "test": "nx test",
+    "start": "nx run nx-electron:serve",
+    "build": "nx run nx-electron:build",
+    "test": "nx run nx-electron:test",
     "publish": "cd dist/packages/nx-electron && npm publish --tag alpha",
     "release": "cd packages/nx-electron && npm run release"
   },
