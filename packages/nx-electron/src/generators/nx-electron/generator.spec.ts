@@ -5,7 +5,7 @@ import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 // nx-ignore-next-line
 import { applicationGenerator as angularApplicationGenerator } from '@nrwl/angular/generators';
 import { Schema } from './schema';
-import { applicationGenerator } from './generator';
+import { generator as applicationGenerator } from './generator';
 import { overrideCollectionResolutionForTesting } from '@nrwl/devkit/ngcli-adapter';
 import { join } from 'path';
 import { Linter } from '@nrwl/linter';

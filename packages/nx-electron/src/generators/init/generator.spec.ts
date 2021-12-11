@@ -2,7 +2,7 @@ import { addDependenciesToPackageJson, NxJsonConfiguration, readJson, Tree } fro
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 
 import { nxVersion } from '../../utils/versions';
-import { initGenerator } from './generator';
+import { generator as initGenerator } from './generator';
 
 describe('init', () => {
   let tree: Tree;
