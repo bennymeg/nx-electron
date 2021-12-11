@@ -1,6 +1,6 @@
 import { addDependenciesToPackageJson, formatFiles, GeneratorCallback, Tree, updateJson } from '@nrwl/devkit';
 import { Schema } from './schema';
-import { nxElectronVersion, electronVersion, electronBuilderVersion, rimrafVersion, exitZeroVersion } from '../../utils/versions';
+import { nxElectronVersion, electronVersion, electronBuilderVersion, exitZeroVersion } from '../../utils/versions';
 import { setDefaultCollection } from '@nrwl/workspace/src/utilities/set-default-collection';
 import { jestInitGenerator } from '@nrwl/jest';
 
@@ -14,7 +14,6 @@ function addDependencies(tree: Tree) {
       'electron': electronVersion,
       'exitzero': exitZeroVersion,
       // 'electron-builder': electronBuilderVersion,
-      // 'rimraf': rimrafVersion
     }
   );
 }
@@ -26,7 +25,6 @@ function moveDependency(tree: Tree) {
     delete json.dependencies['nx-electron'];
     delete json.dependencies['electron'];
     // delete json.dependencies['electron-builder'];
-    // delete json.dependencies['rimraf'];
 
     return json;
   });
