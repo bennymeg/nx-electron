@@ -1,4 +1,4 @@
-import { Configuration, ProgressPlugin, DefinePlugin, Stats, Plugin, WebpackPluginInstance } from 'webpack';
+import { Configuration, ProgressPlugin, DefinePlugin, WebpackPluginInstance } from 'webpack';
 
 import * as ts from 'typescript';
 import { join } from 'path';
@@ -68,7 +68,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
           configFile: options.tsConfig,
           extensions,
           mainFields
-        })
+        }) as any
       ],
       mainFields
     },
@@ -92,7 +92,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     watchOptions: {
       poll: options.poll
     },
-    stats: getStatsConfig(options)
+    stats: options.verbose ? 'verbose' : 'normal'
   };
 
   const extraPlugins: WebpackPluginInstance[] = [];
@@ -171,27 +171,4 @@ function getAliases(options: BuildBuilderOptions): { [key: string]: string } {
     }),
     {}
   );
-}
-
-function getStatsConfig(options: BuildBuilderOptions): Stats.ToStringOptions {
-  return {
-    hash: true,
-    timings: false,
-    cached: false,
-    cachedAssets: false,
-    modules: false,
-    warnings: true,
-    errors: true,
-    colors: !options.verbose && !options.statsJson,
-    chunks: !options.verbose,
-    assets: !!options.verbose,
-    chunkOrigins: !!options.verbose,
-    chunkModules: !!options.verbose,
-    children: !!options.verbose,
-    reasons: !!options.verbose,
-    version: !!options.verbose,
-    errorDetails: !!options.verbose,
-    moduleTrace: !!options.verbose,
-    usedExports: !!options.verbose
-  };
 }

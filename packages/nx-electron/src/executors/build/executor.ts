@@ -3,7 +3,7 @@ import { map, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
 
 import { ExecutorContext } from '@nrwl/devkit';
-import { runWebpack } from '@nrwl/workspace/src/utilities/run-webpack';
+import { runWebpack } from '../../utils/run-webpack';
 import { readCachedProjectGraph } from '@nrwl/workspace/src/core/project-graph';
 import { calculateProjectDependencies, checkDependentProjectsHaveBeenBuilt, createTmpTsConfig } from '@nrwl/workspace/src/utilities/buildable-libs-utils';
 
@@ -13,7 +13,6 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
-import webpack from 'webpack';
 
 try {
   require('dotenv').config();
@@ -69,7 +68,7 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
 
 
   return eachValueFrom(
-    runWebpack(config, webpack).pipe(
+    runWebpack(config).pipe(
       tap((stats) => {
         console.info(stats.toString(config.stats));
       }),

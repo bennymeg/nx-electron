@@ -1,4 +1,4 @@
-import { ProjectGraph } from '@nrwl/workspace/src/core/project-graph';
+import { ProjectGraph } from '@nrwl/devkit';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { writeJsonFile, readJsonFile } from '@nrwl/workspace/src/utilities/fileutils';
 import { INDEX_OUTPUT_FILENAME } from './config';
@@ -72,7 +72,7 @@ function findAllNpmDeps(
 
   const node = graph.nodes[projectName];
 
-  if (node.type === 'npm') {
+  if (node && node.type === 'npm') {
     list[node.data.packageName] = node.data.version;
   }
   graph.dependencies[projectName]?.forEach((dep) => {

@@ -23,11 +23,11 @@ export function runWebpack(config: webpack.Configuration): Observable<any> {
     } else {
       webpackCompiler.run((err, stats) => {
         callback(err, stats);
-        // todo webpack 4
-        // webpackCompiler.close((closeErr) => {
-        //   if (closeErr) subscriber.error(closeErr);
-        //   subscriber.complete();
-        // });
+
+        webpackCompiler.close((closeErr) => {
+          if (closeErr) subscriber.error(closeErr);
+          subscriber.complete();
+        });
       });
     }
   });
