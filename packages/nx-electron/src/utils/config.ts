@@ -26,19 +26,19 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
   const additionalEntryPoints = options.additionalEntryPoints?.reduce(
     (obj, current) => ({ ...obj, [current.entryName]: current.entryPath }), {} as { [entryName: string]: string }) ?? {};
   
-    const webpackConfig: Configuration = {
+  const webpackConfig: Configuration = {
     entry: {
       main: [options.main],
+      // preload: [options.main.replace(/([.][a-z]+)$/, ".preload$1")],
       ...additionalEntryPoints,
     },
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
     output: {
       path: options.outputPath,
-      filename:
-        options.additionalEntryPoints?.length > 0
-          ? OUT_FILENAME_TEMPLATE
-          : options.outputFileName,
+      filename: (pathData) => {
+        return pathData.chunk.name === 'main' ? options.outputFileName : OUT_FILENAME_TEMPLATE;
+      },
       hashFunction: 'xxhash64',
       // Disabled for performance
       pathinfo: false,
