@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "12.0.0-alpha.7",
+  "version": "12.0.0-beta.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -24,7 +24,7 @@
     "test": "nx test nx-electron",
     "build": "nx build nx-electron",
     "release": "standard-version",
-    "postrelease": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag alpha"
+    "postrelease": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag beta"
   },
   "keywords": [
     "nx",

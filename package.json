@@ -9,7 +9,7 @@
     "build": "nx run nx-electron:build",
     "link": "npm link ./dist/packages/nx-electron/",
     "test": "nx run nx-electron:test",
-    "publish": "cd dist/packages/nx-electron && npm publish --tag alpha",
+    "publish": "cd dist/packages/nx-electron && npm publish --tag beta",
     "release": "cd packages/nx-electron && npm run release"
   },
   "private": true,
