@@ -166,12 +166,10 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
 }
 
 function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: PackageElectronBuilderOptions): CliOptions {
-  let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+  let normalizedOptions: CliOptions = { config, targets, publish: rawOptions.publishPolicy || null };
 
   if (rawOptions.prepackageOnly) {
     normalizedOptions.dir = true;
-  } else {
-    normalizedOptions.targets = targets
   }
 
   return normalizedOptions;
