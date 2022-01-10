@@ -1,12 +1,14 @@
 {
   "name": "nx-electron",
-  "version": "12.0.0-beta.1",
+  "version": "12.0.0-beta.2",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
   "license": "Apache-2.0",
   "generators": "./generators.json",
+  "schematics": "./generators.json",
   "executors": "./executors.json",
+  "builders": "./executors.json",
   "ng-update": {
     "requirements": {},
     "migrations": "./migrations.json"
