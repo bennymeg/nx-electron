@@ -38,42 +38,36 @@ export interface PackageElectronBuilderOutput {
   outputPath: string | string[];
 }
 
-export function executor(rawOptions: PackageElectronBuilderOptions, context: ExecutorContext): Observable<PackageElectronBuilderOutput> { 
-  return from(of(getSourceRoot(context))).pipe(
-    tap(_ => {
-      logger.warn(stripIndents`
-        *********************************************************
-        DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
-        FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
-        *********************************************************`);
-    }),
-    map(({ sourceRoot, projectRoot }) =>
-      normalizePackagingOptions(rawOptions, context.root, sourceRoot)
-    ),
-    map(options => 
-      mergePresetOptions(options)
-    ),
-    map(options => 
-      addMissingDefaultOptions(options)
-    ),
-    concatMap(async (options) => {
-      await beforeBuild(options.root, options.sourcePath, options.name);
+export async function executor(rawOptions: PackageElectronBuilderOptions, context: ExecutorContext): Promise<{ success: boolean; }> { 
+  logger.warn(stripIndents`
+  *********************************************************
+  DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
+  FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
+  *********************************************************`);
+  let success: boolean = false;
 
-      const platforms: Platform[] = _createPlatforms(options.platform);
-      const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
-      const baseConfig: Configuration = _createBaseConfig(options, context);
-      const config: Configuration = _createConfigFromOptions(options, baseConfig);
-      const normalizedOptions: CliOptions = _normalizeBuilderOptions(targets, config, rawOptions);
-      const outputPath = await build(normalizedOptions);
+  try {
+    const { sourceRoot, projectRoot } = getSourceRoot(context);
+  
+    let options = normalizePackagingOptions(rawOptions, context.root, sourceRoot);
+    options = mergePresetOptions(options);
+    options = addMissingDefaultOptions(options);
+  
+    const platforms: Platform[] = _createPlatforms(options.platform);
+    const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
+    const baseConfig: Configuration = _createBaseConfig(options, context);
+    const config: Configuration = _createConfigFromOptions(options, baseConfig);
+    const normalizedOptions: CliOptions = _normalizeBuilderOptions(targets, config, rawOptions);
 
-      return { success: true, outputPath };
-    }),
-    catchError(error => {
-      console.error(error);
+    await beforeBuild(options.root, options.sourcePath, options.name);
+    await build(normalizedOptions);
 
-      return of({ success: false, outputPath: null });
-    })
-  );
+    success = true;
+  } catch (error) {
+    logger.error(error);
+  }
+  
+  return { success };
 }
 
 async function beforeBuild(projectRoot: string, sourcePath: string, appName: string) {
