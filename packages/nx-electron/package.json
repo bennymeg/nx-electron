@@ -1,0 +1,74 @@
+{
+  "name": "nx-electron",
+  "version": "12.0.0",
+  "main": "src/index.js",
+  "description": "Electron Plugin for Nx",
+  "author": "Benny Megidish",
+  "license": "Apache-2.0",
+  "generators": "./generators.json",
+  "schematics": "./generators.json",
+  "executors": "./executors.json",
+  "builders": "./executors.json",
+  "ng-update": {
+    "requirements": {},
+    "migrations": "./migrations.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennymeg/nx-electron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bennymeg/nx-electron/issues"
+  },
+  "scripts": {
+    "lint": "nx lint nx-electron",
+    "lint:fix": "npm run lint --fix",
+    "test": "nx test nx-electron",
+    "build": "nx build nx-electron",
+    "release": "standard-version",
+    "release:alpha": "standard-version",
+    "release:beta": "standard-version",
+    "postrelease": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish",
+    "postrelease:alpha": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag alpha",
+    "postrelease:beta": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag beta"
+  },
+  "keywords": [
+    "nx",
+    "electron",
+    "forge",
+    "package",
+    "make",
+    "bundle",
+    "monorepo",
+    "schematics",
+    "generators",
+    "builders",
+    "executors"
+  ],
+  "peerDependencies": {
+    "@nrwl/workspace": "*",
+    "electron": "*"
+  },
+  "dependencies": {
+    "circular-dependency-plugin": "^5.2.2",
+    "copy-webpack-plugin": "^10.1.0",
+    "electron-builder": "^22.14.5",
+    "fork-ts-checker-webpack-plugin": "^6.5.0",
+    "license-webpack-plugin": "^4.0.0",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "rimraf": "^3.0.2",
+    "rxjs-for-await": "^1.0.0",
+    "source-map-support": "^0.5.19",
+    "strip-json-comments": "^3.1.1",
+    "terser-webpack-plugin": "^5.2.5",
+    "tree-kill": "^1.2.2",
+    "ts-loader": "^9.2.6",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "webpack": "^5.65.0",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-merge": "^5.8.0"
+  },
+  "devDependencies": {
+    "webpack-node-externals": "^3.0.0"
+  }
+}
