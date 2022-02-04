@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "12.1.0",
+  "version": "12.0.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -28,7 +28,7 @@
     "release": "standard-version",
     "release:alpha": "standard-version",
     "release:beta": "standard-version",
-    "postrelease": "git push --follow-tags",
+    "postrelease": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish",
     "postrelease:alpha": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag alpha",
     "postrelease:beta": "git push --follow-tags && npm run build && cd ../../dist/packages/nx-electron && npm publish --tag beta"
   },
@@ -65,7 +65,7 @@
     "ts-loader": "^9.2.6",
     "tsconfig-paths-webpack-plugin": "^3.5.2",
     "webpack": "^5.65.0",
-    "webpack-dev-server": "^4.6.0",
+    "webpack-dev-server": "^4.7.4",
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
