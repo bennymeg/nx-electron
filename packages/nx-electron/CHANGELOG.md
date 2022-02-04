@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.1.0](https://github.com/bennymeg/nx-electron/compare/v12.0.0-beta.0...v12.1.0) (2022-02-04)
+
+
+### Features
+
+* defined schematics and builders entry point [#128](https://github.com/bennymeg/nx-electron/issues/128) ([83525b0](https://github.com/bennymeg/nx-electron/commit/83525b08a6b9b2f346a5186c90b096556d2a425b))
+* v12 ([f420430](https://github.com/bennymeg/nx-electron/commit/f420430759273c46e65ec05630d81eb23adfdc2d))
+
+
+### Bug Fixes
+
+* add targets to the packaging options [#125](https://github.com/bennymeg/nx-electron/issues/125) ([cf70be6](https://github.com/bennymeg/nx-electron/commit/cf70be6361836ace667ea5f75960c27ece403869))
+* bump version ([56ec734](https://github.com/bennymeg/nx-electron/commit/56ec734fd854de6c8e9a7b5b59051081e341c4c8))
+* packager returns promise instead of observable [#135](https://github.com/bennymeg/nx-electron/issues/135) ([753997a](https://github.com/bennymeg/nx-electron/commit/753997a36a73083c6b76ff20cdcd4145f9a4094e))
+* revert adding targets packaging options [#125](https://github.com/bennymeg/nx-electron/issues/125) ([5beb469](https://github.com/bennymeg/nx-electron/commit/5beb469ae5c92716fe4cb3fde4fdd31c953a5d8f))
+
 ## [12.0.0](https://github.com/bennymeg/nx-electron/compare/v11.4.1...v12.0.0) (2021-11-24)
 
 
