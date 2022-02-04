@@ -1,0 +1,58 @@
+{
+  "title": "Schema for Executing Electron apps",
+  "description": "Electron execution options",
+  "type": "object",
+  "cli": "nx",
+  "properties": {
+    "buildTarget": {
+      "type": "string",
+      "description": "The target to run to build you the app"
+    },
+    "buildTargetOptions": {
+      "type": "object",
+      "description": "Additional options to pass into the build target.",
+      "default": {}
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Run build when files change",
+      "default": true
+    },
+    "waitUntilTargets": {
+      "type": "array",
+      "description": "The targets to run to before starting the electron app",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "port": {
+      "type": "number",
+      "default": 5858,
+      "description": "The port to inspect the process on. Setting port to 0 will assign random free ports to all forked processes."
+    },
+    "inspect": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["inspect", "inspect-brk", "inspect-brk-node"]
+        },
+        {
+          "type": "boolean"
+        }
+      ],
+      "description": "Ensures the app is starting with debugging",
+      "default": "inspect"
+    },
+    "args": {
+      "type": "array",
+      "description": "Extra args when starting the app",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["buildTarget"]
+}

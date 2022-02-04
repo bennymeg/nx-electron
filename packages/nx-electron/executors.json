@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "executors": {
+    "build": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/schema.json",
+      "description": "Build an Electron application"
+    },
+    "execute": {
+      "implementation": "./src/executors/execute/executor",
+      "schema": "./src/executors/execute/schema.json",
+      "description": "Execute an Electron application"
+    },
+    "package": {
+      "implementation": "./src/executors/package/executor",
+      "schema": "./src/executors/package/schema.json",
+      "description": "Package an Electron application"
+    },
+    "make": {
+      "implementation": "./src/executors/package/executor",
+      "schema": "./src/executors/package/schema.json",
+      "description": "Make an Electron application"
+    }
+  },
+  "builders": {
+    "build": {
+      "implementation": "./src/executors/build/executor.compat",
+      "schema": "./src/executors/build/schema.json",
+      "description": "Build an Electron application"
+    },
+    "execute": {
+      "implementation": "./src/executors/execute/executor.compat",
+      "schema": "./src/executors/execute/schema.json",
+      "description": "Execute an Electron application"
+    },
+    "package": {
+      "implementation": "./src/executors/package/executor.compat",
+      "schema": "./src/executors/package/schema.json",
+      "description": "Package an Electron application"
+    },
+    "make": {
+      "implementation": "./src/executors/package/executor.compat",
+      "schema": "./src/executors/package/schema.json",
+      "description": "Make an Electron application"
+    }
+  }
+}
