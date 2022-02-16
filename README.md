@@ -70,13 +70,13 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 - Run `nx run <electron-app-name>:package [--options]` to package your application.
 - Or `nx run <electron-app-name>:make --prepackgeOnly` to package your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/package/schema.json).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
 ## Making Nx Electron Application
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/src/builders/package/schema.json).
+The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
 ## Configuring static packaging / making options
 
