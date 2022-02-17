@@ -22,7 +22,8 @@
           "lint",
           "test",
           "e2e"
-        ]
+        ],
+        "parallel": 1
       }
     }
   },
