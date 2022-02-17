@@ -1,6 +1,6 @@
-import { ProjectGraph } from '@nrwl/devkit';
+import type { ProjectGraph } from '@nrwl/devkit';
+import { writeJsonFile, readJsonFile } from '@nrwl/devkit';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
-import { writeJsonFile, readJsonFile } from '@nrwl/workspace/src/utilities/fileutils';
 import { INDEX_OUTPUT_FILENAME } from './config';
 
 /**
@@ -70,7 +70,7 @@ function findAllNpmDeps(
 
   seen.add(projectName);
 
-  const node = graph.nodes[projectName];
+  const node = graph.externalNodes ? graph.externalNodes[projectName] : graph.nodes[projectName];
 
   if (node && node.type === 'npm') {
     list[node.data.packageName] = node.data.version;
