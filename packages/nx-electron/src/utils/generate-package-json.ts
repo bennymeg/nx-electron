@@ -13,11 +13,7 @@ import { INDEX_OUTPUT_FILENAME } from './config';
  * @param options
  * @constructor
  */
-export function generatePackageJson(
-  projectName: string,
-  graph: ProjectGraph,
-  options: BuildElectronBuilderOptions
-) {
+export function generatePackageJson(projectName: string, graph: ProjectGraph, options: BuildElectronBuilderOptions) {
   // default package.json if one does not exist
   let packageJson = {
     name: projectName,
