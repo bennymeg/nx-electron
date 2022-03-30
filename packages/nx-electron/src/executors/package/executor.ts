@@ -30,6 +30,7 @@ export interface PackageElectronBuilderOptions extends Configuration {
   sourcePath: string;
   outputPath: string;
   publishPolicy?: PublishOptions["publish"];
+  makerOptionsPath?: string;
 }
 
 export interface PackageElectronBuilderOutput {
@@ -155,6 +156,7 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
   delete config["publishPolicy"];
   delete config.sourcePath;
   delete config.outputPath;
+  delete config["makerOptionsPath"];
 
   return config;
 }
@@ -173,7 +175,8 @@ function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, c
 
 function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
   // load preset options file
-  const externalOptionsPath: string = join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
+  const externalOptionsPath: string = 
+  resolve(options.root, options.makerOptionsPath) || join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
 
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')

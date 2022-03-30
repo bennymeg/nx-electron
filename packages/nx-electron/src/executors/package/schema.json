@@ -20,7 +20,7 @@
     },
     "prepackageOnly": {
       "type": "boolean",
-      "description": "Only prepackage the aplication.",
+      "description": "Only prepackage the application.",
       "default": false
     },
     "sourcePath": {
@@ -58,6 +58,10 @@
       "type": "string",
       "enum": ["onTag", "onTagOrDraft", "always", "never"],
       "description": "Package publish policy."
+    },
+    "makerOptionsPath": {
+      "type": "string",
+      "description": "Overrides the '{sourceRoot}/app/options/maker.options.json' configuration file path."
     }
   },
   "required": ["name", "frontendProject"]
