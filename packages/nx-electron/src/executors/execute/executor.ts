@@ -19,6 +19,7 @@ export const enum InspectType {
 
 export interface ElectronExecuteBuilderOptions {
   inspect: boolean | InspectType;
+  remoteDebuggingPort?: number;
   port: number;
   args: string[];
   waitUntilTargets: string[];
@@ -86,6 +87,10 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
 
   if (options.inspect) {
     args.push(`--${options.inspect}=${options.port}`);
+  }
+
+  if (options.remoteDebuggingPort) {
+    args.push(`--remote-debugging-port=${options.remoteDebuggingPort}`);
   }
 
   args.push(file);
