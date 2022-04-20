@@ -64,7 +64,7 @@ export default class App {
         App.mainWindow = new BrowserWindow({ width: width, height: height, show: false, webPreferences: {
                 contextIsolation: true,
                 backgroundThrottling: false,
-                preload: join(__dirname, 'preload.js')
+                preload: join(__dirname, 'main.preload.js')
             }
         });
         App.mainWindow.setMenu(null);
