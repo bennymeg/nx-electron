@@ -175,8 +175,9 @@ function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, c
 
 function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
   // load preset options file
-  const externalOptionsPath: string = 
-  resolve(options.root, options.makerOptionsPath) || join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
+  const externalOptionsPath: string = options.makerOptionsPath ?
+    resolve(options.root, options.makerOptionsPath) : 
+    join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
 
   if (statSync(externalOptionsPath).isFile()) {
     const rawData = readFileSync(externalOptionsPath, 'utf8')
