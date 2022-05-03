@@ -17,8 +17,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "nx-electron": ["packages/nx-electron/src/index.ts"],
-      "@benny/nx-electron/schema/maker": ["node_modules/nx-electron/src/validation/maker.schema.json"]
+      "@benny/nx-electron/schema/maker": [
+        "node_modules/nx-electron/src/validation/maker.schema.json"
+      ],
+      "nx-electron": ["packages/nx-electron/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "build", "packages/*/src/*/files/**/*"]

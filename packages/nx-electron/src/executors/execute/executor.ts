@@ -19,6 +19,7 @@ export const enum InspectType {
 
 export interface ElectronExecuteBuilderOptions {
   inspect: boolean | InspectType;
+  remoteDebuggingPort?: number;
   port: number;
   args: string[];
   waitUntilTargets: string[];
@@ -88,6 +89,10 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
     args.push(`--${options.inspect}=${options.port}`);
   }
 
+  if (options.remoteDebuggingPort) {
+    args.push(`--remote-debugging-port=${options.remoteDebuggingPort}`);
+  }
+
   args.push(file);
   args = args.concat(options.args);
 
@@ -142,20 +147,19 @@ async function* startBuild(options: ElectronExecuteBuilderOptions, context: Exec
     buildTarget,
     {
       ...options.buildTargetOptions,
+      generatePackageJson: false,
       watch: options.watch,
     },
     context
   );
 }
 
-function runWaitUntilTargets(
-  options: ElectronExecuteBuilderOptions,
-  context: ExecutorContext
-): Promise<{ success: boolean }[]> {
+function runWaitUntilTargets(options: ElectronExecuteBuilderOptions, context: ExecutorContext): Promise<{ success: boolean }[]> {
   return Promise.all(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
       const target = parseTargetString(waitUntilTarget);
       const output = await runExecutor(target, {}, context);
+
       return new Promise<{ success: boolean }>(async (resolve) => {
         let event = await output.next();
         // Resolve after first event

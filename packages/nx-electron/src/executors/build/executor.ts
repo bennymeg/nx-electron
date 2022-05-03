@@ -1,6 +1,7 @@
 import { join, resolve } from 'path';
 import { map, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
+import { readdirSync } from 'fs';
 
 import { ExecutorContext } from '@nrwl/devkit';
 import { runWebpack } from '../../utils/run-webpack';
@@ -64,8 +65,15 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
       configuration: context.configurationName,
     });
   }
-  config.entry['preload'] = join(normalizedOptions.sourceRoot, 'app/api/preload.ts');
 
+  try {
+    const preloadFilesDirectory = join(normalizedOptions.sourceRoot, 'app/api');
+    readdirSync(preloadFilesDirectory, { withFileTypes: true })
+      .filter(entry => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/))
+      .forEach(entry => config.entry[entry.name] = join(preloadFilesDirectory, entry.name));
+  } catch (error) {
+    console.warn('Failed to load preload scripts');
+  }
 
   return eachValueFrom(
     runWebpack(config).pipe(

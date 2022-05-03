@@ -29,8 +29,8 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
   const webpackConfig: Configuration = {
     entry: {
       main: [options.main],
-      // preload: [options.main.replace(/([.][a-z]+)$/, ".preload$1")],
       ...additionalEntryPoints,
+      // preload entries will be included dynamically
     },
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
