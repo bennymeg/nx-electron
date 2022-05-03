@@ -31,6 +31,10 @@
       "default": 5858,
       "description": "The port to inspect the process on. Setting port to 0 will assign random free ports to all forked processes."
     },
+    "remoteDebuggingPort": {
+      "type": "number",
+      "description": "Enables remote debugging of the renderer process on the defined port."
+    },
     "inspect": {
       "oneOf": [
         {
