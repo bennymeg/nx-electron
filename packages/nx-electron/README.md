@@ -27,7 +27,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Live Update**: Provides continuos live reload for your backend code.
 - **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events.
 - **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
-- **Making**: Makes your frontend and backend webpack bundles into single executable. 🆕
+- **Making**: Makes your frontend and backend webpack bundles into single executable.
 
 # Getting Started
 
@@ -36,7 +36,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@12
+npx create-nx-workspace@13
 ```
 
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
@@ -85,12 +85,8 @@ It is possible to configure all the packaging / making [options](https://www.ele
 
 ## Migrating Nx Electron Application
 
-To migrate automaticlly run `ng update nx-electron@<version>`.
-You can find detailed information in the following articles:
-
-- [v8.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v8.md)
-- [v9.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v9.md)
-- [v10.0.0](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/migrating.v10.md)
+To migrate automatically run `ng update nx-electron@<version>`.
+You can find detailed information in the following [migration guides](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/).
 
 ## Testing Nx Electron Application
 
@@ -122,7 +118,7 @@ Regardless of what framework you chose, the resulting file tree will look like t
 - 👨🏼‍💻 [API](https://github.com/bennymeg/nx-electron/blob/master/docs/API.md),
 - 👩🏼‍🏫 [Examples](https://github.com/bennymeg/nx-electron/blob/master/docs/examples),
 - 📜 [Change log](https://github.com/bennymeg/nx-electron/blob/master/docs/CHANGELOG.md),
-- 🖋 [Licence](https://github.com/bennymeg/nx-electron/blob/master/LICENSE) -->
+- 🖋 [License](https://github.com/bennymeg/nx-electron/blob/master/LICENSE) -->
 
 ## Support
 
@@ -135,6 +131,7 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 ## Versioning
 
 This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
+I.e. version 13.x of nx-electron will be compatible with version 13.y of NX. 
 
 ## Attribution
 
