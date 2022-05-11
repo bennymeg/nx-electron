@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { join, parse, resolve } from 'path';
 import { map, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
 import { readdirSync } from 'fs';
@@ -44,7 +44,7 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
   const projGraph = readCachedProjectGraph();
 
   if (!normalizedOptions.buildLibsFromSource) {
-    const { target, dependencies } = 
+    const { target, dependencies } =
       calculateProjectDependencies(projGraph, context.root, context.projectName, context.targetName, context.configurationName);
 
     normalizedOptions.tsConfig = createTmpTsConfig(normalizedOptions.tsConfig, context.root, target.data.root, dependencies);
@@ -70,7 +70,7 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
     const preloadFilesDirectory = join(normalizedOptions.sourceRoot, 'app/api');
     readdirSync(preloadFilesDirectory, { withFileTypes: true })
       .filter(entry => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/))
-      .forEach(entry => config.entry[entry.name] = join(preloadFilesDirectory, entry.name));
+      .forEach(entry => config.entry[parse(entry.name).name] = join(preloadFilesDirectory, entry.name));
   } catch (error) {
     console.warn('Failed to load preload scripts');
   }
