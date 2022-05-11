@@ -24,7 +24,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Typescript**: Uses Typescript to help reduce errors, and create more structured code.
 - **Obfuscation**: Since Electron are used on the client machines, nx-electron obfuscates you code (and only it).
 - **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
-- **Live Update**: Provides continuos live reload for your backend code.
+- **Live Update**: Provides continuous live reload for your backend code.
 - **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events.
 - **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
 - **Making**: Makes your frontend and backend webpack bundles into single executable.
