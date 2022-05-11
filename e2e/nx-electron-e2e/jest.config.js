@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/e2e\nx-electron-e2e',
+  coverageDirectory: '../../coverage/e2e/nx-electron-e2e',
 };
