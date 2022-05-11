@@ -2,6 +2,6 @@
   "version": 2,
   "projects": {
     "nx-electron": "packages/nx-electron",
-    "nx-electron-e2e": "e2e\\nx-electron-e2e"
+    "nx-electron-e2e": "e2e/nx-electron-e2e"
   }
 }
