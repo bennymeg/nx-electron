@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.1.0](https://github.com/bennymeg/nx-electron/compare/v12.1.0...v13.1.0) (2022-05-16)
+
+
+### Features
+
+* added multiple preload scripts support [#155](https://github.com/bennymeg/nx-electron/issues/155) ([1adc422](https://github.com/bennymeg/nx-electron/commit/1adc4223e764acf2f40884b25c795c897f8d5057))
+* do not generate package json while serving ([209702f](https://github.com/bennymeg/nx-electron/commit/209702f799933507ecda6b635dbcedf86fe82c98))
+* migrate generate package json ([b0d839f](https://github.com/bennymeg/nx-electron/commit/b0d839f467037169d9e66599cd7dfefaecfc000a))
+* **package:** add option for overriding maker options file [#151](https://github.com/bennymeg/nx-electron/issues/151) ([198c22c](https://github.com/bennymeg/nx-electron/commit/198c22c82d19043ade793f6c0dc058c7ff98a50c))
+* **serve:** added rederer debugging port option [#136](https://github.com/bennymeg/nx-electron/issues/136) ([8958f32](https://github.com/bennymeg/nx-electron/commit/8958f32e060743ac77cab63bad3c45ded1e6265f))
+
+
+### Bug Fixes
+
+* app init asset folder generation ([bbe1661](https://github.com/bennymeg/nx-electron/commit/bbe1661234b9e971ea6c2b13c44a4f81208819ba))
+* app init asset folder generation ([4acace3](https://github.com/bennymeg/nx-electron/commit/4acace3b86764beb2c1312a7e8bb8a57cbf5a033))
+* app init asset folder generation (2) ([801f653](https://github.com/bennymeg/nx-electron/commit/801f653f1b3bf8e627de393b59ef72d457fcfbc6))
+* deps audit ([22d8d00](https://github.com/bennymeg/nx-electron/commit/22d8d00dff56dc105c4a7657310e41a441e29b3a))
+* empty maker option path ([d659149](https://github.com/bennymeg/nx-electron/commit/d659149d9cefd9c6c15c429b15d26f69842091fa))
+* remove file extension from preload webpack entry ([b23abba](https://github.com/bennymeg/nx-electron/commit/b23abba69b43dfaa302dcdeeaa3f3282d3afa304))
+* temporarly added angular-devkit ([6abd615](https://github.com/bennymeg/nx-electron/commit/6abd61509031ca7f22b28a5e49a7b9446718d89c))
+* updated path delimeters for consistency ([5e90a9f](https://github.com/bennymeg/nx-electron/commit/5e90a9fb23c329440d200f3ecfd95572575bacb4))
+
 ## [12.1.0](https://github.com/bennymeg/nx-electron/compare/v12.0.0-beta.0...v12.1.0) (2022-02-04)
 
 
