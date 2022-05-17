@@ -16,8 +16,6 @@
   },
   "private": true,
   "devDependencies": {
-    "@angular-devkit/core": "^13.3.4",
-    "@angular-devkit/schematics": "^13.3.4",
     "@nrwl/angular": "13.10.3",
     "@nrwl/cli": "13.10.3",
     "@nrwl/devkit": "13.10.3",

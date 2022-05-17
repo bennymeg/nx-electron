@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "13.1.0",
+  "version": "13.1.1",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -46,10 +46,14 @@
     "executors"
   ],
   "peerDependencies": {
-    "@nrwl/workspace": "^13",
     "electron": "*"
   },
   "dependencies": {
+    "@angular-devkit/schematics": "^13",
+    "@nrwl/devkit": "^13",
+    "@nrwl/jest": "^13",
+    "@nrwl/linter": "^13",
+    "@nrwl/workspace": "^13",
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^10.2.4",
     "electron-builder": "^22.14.13",
