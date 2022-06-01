@@ -8,10 +8,7 @@ import { promisify } from 'util';
 import { getSourceRoot } from '../../utils/workspace';
 import { normalizePackagingOptions } from '../../utils/normalize';
 
-import { Observable, from, of } from 'rxjs';
-import { map, tap, concatMap, catchError } from 'rxjs/operators';
 import { platform } from 'os';
-
 import stripJsonComments from 'strip-json-comments';
 
 try {
@@ -121,6 +118,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
       output: join(context.root, outputPath)
     },
     files: files.concat([
+      './package.json',
       {
           from: resolve(options.sourcePath, options.frontendProject),
           to: options.frontendProject,
@@ -136,7 +134,6 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
           to: '',
           filter: ['index.js', 'package.json']
       },      
-      './package.json',
       '!(**/*.+(js|css).map)',
     ])
   };
