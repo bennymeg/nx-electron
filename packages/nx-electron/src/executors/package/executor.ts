@@ -108,9 +108,15 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 
 function _createBaseConfig(options: PackageElectronBuilderOptions, context: ExecutorContext): Configuration {
   const files: Array<FileSet | string> = options.files ?
-   (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+    (Array.isArray(options.files) ? options.files : [options.files]) : Array<FileSet | string>();
   const outputPath = options.prepackageOnly ? 
     options.outputPath.replace('executables', 'packages') : options.outputPath;
+
+  files.forEach(file => {
+    if (file && typeof file === 'object' && file.from && file.from.length > 0) {
+      file.from = resolve(options.sourcePath, file.from);
+    }
+  });
 
   return {
     directories: {
