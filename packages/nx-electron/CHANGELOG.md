@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.2.0](https://github.com/bennymeg/nx-electron/compare/v13.1.0...v13.2.0) (2022-06-01)
+
+
+### Features
+
+* resolve maker added file path [#169](https://github.com/bennymeg/nx-electron/issues/169) ([1506470](https://github.com/bennymeg/nx-electron/commit/1506470cd380afe5ebcef9f3e35fbdd7531859b4))
+
+
+### Bug Fixes
+
+* added missing dependencies [#146](https://github.com/bennymeg/nx-electron/issues/146), [#166](https://github.com/bennymeg/nx-electron/issues/166) ([d37a7bd](https://github.com/bennymeg/nx-electron/commit/d37a7bd9256591819772b0c01fe231c02eda406e))
+* moved global package.json down in hierarchy [#167](https://github.com/bennymeg/nx-electron/issues/167) ([7a72016](https://github.com/bennymeg/nx-electron/commit/7a720167d81128f0ed5e4d9a5afc767711259099))
+
 ## [13.1.0](https://github.com/bennymeg/nx-electron/compare/v12.1.0...v13.1.0) (2022-05-16)
 
 
