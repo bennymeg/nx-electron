@@ -24,7 +24,7 @@
     "lint": "nx lint nx-electron",
     "lint:fix": "npm run lint --fix",
     "test": "nx test nx-electron",
-    "build": "nx build nx-electron",
+    "build": "cd ../.. && nx build nx-electron",
     "release": "standard-version",
     "release:alpha": "standard-version",
     "release:beta": "standard-version",
