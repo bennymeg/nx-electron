@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "13.1.0",
+  "version": "14.0.0-alpha.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -46,7 +46,7 @@
     "executors"
   ],
   "peerDependencies": {
-    "@nrwl/workspace": "^13",
+    "@nrwl/workspace": "^14",
     "electron": "*"
   },
   "dependencies": {
