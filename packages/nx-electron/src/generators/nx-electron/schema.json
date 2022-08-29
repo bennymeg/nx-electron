@@ -23,6 +23,14 @@
       "description": "Frontend project that needs to access this application.",
       "x-prompt": "What's the name of the web app in your workspace you'd like to use inside Electron?"
     },
+    "extraProjects": {
+      "type": "array",
+      "description": "Extra frontend project that needs to access this application.",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "addProxy": {
       "type": "boolean",
       "default": false,

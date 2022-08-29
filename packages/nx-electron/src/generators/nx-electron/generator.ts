@@ -127,10 +127,12 @@ function addProject(tree: Tree, options: NormalizedSchema) {
 }
 
 function updateConstantsFile(tree: Tree, options: NormalizedSchema) {
+  const rendererAppName = !options.frontendProject || options.frontendProject == '' ? undefined : options.frontendProject;
+
   tree.write(
     join(options.appProjectRoot, 'src/app/constants.ts'),
     stripIndents`export const rendererAppPort = 4200;
-    export const rendererAppName = '${options.frontendProject || options.name.split('-')[0] + '-web'}';
+    export const rendererAppName = '${rendererAppName}';                        // options.name.split('-')[0] + '-web'
     export const electronAppName = '${options.name}';
     export const updateServerUrl = 'https://deployment-server-url.com';         // TODO: insert your update server url here
     `
