@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { resolve, dirname, relative, basename } from 'path';
-import { AdditionalEntryPoint} from './types';
-import { BuildElectronBuilderOptions, NormalizedBuildElectronBuilderOptions} from '../executors/build/executor';
+import { AdditionalEntryPoint } from './types';
+import {
+  BuildElectronBuilderOptions,
+  NormalizedBuildElectronBuilderOptions,
+} from '../executors/build/executor';
 import { PackageElectronBuilderOptions } from '../executors/package/executor';
 import { statSync } from 'fs';
 
@@ -9,7 +13,12 @@ export interface FileReplacement {
   with: string;
 }
 
-export function normalizeBuildOptions( options: BuildElectronBuilderOptions, root: string, sourceRoot: string, projectRoot: string): NormalizedBuildElectronBuilderOptions {
+export function normalizeBuildOptions(
+  options: BuildElectronBuilderOptions,
+  root: string,
+  sourceRoot: string,
+  projectRoot: string
+): NormalizedBuildElectronBuilderOptions {
   return {
     ...options,
     root,
@@ -20,7 +29,9 @@ export function normalizeBuildOptions( options: BuildElectronBuilderOptions, roo
     tsConfig: resolve(root, options.tsConfig),
     fileReplacements: normalizeFileReplacements(root, options.fileReplacements),
     assets: normalizeAssets(options.assets, root, sourceRoot),
-    webpackConfig: options.webpackConfig ? resolve(root, options.webpackConfig) : options.webpackConfig,
+    webpackConfig: options.webpackConfig
+      ? resolve(root, options.webpackConfig)
+      : options.webpackConfig,
     additionalEntryPoints: normalizeAdditionalEntries(
       root,
       options.additionalEntryPoints ?? []
@@ -29,11 +40,13 @@ export function normalizeBuildOptions( options: BuildElectronBuilderOptions, roo
   };
 }
 
-export function normalizePackagingOptions<T extends PackageElectronBuilderOptions>(options: T, root: string, sourceRoot: string): T {
+export function normalizePackagingOptions<
+  T extends PackageElectronBuilderOptions
+>(options: T, root: string, sourceRoot: string): T {
   return {
     ...options,
     root,
-    sourceRoot
+    sourceRoot,
   };
 }
 

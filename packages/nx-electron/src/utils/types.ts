@@ -32,6 +32,7 @@ export interface BuildBuilderOptions {
   poll?: number;
 
   fileReplacements: FileReplacement[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assets?: any[];
 
   progress?: boolean;
@@ -45,7 +46,7 @@ export interface BuildBuilderOptions {
   root?: string;
   sourceRoot?: string;
   projectRoot?: string;
-  
+
   // tsPlugins?: TsPluginEntry[];
 
   additionalEntryPoints?: AdditionalEntryPoint[];

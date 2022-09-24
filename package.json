@@ -1,20 +1,24 @@
 {
   "name": "nx-electron",
   "version": "0.0.0",
-  "license": "Apache-2.0",
+  "private": true,
   "description": "Electron Plugin for Nx",
+  "license": "Apache-2.0",
   "author": "Benny Megidish",
   "scripts": {
-    "start": "nx run nx-electron:serve",
     "build": "nx run nx-electron:build",
     "link": "npm link ./dist/packages/nx-electron/",
-    "test": "nx run nx-electron:test",
     "publish": "cd dist/packages/nx-electron && npm publish",
     "publish:alpha": "cd dist/packages/nx-electron && npm publish --tag alpha",
     "publish:beta": "cd dist/packages/nx-electron && npm publish --tag beta",
-    "release": "cd packages/nx-electron && npm run release"
+    "release": "cd packages/nx-electron && npm run release",
+    "start": "nx run nx-electron:serve",
+    "test": "nx run nx-electron:test"
   },
-  "private": true,
+  "dependencies": {
+    "@angular/core": "14.2.3",
+    "tslib": "2.4.0"
+  },
   "devDependencies": {
     "@nrwl/angular": "14.7.11",
     "@nrwl/cli": "14.7.11",
@@ -32,19 +36,17 @@
     "@typescript-eslint/parser": "5.38.0",
     "bufferutil": "4.0.6",
     "electron": "20.2.0",
+    "electron-builder": "^23.3.3",
     "eslint": "8.15.0",
     "eslint-config-prettier": "8.1.0",
     "jest": "28.1.1",
     "nx": "14.7.11",
     "prettier": "^2.6.2",
+    "rxjs-for-await": "^1.0.0",
     "shx": "0.3.4",
     "standard-version": "9.5.0",
     "ts-jest": "28.0.5",
     "typescript": "4.8.3",
     "utf-8-validate": "5.0.9"
-  },
-  "dependencies": {
-    "@angular/core": "14.2.3",
-    "tslib": "2.4.0"
   }
 }

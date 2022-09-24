@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { normalizeBuildOptions } from './normalize';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import * as fs from 'fs';
@@ -87,7 +88,9 @@ describe('normalizeBuildOptions', () => {
       sourceRoot,
       projectRoot
     );
-    expect(result.tsConfig).toEqual('/root/apps/electron-app/tsconfig.app.json');
+    expect(result.tsConfig).toEqual(
+      '/root/apps/electron-app/tsconfig.app.json'
+    );
   });
 
   it('should normalize asset patterns', () => {

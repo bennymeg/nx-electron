@@ -43,7 +43,7 @@ describe('app', () => {
         skipPackageJson: false,
         linter: Linter.None,
         standaloneConfig: false,
-        unitTestRunner: 'none'
+        unitTestRunner: 'none',
       });
       const workspaceJson = readJson(tree, '/workspace.json');
       const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
@@ -67,7 +67,8 @@ describe('app', () => {
                 inspect: false,
                 fileReplacements: [
                   {
-                    replace: 'apps/electron-app/src/environments/environment.ts',
+                    replace:
+                      'apps/electron-app/src/environments/environment.ts',
                     with: 'apps/electron-app/src/environments/environment.prod.ts',
                   },
                 ],
@@ -421,7 +422,35 @@ describe('app', () => {
     });
   });
 
-    it('should update workspace.json', async () => {
+  it('should update workspace.json', async () => {
+    await applicationGenerator(tree, {
+      name: 'electron-app',
+      frontendProject: 'electron-web',
+      addProxy: false,
+      proxyPort: 3000,
+      skipFormat: false,
+      skipPackageJson: false,
+      linter: Linter.None,
+      standaloneConfig: false,
+      unitTestRunner: 'none',
+    } as Schema);
+    const workspaceJson = readJson(tree, '/workspace.json');
+    const project = workspaceJson.projects['electron-app'];
+    const buildTarget = project.architect.build;
+
+    expect(buildTarget.options.main).toEqual('apps/electron-app/src/main.js');
+    expect(buildTarget.configurations.production.fileReplacements).toEqual([
+      {
+        replace: 'apps/electron-app/src/environments/environment.js',
+        with: 'apps/electron-app/src/environments/environment.prod.js',
+      },
+    ]);
+  });
+
+  describe('--skipFormat', () => {
+    it('should format files by default', async () => {
+      jest.spyOn(devkit, 'formatFiles');
+
       await applicationGenerator(tree, {
         name: 'electron-app',
         frontendProject: 'electron-web',
@@ -432,34 +461,6 @@ describe('app', () => {
         linter: Linter.None,
         standaloneConfig: false,
         unitTestRunner: 'none',
-      } as Schema);
-      const workspaceJson = readJson(tree, '/workspace.json');
-      const project = workspaceJson.projects['electron-app'];
-      const buildTarget = project.architect.build;
-
-      expect(buildTarget.options.main).toEqual('apps/electron-app/src/main.js');
-      expect(buildTarget.configurations.production.fileReplacements).toEqual([
-        {
-          replace: 'apps/electron-app/src/environments/environment.js',
-          with: 'apps/electron-app/src/environments/environment.prod.js',
-        },
-      ]);
-    });
-
-  describe('--skipFormat', () => {
-    it('should format files by default', async () => {
-      jest.spyOn(devkit, 'formatFiles');
-
-      await applicationGenerator(tree, {        
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none', 
       });
 
       expect(devkit.formatFiles).toHaveBeenCalled();
@@ -468,7 +469,7 @@ describe('app', () => {
     it('should not format files when --skipFormat=true', async () => {
       jest.spyOn(devkit, 'formatFiles');
 
-      await applicationGenerator(tree, { 
+      await applicationGenerator(tree, {
         name: 'electron-app',
         frontendProject: 'electron-web',
         addProxy: false,

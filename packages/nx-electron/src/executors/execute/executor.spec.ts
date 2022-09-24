@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
 let buildOptions;
 
 jest.mock('@nrwl/devkit');
@@ -5,12 +7,16 @@ const devkit = require('@nrwl/devkit');
 import { ExecutorContext, logger } from '@nrwl/devkit';
 
 jest.mock('child_process');
-let { fork } = require('child_process');
+const { fork } = require('child_process');
 
 jest.mock('tree-kill');
-let treeKill = require('tree-kill');
+const treeKill = require('tree-kill');
 
-import { executor, InspectType, ElectronExecuteBuilderOptions } from './executor';
+import {
+  executor,
+  InspectType,
+  ElectronExecuteBuilderOptions,
+} from './executor';
 
 describe('ElectronExecuteBuilder', () => {
   let options: ElectronExecuteBuilderOptions;
@@ -93,9 +99,7 @@ describe('ElectronExecuteBuilder', () => {
       context
     );
     expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-      execArgv: [
-        '--inspect=9229',
-      ],
+      execArgv: ['--inspect=9229'],
     });
     expect(treeKill).toHaveBeenCalledTimes(0);
     expect(fork).toHaveBeenCalledTimes(1);
@@ -111,11 +115,10 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         )) {
+          console.log(event);
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect=9229',
-          ],
+          execArgv: ['--inspect=9229'],
         });
       });
     });
@@ -129,11 +132,10 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         )) {
+          console.log(event);
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect-brk=9229',
-          ],
+          execArgv: ['--inspect-brk=9229'],
         });
       });
     });
@@ -149,11 +151,10 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         )) {
+          console.log(event);
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect=1234',
-          ],
+          execArgv: ['--inspect=1234'],
         });
       });
     });
@@ -167,6 +168,7 @@ describe('ElectronExecuteBuilder', () => {
     const loggerError = jest.spyOn(logger, 'error');
 
     for await (const event of executor(options, context)) {
+      console.log(event);
     }
     expect(loggerError).toHaveBeenCalledWith('Error Message');
   });
@@ -184,6 +186,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context
     )) {
+      console.log(event);
     }
     expect(loggerError).toHaveBeenLastCalledWith('Error Message');
   });
@@ -197,6 +200,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context
     )) {
+      console.log(event);
     }
     expect(fork).toHaveBeenCalledWith('outfile.js', ['arg1', 'arg2'], {});
   });
@@ -214,6 +218,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context
     )) {
+      console.log(event);
     }
     expect(loggerWarn).toHaveBeenCalled();
   });
@@ -228,6 +233,7 @@ describe('ElectronExecuteBuilder', () => {
         },
         context
       )) {
+        console.log(event);
       }
 
       expect(runExecutor).toHaveBeenCalledTimes(3);
@@ -263,6 +269,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context
         )) {
+          console.log(event);
         }
       } catch (e) {
         expect(e.message).toMatchInlineSnapshot(

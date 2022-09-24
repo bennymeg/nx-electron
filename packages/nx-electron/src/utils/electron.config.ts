@@ -7,19 +7,21 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { getBaseWebpackPartial } from './config';
 
-function getElectronPartial(options: BuildElectronBuilderOptions): Configuration {
+function getElectronPartial(
+  options: BuildElectronBuilderOptions
+): Configuration {
   const webpackConfig: Configuration = {
     output: {
-      libraryTarget: 'commonjs'
+      libraryTarget: 'commonjs',
     },
     target: 'electron-main',
-    node: false
+    node: false,
   };
 
   if (options.optimization) {
     webpackConfig.optimization = {
       minimize: false,
-      concatenateModules: false
+      concatenateModules: false,
     };
   }
 
@@ -36,15 +38,18 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
             keep_fnames: false,
             toplevel: true,
             output: {
-              comments: false
-            }
-          }
+              comments: false,
+            },
+          },
         }),
       ],
     };
 
     if (webpackConfig.optimization) {
-      webpackConfig.optimization = Object.assign(webpackConfig.optimization, obfuscationOptimization);
+      webpackConfig.optimization = Object.assign(
+        webpackConfig.optimization,
+        obfuscationOptimization
+      );
     } else {
       webpackConfig.optimization = obfuscationOptimization;
     }
@@ -55,6 +60,7 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
     webpackConfig.externals = [nodeExternals({ modulesDir })];
   } else if (Array.isArray(options.externalDependencies)) {
     webpackConfig.externals = [
+      // eslint-disable-next-line @typescript-eslint/ban-types
       function (context, callback: Function) {
         if (options.externalDependencies.includes(context.request)) {
           // not bundled

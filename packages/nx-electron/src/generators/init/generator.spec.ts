@@ -1,4 +1,4 @@
-import { addDependenciesToPackageJson, NxJsonConfiguration, readJson, Tree } from '@nrwl/devkit';
+import { addDependenciesToPackageJson, readJson, Tree } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 
 import { nxVersion } from '../../utils/versions';

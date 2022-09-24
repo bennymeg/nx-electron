@@ -1,4 +1,12 @@
-import { runExecutor, stripIndents, parseTargetString, ExecutorContext, logger, readTargetOptions } from '@nrwl/devkit';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  runExecutor,
+  stripIndents,
+  parseTargetString,
+  ExecutorContext,
+  logger,
+  readTargetOptions,
+} from '@nrwl/devkit';
 import { ChildProcess, spawn } from 'child_process';
 import { promisify } from 'util';
 import electron from 'electron';
@@ -7,14 +15,17 @@ import treeKill from 'tree-kill';
 import { ElectronBuildEvent } from '../build/executor';
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require('dotenv').config();
-} catch (e) {}
+} catch (e) {
+  console.error(e);
+}
 
 export const enum InspectType {
   Inspect = 'inspect',
   InspectBrk = 'inspect-brk',
   InspectBrkNode = 'inspect-brk-node',
-  InspectBrkElectron = 'inspect-brk-electron'
+  InspectBrkElectron = 'inspect-brk-electron',
 }
 
 export interface ElectronExecuteBuilderOptions {
@@ -30,7 +41,10 @@ export interface ElectronExecuteBuilderOptions {
 
 let subProcess: ChildProcess = null;
 
-export async function* executor(options: ElectronExecuteBuilderOptions, context: ExecutorContext) {
+export async function* executor(
+  options: ElectronExecuteBuilderOptions,
+  context: ExecutorContext
+) {
   process.on('SIGTERM', () => {
     subProcess?.kill();
     process.exit(128 + 15);
@@ -62,7 +76,10 @@ export async function* executor(options: ElectronExecuteBuilderOptions, context:
   }
 }
 
-function runProcess(event: ElectronBuildEvent, options: ElectronExecuteBuilderOptions) {
+function runProcess(
+  event: ElectronBuildEvent,
+  options: ElectronExecuteBuilderOptions
+) {
   if (subProcess) {
     throw new Error('Already running');
   }
@@ -99,11 +116,14 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
   return args;
 }
 
-async function handleBuildEvent(event: ElectronBuildEvent, options: ElectronExecuteBuilderOptions) {
+async function handleBuildEvent(
+  event: ElectronBuildEvent,
+  options: ElectronExecuteBuilderOptions
+) {
   if ((!event.success || options.watch) && subProcess) {
     await killProcess();
   }
-  
+
   runProcess(event, options);
 }
 
@@ -128,9 +148,15 @@ async function killProcess() {
   }
 }
 
-async function* startBuild(options: ElectronExecuteBuilderOptions, context: ExecutorContext) {
+async function* startBuild(
+  options: ElectronExecuteBuilderOptions,
+  context: ExecutorContext
+) {
   const buildTarget = parseTargetString(options.buildTarget);
-  const buildOptions = readTargetOptions<ElectronExecuteBuilderOptions>(buildTarget, context);
+  const buildOptions = readTargetOptions<ElectronExecuteBuilderOptions>(
+    buildTarget,
+    context
+  );
 
   if (buildOptions['optimization']) {
     logger.warn(stripIndents`
@@ -154,12 +180,16 @@ async function* startBuild(options: ElectronExecuteBuilderOptions, context: Exec
   );
 }
 
-function runWaitUntilTargets(options: ElectronExecuteBuilderOptions, context: ExecutorContext): Promise<{ success: boolean }[]> {
+function runWaitUntilTargets(
+  options: ElectronExecuteBuilderOptions,
+  context: ExecutorContext
+): Promise<{ success: boolean }[]> {
   return Promise.all(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
       const target = parseTargetString(waitUntilTarget);
       const output = await runExecutor(target, {}, context);
 
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise<{ success: boolean }>(async (resolve) => {
         let event = await output.next();
         // Resolve after first event

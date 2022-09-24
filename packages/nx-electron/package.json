@@ -1,5 +1,5 @@
 {
-  "name": "nx-electron",
+  "name": "@rocket-monkey/nx-electron",
   "version": "13.3.1",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",

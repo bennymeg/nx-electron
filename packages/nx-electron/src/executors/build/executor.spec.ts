@@ -1,6 +1,6 @@
-import { ExecutorContext } from '@nrwl/devkit';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ExecutorContext, ProjectGraph } from '@nrwl/devkit';
 import * as projectGraph from '@nrwl/workspace/src/core/project-graph';
-import type { ProjectGraph } from '@nrwl/workspace/src/core/project-graph';
 import { of } from 'rxjs';
 import executor, { BuildElectronBuilderOptions } from './executor';
 
