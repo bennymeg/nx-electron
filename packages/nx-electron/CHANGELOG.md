@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.3.1](https://github.com/bennymeg/nx-electron/compare/v13.3.0...v13.3.1) (2022-09-24)
+
 ## 13.3.0 (2022-09-24)
 
 
