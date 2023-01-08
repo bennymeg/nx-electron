@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.2.2](https://github.com/bennymeg/nx-electron/compare/v13.2.1...v13.2.2) (2023-01-08)
+
+
+### Bug Fixes
+
+* build script path ([f89a13b](https://github.com/bennymeg/nx-electron/commit/f89a13b586e16b5d3aec4b913494e4e7dd1b0232))
+
 ### [13.2.1](https://github.com/bennymeg/nx-electron/compare/v13.2.0...v13.2.1) (2022-06-01)
 
 ## [13.2.0](https://github.com/bennymeg/nx-electron/compare/v13.1.0...v13.2.0) (2022-06-01)
