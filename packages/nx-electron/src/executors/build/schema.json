@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "outputCapture": "direct-nodejs",
   "title": "Electron Application Build Target",
   "description": "Electron application build target options for Build Facade",
   "type": "object",
@@ -130,7 +132,6 @@
     }
   },
   "required": ["tsConfig", "main"],
-
   "definitions": {
     "assetPattern": {
       "oneOf": [

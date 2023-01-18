@@ -3,5 +3,6 @@
   "projects": {
     "nx-electron": "packages/nx-electron",
     "nx-electron-e2e": "e2e/nx-electron-e2e"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

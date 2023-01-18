@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "outputCapture": "direct-nodejs",
   "title": "Schema for Executing Electron apps",
   "description": "Electron execution options",
   "type": "object",

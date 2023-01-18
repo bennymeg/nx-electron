@@ -1,5 +1,6 @@
 {
-  "root": "packages/nx-electron",
+  "name": "nx-electron",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-electron/src",
   "projectType": "library",
   "targets": {
@@ -12,9 +13,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/nx-electron"],
+      "outputs": ["{workspaceRoot}/coverage/packages/nx-electron"],
       "options": {
-        "jestConfig": "packages/nx-electron/jest.config.js",
+        "jestConfig": "packages/nx-electron/jest.config.ts",
         "passWithNoTests": true
       }
     },

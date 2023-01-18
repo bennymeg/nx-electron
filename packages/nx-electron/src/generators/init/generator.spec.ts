@@ -1,5 +1,10 @@
-import { addDependenciesToPackageJson, NxJsonConfiguration, readJson, Tree } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  addDependenciesToPackageJson,
+  NxJsonConfiguration,
+  readJson,
+  Tree,
+} from '@nrwl/devkit';
+import { createTreeWithEmptyV1Workspace } from '@nrwl/devkit/testing';
 
 import { nxVersion } from '../../utils/versions';
 import { generator as initGenerator } from './generator';
@@ -8,7 +13,7 @@ describe('init', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyV1Workspace();
   });
 
   it('should add dependencies', async () => {

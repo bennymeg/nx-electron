@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "outputCapture": "direct-nodejs",
   "title": "Electron Application Packaging Target",
   "description": "Electron application packaging target options for Build Facade",
   "type": "object",
