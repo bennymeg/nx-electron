@@ -31,6 +31,7 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
         new TerserPlugin({
           // Exclude uglification for the `vendor` chunk
           // chunkFilter: (chunk) => chunk.name !== 'vendor', // use test/include/exclude options instead
+          exclude: /node_modules/,
           parallel: true,
           terserOptions: {
             mangle: true,
