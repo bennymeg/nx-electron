@@ -8,15 +8,10 @@ import { promisify } from 'util';
 import { getSourceRoot } from '../../utils/workspace';
 import { normalizePackagingOptions } from '../../utils/normalize';
 
-import { Observable, from, of } from 'rxjs';
-import { map, tap, concatMap, catchError } from 'rxjs/operators';
 import { platform } from 'os';
 
 import stripJsonComments from 'strip-json-comments';
 
-try {
-  require('dotenv').config();
-} catch (e) {}
 
 const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path, data, { encoding: 'utf8' });
 
@@ -46,7 +41,7 @@ export async function executor(rawOptions: PackageElectronBuilderOptions, contex
   DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
   FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
   *********************************************************`);
-  let success: boolean = false;
+  let success = false;
 
   try {
     const { sourceRoot, projectRoot } = getSourceRoot(context);
@@ -130,7 +125,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
     options.extraProjects.forEach(project => {
       files = files.concat([
         {
-            from: resolve(options.sourcePath, project),
+            from: resolve(options.sourcePath, project.trim()),
             to: project,
             filter: ['**/!(*.+(js|css).map)']
         }
@@ -181,7 +176,7 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
 }
 
 function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: PackageElectronBuilderOptions): CliOptions {
-  let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+  const normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
 
   if (rawOptions.prepackageOnly) {
     normalizedOptions.dir = true;

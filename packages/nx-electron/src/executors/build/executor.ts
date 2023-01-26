@@ -15,9 +15,6 @@ import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
 
-try {
-  require('dotenv').config();
-} catch (e) {}
 
 export type ElectronBuildEvent = {
   outfile: string;

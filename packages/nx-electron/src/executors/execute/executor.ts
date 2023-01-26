@@ -6,9 +6,6 @@ import treeKill from 'tree-kill';
 
 import { ElectronBuildEvent } from '../build/executor';
 
-try {
-  require('dotenv').config();
-} catch (e) {}
 
 export const enum InspectType {
   Inspect = 'inspect',
