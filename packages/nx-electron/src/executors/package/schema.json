@@ -11,7 +11,7 @@
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What's the name the of electron application you would like to package? (backend)"
+      "x-prompt": "What's the name the of electron (backend) application you would like to package?"
     },
     "frontendProject": {
       "type": "string",
@@ -72,5 +72,5 @@
       "description": "Overrides the '{sourceRoot}/app/options/maker.options.json' configuration file path."
     }
   },
-  "required": ["name", "frontendProject"]
+  "required": ["name"]
 }

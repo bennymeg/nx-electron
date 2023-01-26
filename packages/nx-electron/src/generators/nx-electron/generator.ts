@@ -80,7 +80,7 @@ function getPackageConfig(options: NormalizedSchema): TargetConfiguration {
     executor: 'nx-electron:package',
     options: {
       name: options.name,
-      frontendProject: options.frontendProject,
+      frontendProject: options.frontendProject || '',
       outputPath: 'dist/packages',
       prepackageOnly: true
     }
@@ -92,7 +92,7 @@ function getMakeConfig(options: NormalizedSchema): TargetConfiguration {
     executor: 'nx-electron:make',
     options: {
       name: options.name,
-      frontendProject: options.frontendProject,
+      frontendProject: options.frontendProject || '',
       outputPath: 'dist/executables'
     }
   };
@@ -127,7 +127,7 @@ function addProject(tree: Tree, options: NormalizedSchema) {
 }
 
 function updateConstantsFile(tree: Tree, options: NormalizedSchema) {
-  const rendererAppName = !options.frontendProject || options.frontendProject == '' ? undefined : options.frontendProject;
+  const rendererAppName = !options.frontendProject ? '' : options.frontendProject;
 
   tree.write(
     join(options.appProjectRoot, 'src/app/constants.ts'),

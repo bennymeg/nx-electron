@@ -27,6 +27,7 @@
       "type": "array",
       "description": "Extra frontend project that needs to access this application.",
       "default": [],
+      "uniqueItems": true,
       "items": {
         "type": "string"
       }
@@ -77,5 +78,5 @@
       "type": "boolean"
     }
   },
-  "required": ["frontendProject"]
+  "required": ["name"]
 }
