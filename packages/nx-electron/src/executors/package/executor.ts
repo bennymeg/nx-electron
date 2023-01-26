@@ -113,26 +113,26 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 function _createBaseConfig(options: PackageElectronBuilderOptions, context: ExecutorContext): Configuration {
   const outputPath = options.prepackageOnly ? 
     options.outputPath.replace('executables', 'packages') : options.outputPath;
-  const files: Array<FileSet | string> = options.files ?
+  let files: Array<FileSet | string> = options.files ?
    (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
 
    if (options.frontendProject && options.frontendProject != '') {
-    files.concat([
+    files = files.concat([
       {
           from: resolve(options.sourcePath, options.frontendProject),
           to: options.frontendProject,
-          filter: ['**/!(*.+(js|css).map)', 'assets']
+          filter: ['**/!(*.+(js|css).map)']
       }
     ]);
    }
 
    if (options.extraProjects) {
     options.extraProjects.forEach(project => {
-      files.concat([
+      files = files.concat([
         {
             from: resolve(options.sourcePath, project),
             to: project,
-            filter: ['**/!(*.+(js|css).map)', 'assets']
+            filter: ['**/!(*.+(js|css).map)']
         }
       ]);
     })
@@ -144,6 +144,7 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
       output: join(context.root, outputPath)
     },
     files: files.concat([
+      './package.json',
       {
           from: resolve(options.sourcePath, options.name),
           to: options.name,
@@ -154,7 +155,6 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
           to: '',
           filter: ['index.js', 'package.json']
       },      
-      './package.json',
       '!(**/*.+(js|css).map)',
     ])
   };
