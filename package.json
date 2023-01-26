@@ -30,11 +30,11 @@
     "@nrwl/workspace": "14.8.6",
     "@swc-node/register": "^1.4.2",
     "@swc/core": "^1.2.173",
-    "@types/circular-dependency-plugin": "^5.0.1",
+    "@types/circular-dependency-plugin": "^5.0.5",
     "@types/copy-webpack-plugin": "^6.4.0",
     "@types/jest": "28.1.8",
     "@types/node": "18.7.1",
-    "@types/rimraf": "^3.0.0",
+    "@types/rimraf": "^3.0.2",
     "@types/terser-webpack-plugin": "^4.2.0",
     "@types/webpack": "^4.41.26",
     "@types/webpack-merge": "^4.1.5",
@@ -50,14 +50,14 @@
     "nx": "14.8.6",
     "prettier": "2.6.2",
     "shx": "^0.3.4",
-    "standard-version": "^9.2.0",
+    "standard-version": "^9.5.0",
     "ts-jest": "28.0.8",
     "typescript": "4.8.4",
     "utf-8-validate": "^5.0.9"
   },
   "dependencies": {
     "@angular/core": "14.2.2",
-    "tslib": "^2.4.0"
+    "tslib": "^2.4.1"
   }
 }
 
