@@ -46,7 +46,7 @@
     "executors"
   ],
   "peerDependencies": {
-    "@nrwl/workspace": "^14.8.6",
+    "@nrwl/workspace": "^15.6.3",
     "electron": "*"
   },
   "dependencies": {
