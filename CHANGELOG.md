@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+**Note:** As of v14, all notable changes to this project will be documented [HERE](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/CHANGELOG.md). See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ### [13.2.3](https://github.com/bennymeg/nx-electron/compare/v13.2.2...v13.2.3) (2023-01-08)
 
