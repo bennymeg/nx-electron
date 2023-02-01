@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -57,7 +57,7 @@
     "@nrwl/workspace": "^13",
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^10.2.4",
-    "electron-builder": "^23.0.3",
+    "electron-builder": "^23.6.0",
     "fork-ts-checker-webpack-plugin": "^6.5.2",
     "license-webpack-plugin": "^4.0.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
