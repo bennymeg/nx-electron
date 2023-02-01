@@ -11,15 +11,13 @@ import { normalizePackagingOptions } from '../../utils/normalize';
 import { platform } from 'os';
 import stripJsonComments from 'strip-json-comments';
 
-try {
-  require('dotenv').config();
-} catch (e) {}
 
 const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path, data, { encoding: 'utf8' });
 
 export interface PackageElectronBuilderOptions extends Configuration {
   name: string;
   frontendProject: string;
+  extraProjects: string[];
   platform: string | string[];
   arch: string;
   root: string;
@@ -42,7 +40,7 @@ export async function executor(rawOptions: PackageElectronBuilderOptions, contex
   DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
   FOR PRODUCTION BEFORE PACKAGING / MAKING YOUR ARTIFACT!
   *********************************************************`);
-  let success: boolean = false;
+  let success = false;
 
   try {
     const { sourceRoot, projectRoot } = getSourceRoot(context);
@@ -107,10 +105,32 @@ function _createTargets(platforms: Platform[], type: string, arch: string): Map<
 }
 
 function _createBaseConfig(options: PackageElectronBuilderOptions, context: ExecutorContext): Configuration {
-  const files: Array<FileSet | string> = options.files ?
-    (Array.isArray(options.files) ? options.files : [options.files]) : Array<FileSet | string>();
   const outputPath = options.prepackageOnly ? 
     options.outputPath.replace('executables', 'packages') : options.outputPath;
+  let files: Array<FileSet | string> = options.files ?
+   (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+
+   if (options.frontendProject && options.frontendProject != '') {
+    files = files.concat([
+      {
+          from: resolve(options.sourcePath, options.frontendProject),
+          to: options.frontendProject,
+          filter: ['**/!(*.+(js|css).map)']
+      }
+    ]);
+   }
+
+   if (options.extraProjects) {
+    options.extraProjects.forEach(project => {
+      files = files.concat([
+        {
+            from: resolve(options.sourcePath, project.trim()),
+            to: project,
+            filter: ['**/!(*.+(js|css).map)']
+        }
+      ]);
+    })
+   }
 
   files.forEach(file => {
     if (file && typeof file === 'object' && file.from && file.from.length > 0) {
@@ -125,11 +145,6 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
     },
     files: files.concat([
       './package.json',
-      {
-          from: resolve(options.sourcePath, options.frontendProject),
-          to: options.frontendProject,
-          filter: ['**/!(*.+(js|css).map)', 'assets']
-      },
       {
           from: resolve(options.sourcePath, options.name),
           to: options.name,
@@ -150,6 +165,7 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
       
   delete config.name;
   delete config.frontendProject;
+  delete config.extraProjects;
   delete config.platform;
   delete config.arch;
   delete config.root;
@@ -165,7 +181,7 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
 }
 
 function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: PackageElectronBuilderOptions): CliOptions {
-  let normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+  const normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
 
   if (rawOptions.prepackageOnly) {
     normalizedOptions.dir = true;

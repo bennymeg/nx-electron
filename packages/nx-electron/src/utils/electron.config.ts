@@ -30,6 +30,7 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
         new TerserPlugin({
           // Exclude uglification for the `vendor` chunk
           // chunkFilter: (chunk) => chunk.name !== 'vendor', // use test/include/exclude options instead
+          exclude: /node_modules/,
           parallel: true,
           terserOptions: {
             mangle: true,
@@ -55,7 +56,7 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
     webpackConfig.externals = [nodeExternals({ modulesDir })];
   } else if (Array.isArray(options.externalDependencies)) {
     webpackConfig.externals = [
-      function (context, callback: Function) {
+      function (context, callback) {
         if (options.externalDependencies.includes(context.request)) {
           // not bundled
           return callback(null, `commonjs ${context.request}`);

@@ -1,6 +1,6 @@
 import { ExecutorContext } from '@nrwl/devkit';
 import { join } from 'path';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 import { executor, PackageElectronBuilderOptions } from './executor';
 
 jest.mock('@nrwl/workspace/src/core/project-graph');

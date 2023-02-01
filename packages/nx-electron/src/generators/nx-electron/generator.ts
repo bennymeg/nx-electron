@@ -80,7 +80,7 @@ function getPackageConfig(options: NormalizedSchema): TargetConfiguration {
     executor: 'nx-electron:package',
     options: {
       name: options.name,
-      frontendProject: options.frontendProject,
+      frontendProject: options.frontendProject || '',
       outputPath: 'dist/packages',
       prepackageOnly: true
     }
@@ -92,7 +92,7 @@ function getMakeConfig(options: NormalizedSchema): TargetConfiguration {
     executor: 'nx-electron:make',
     options: {
       name: options.name,
-      frontendProject: options.frontendProject,
+      frontendProject: options.frontendProject || '',
       outputPath: 'dist/executables'
     }
   };
@@ -127,10 +127,12 @@ function addProject(tree: Tree, options: NormalizedSchema) {
 }
 
 function updateConstantsFile(tree: Tree, options: NormalizedSchema) {
+  const rendererAppName = !options.frontendProject ? '' : options.frontendProject;
+
   tree.write(
     join(options.appProjectRoot, 'src/app/constants.ts'),
     stripIndents`export const rendererAppPort = 4200;
-    export const rendererAppName = '${options.frontendProject || options.name.split('-')[0] + '-web'}';
+    export const rendererAppName = '${rendererAppName}';                        // options.name.split('-')[0] + '-web'
     export const electronAppName = '${options.name}';
     export const updateServerUrl = 'https://deployment-server-url.com';         // TODO: insert your update server url here
     `

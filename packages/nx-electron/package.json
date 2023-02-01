@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "13.2.3",
+  "version": "14.0.0-beta.1",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -46,6 +46,7 @@
     "executors"
   ],
   "peerDependencies": {
+    "@nrwl/workspace": "^14.7.8",
     "electron": "*"
   },
   "dependencies": {
@@ -68,8 +69,8 @@
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.3.0",
     "tsconfig-paths-webpack-plugin": "^3.5.2",
-    "webpack": "^5.72.0",
-    "webpack-dev-server": "^4.8.1",
+    "webpack": "^5.74.0",
+    "webpack-dev-server": "^4.11.1",
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
