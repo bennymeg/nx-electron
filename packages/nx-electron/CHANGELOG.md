@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.0.0](https://github.com/bennymeg/nx-electron/compare/v13.2.3...v14.0.0) (2023-02-01)
+
+
+### Features
+
+* add support for backend only / multiple frontend applications [#154](https://github.com/bennymeg/nx-electron/issues/154), [#170](https://github.com/bennymeg/nx-electron/issues/170) ([dff1926](https://github.com/bennymeg/nx-electron/commit/dff1926622b0a96794778c2450bc7b97e6ebcc96))
+* added extraProjects option [#154](https://github.com/bennymeg/nx-electron/issues/154) ([3d70e28](https://github.com/bennymeg/nx-electron/commit/3d70e2864b206a917b4af0cceae220a52e0c51da))
+* dont minimize node modules ([78f0fbc](https://github.com/bennymeg/nx-electron/commit/78f0fbc5c41b344dd4023181b41da2af15282544))
+* make front project optional [#170](https://github.com/bennymeg/nx-electron/issues/170) ([884181d](https://github.com/bennymeg/nx-electron/commit/884181d8dbf0c08750d338a4ae09d26fd4609b2d))
+* migrate to nx v14 ([1ed6a1b](https://github.com/bennymeg/nx-electron/commit/1ed6a1b645185d5ec261845ed0cc8032aac7ab9d))
+
+
+### Bug Fixes
+
+* package projects files list [#154](https://github.com/bennymeg/nx-electron/issues/154), [#170](https://github.com/bennymeg/nx-electron/issues/170) ([41f3676](https://github.com/bennymeg/nx-electron/commit/41f36760471cc8aa8f3061e52c4a493d2e1a7aba))
+* tao appRoot deprecation ([e51bbc3](https://github.com/bennymeg/nx-electron/commit/e51bbc34db233e31bf0894dc05b87d9d9ca6f783))
+
 ### [13.2.3](https://github.com/bennymeg/nx-electron/compare/v13.2.2...v13.2.3) (2023-01-08)
 
 ### [13.2.2](https://github.com/bennymeg/nx-electron/compare/v13.2.1...v13.2.2) (2023-01-08)
