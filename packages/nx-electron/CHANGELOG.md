@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.2](https://github.com/bennymeg/nx-electron/compare/v14.0.0...v14.0.2) (2023-02-01)
+
+
+### Bug Fixes
+
+* removed unused dependencies from v13 ([ab450d8](https://github.com/bennymeg/nx-electron/commit/ab450d886cca21089712f7b738233a55333aa376))
+
 ## [14.0.0](https://github.com/bennymeg/nx-electron/compare/v13.2.3...v14.0.0) (2023-02-01)
 
 
