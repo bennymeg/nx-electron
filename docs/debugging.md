@@ -61,7 +61,7 @@ In this document we will describe how to configure you IDE to debug your nx-elec
 `"build:main": "nx build {electron-app-name}"`
 
 ## Rider / Webstorm
-Edit your Electron App project.json and add the following rows to the `serve`-configuration:
+Edit your Electron App project.json and add the following lines to the `serve`-configuration:
 ```json
  "serve": {
       "executor": "nx-electron:execute",
