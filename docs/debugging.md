@@ -59,3 +59,27 @@ In this document we will describe how to configure you IDE to debug your nx-elec
 
 - package.json script
 `"build:main": "nx build {electron-app-name}"`
+
+## Rider / Webstorm
+Edit your Electron App project.json and add the following lines to the `serve`-configuration:
+```json
+ "serve": {
+      "executor": "nx-electron:execute",
+      "options": {
+        ...
+        "args": [
+          "--remote-debugging-port=9223"
+        ],
+        "inspect": true
+      }
+    },
+```    
+
+This tells electron to open the port 9223 for debugging. 
+
+Next you go to your configurations and add "Attach to Node.js/Chrome"
+![image](https://user-images.githubusercontent.com/3856060/220625282-c1293cb6-80f1-47c5-9ceb-e881d30f8e9e.png)
+
+Edit the port accordingly to the inspection port you defined previously in `project.json`.
+
+Congratulations! You can now debug all renderer processes via Jetbrains Webstorm or Rider IDE.
