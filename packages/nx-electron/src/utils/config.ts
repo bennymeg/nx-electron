@@ -7,7 +7,7 @@ import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import { readTsConfig } from '@nrwl/workspace/src/utilities/typescript';
+import { readTsConfig } from '@nrwl/js';
 import { BuildBuilderOptions } from './types';
 
 export const MAIN_OUTPUT_FILENAME = 'main.js';
