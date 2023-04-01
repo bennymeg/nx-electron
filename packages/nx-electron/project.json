@@ -1,4 +1,5 @@
 {
+  "name": "nx-electron",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-electron/src",
   "projectType": "library",
