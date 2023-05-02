@@ -1,9 +1,9 @@
 import { chain, Rule, Tree } from '@angular-devkit/schematics';
-import { formatFiles, updateWorkspaceInTree } from '@nrwl/workspace';
+import { formatFiles, updateWorkspace } from '@nrwl/workspace';
 import { resolve } from 'path';
 
 function addConfigurations(): Rule {
-  return updateWorkspaceInTree((workspaceJson) => {
+  return updateWorkspace((workspaceJson) => {
     Object.entries<any>(workspaceJson.projects).forEach(
       ([projectName, project]) => {
         if (!project.architect) {
@@ -35,13 +35,13 @@ function addConfigurations(): Rule {
       }
     );
 
-    return workspaceJson;
+    // return workspaceJson;
   });
 }
 
 function addConfigurationFile(): Rule {
-  let rules: Rule = updateWorkspaceInTree((workspaceJson, context, host) => {
-    let workspaceRules: Rule[] = [];
+  return updateWorkspace((workspaceJson) => {
+    const workspaceRules: Rule[] = [];
 
     Object.entries<any>(workspaceJson.projects).forEach(
       ([projectName, project]) => {
@@ -59,10 +59,10 @@ function addConfigurationFile(): Rule {
       }
     );
 
-    return workspaceRules;
+    // return workspaceRules;
   });
 
-  return chain([rules]); 
+  // return chain([rules]); 
 }
 
 function writeConfigurationFile(projectSourceRoot: string): Rule {

@@ -1,8 +1,8 @@
 import { chain, Rule } from '@angular-devkit/schematics';
-import { formatFiles, updateWorkspaceInTree } from '@nrwl/workspace';
+import { formatFiles, updateWorkspace } from '@nrwl/workspace';
 
 function updateConfigurations(): Rule {
-  return updateWorkspaceInTree((workspaceJson) => {
+  return updateWorkspace((workspaceJson) => {
     Object.entries<any>(workspaceJson.projects).forEach(
       ([projectName, project]) => {
         if (!project.architect) {
@@ -36,7 +36,7 @@ function updateConfigurations(): Rule {
       }
     );
     
-    return workspaceJson;
+    //return workspaceJson;
   });
 }
 
