@@ -52,7 +52,7 @@
   "dependencies": {
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^11.0.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^24.3.0",
     "fork-ts-checker-webpack-plugin": "^6.5.2",
     "license-webpack-plugin": "^4.0.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
