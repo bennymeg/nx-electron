@@ -38,7 +38,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@14
+npx create-nx-workspace@15
 ```
 
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
@@ -133,7 +133,7 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 ## Versioning
 
 This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
-I.e. version 13.x of nx-electron will be compatible with version 13.y of NX. 
+I.e. version 15.x of nx-electron will be compatible with version 15.y of NX. 
 
 ## Attribution
 
