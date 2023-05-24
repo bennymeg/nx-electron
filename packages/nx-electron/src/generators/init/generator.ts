@@ -1,9 +1,18 @@
-import { addDependenciesToPackageJson, formatFiles, GeneratorCallback, Tree, updateJson } from '@nrwl/devkit';
+import {
+  addDependenciesToPackageJson,
+  formatFiles,
+  GeneratorCallback,
+  Tree,
+  updateJson,
+} from '@nx/devkit';
 import { Schema } from './schema';
-import { nxElectronVersion, electronVersion, electronBuilderVersion, exitZeroVersion } from '../../utils/versions';
-import { setDefaultCollection } from '@nrwl/workspace/src/utilities/set-default-collection';
-import { jestInitGenerator } from '@nrwl/jest';
-
+import {
+  nxElectronVersion,
+  electronVersion,
+  electronBuilderVersion,
+  exitZeroVersion,
+} from '../../utils/versions';
+import { jestInitGenerator } from '@nx/jest';
 
 function addDependencies(tree: Tree) {
   return addDependenciesToPackageJson(
@@ -11,15 +20,15 @@ function addDependencies(tree: Tree) {
     {},
     {
       'nx-electron': nxElectronVersion,
-      'electron': electronVersion,
-      'exitzero': exitZeroVersion,
+      electron: electronVersion,
+      exitzero: exitZeroVersion,
       // 'electron-builder': electronBuilderVersion,
     }
   );
 }
 
 function moveDependency(tree: Tree) {
-  return updateJson(tree, 'package.json', json => {
+  return updateJson(tree, 'package.json', (json) => {
     json.dependencies = json.dependencies || {};
 
     delete json.dependencies['nx-electron'];
@@ -31,13 +40,14 @@ function moveDependency(tree: Tree) {
 }
 
 function addScripts(tree: Tree) {
-  return updateJson(tree, 'package.json', json => {
+  return updateJson(tree, 'package.json', (json) => {
     json.scripts = json.scripts || {};
 
-    const postinstall = json.scripts["postinstall"];
-    json.scripts["postinstall"] = (postinstall && postinstall !== '') ?
-                                  `${postinstall} && exitzero electron-builder install-app-deps` :
-                                  "exitzero electron-builder install-app-deps";
+    const postinstall = json.scripts['postinstall'];
+    json.scripts['postinstall'] =
+      postinstall && postinstall !== ''
+        ? `${postinstall} && exitzero electron-builder install-app-deps`
+        : 'exitzero electron-builder install-app-deps';
 
     return json;
   });
@@ -78,3 +88,7 @@ export async function generator(tree: Tree, schema: Schema) {
 }
 
 export default generator;
+function setDefaultCollection(tree: Tree, arg1: string) {
+  throw new Error('Function not implemented.');
+}
+

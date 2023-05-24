@@ -1,5 +1,10 @@
-import { addDependenciesToPackageJson, NxJsonConfiguration, readJson, Tree } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  addDependenciesToPackageJson,
+  NxJsonConfiguration,
+  readJson,
+  Tree,
+} from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 import { nxVersion } from '../../utils/versions';
 import { generator as initGenerator } from './generator';
@@ -18,7 +23,7 @@ describe('init', () => {
     addDependenciesToPackageJson(
       tree,
       {
-        '@nrwl/node': nxVersion,
+        '@nx/node': nxVersion,
         [existing]: existingVersion,
       },
       {
@@ -28,10 +33,10 @@ describe('init', () => {
     await initGenerator(tree, { skipFormat: false });
 
     const packageJson = readJson(tree, 'package.json');
-    expect(packageJson.dependencies['@nrwl/node']).toBeUndefined();
+    expect(packageJson.dependencies['@nx/node']).toBeUndefined();
     expect(packageJson.dependencies['tslib']).toBeDefined();
     expect(packageJson.dependencies[existing]).toBeDefined();
-    expect(packageJson.devDependencies['@nrwl/node']).toBeDefined();
+    expect(packageJson.devDependencies['@nx/node']).toBeDefined();
     expect(packageJson.devDependencies[existing]).toBeDefined();
   });
 
@@ -39,7 +44,7 @@ describe('init', () => {
   //   it('should be set if none was set before', async () => {
   //     await initGenerator(tree, {});
   //     const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
-  //     expect(nxJson.cli.defaultCollection).toEqual('@nrwl/node');
+  //     expect(nxJson.cli.defaultCollection).toEqual('@nx/node');
   //   });
   // });
 

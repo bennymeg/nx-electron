@@ -1,8 +1,8 @@
 let buildOptions;
 
-jest.mock('@nrwl/devkit');
-const devkit = require('@nrwl/devkit');
-import { ExecutorContext, logger } from '@nrwl/devkit';
+jest.mock('@nx/devkit');
+const devkit = require('@nx/devkit');
+import { ExecutorContext, logger } from '@nx/devkit';
 
 jest.mock('child_process');
 let { fork } = require('child_process');
@@ -10,7 +10,11 @@ let { fork } = require('child_process');
 jest.mock('tree-kill');
 let treeKill = require('tree-kill');
 
-import { executor, InspectType, ElectronExecuteBuilderOptions } from './executor';
+import {
+  executor,
+  InspectType,
+  ElectronExecuteBuilderOptions,
+} from './executor';
 
 describe('ElectronExecuteBuilder', () => {
   let options: ElectronExecuteBuilderOptions;
@@ -26,7 +30,7 @@ describe('ElectronExecuteBuilder', () => {
     (devkit.readTargetOptions as any).mockImplementation(() => buildOptions);
 
     (devkit.parseTargetString as any).mockImplementation(
-      jest.requireActual('@nrwl/devkit').parseTargetString
+      jest.requireActual('@nx/devkit').parseTargetString
     );
 
     fork.mockImplementation(() => {
@@ -81,7 +85,7 @@ describe('ElectronExecuteBuilder', () => {
     for await (const event of executor(options, context)) {
       expect(event.success).toEqual(true);
     }
-    expect(require('@nrwl/devkit').runExecutor).toHaveBeenCalledWith(
+    expect(require('@nx/devkit').runExecutor).toHaveBeenCalledWith(
       {
         project: 'electron-app',
         target: 'build',
@@ -93,9 +97,7 @@ describe('ElectronExecuteBuilder', () => {
       context
     );
     expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-      execArgv: [
-        '--inspect=9229',
-      ],
+      execArgv: ['--inspect=9229'],
     });
     expect(treeKill).toHaveBeenCalledTimes(0);
     expect(fork).toHaveBeenCalledTimes(1);
@@ -113,9 +115,7 @@ describe('ElectronExecuteBuilder', () => {
         )) {
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect=9229',
-          ],
+          execArgv: ['--inspect=9229'],
         });
       });
     });
@@ -131,9 +131,7 @@ describe('ElectronExecuteBuilder', () => {
         )) {
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect-brk=9229',
-          ],
+          execArgv: ['--inspect-brk=9229'],
         });
       });
     });
@@ -151,9 +149,7 @@ describe('ElectronExecuteBuilder', () => {
         )) {
         }
         expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: [
-            '--inspect=1234',
-          ],
+          execArgv: ['--inspect=1234'],
         });
       });
     });
@@ -220,7 +216,7 @@ describe('ElectronExecuteBuilder', () => {
 
   describe('waitUntilTasks', () => {
     it('should run the tasks before starting the build', async () => {
-      const runExecutor = require('@nrwl/devkit').runExecutor;
+      const runExecutor = require('@nx/devkit').runExecutor;
       for await (const event of executor(
         {
           ...options,

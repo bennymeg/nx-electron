@@ -1,4 +1,10 @@
-import { formatFiles, getProjects, logger, Tree, updateProjectConfiguration } from '@nrwl/devkit';
+import {
+  formatFiles,
+  getProjects,
+  logger,
+  Tree,
+  updateProjectConfiguration,
+} from '@nx/devkit';
 
 export default async function update(host: Tree) {
   const projects = getProjects(host);

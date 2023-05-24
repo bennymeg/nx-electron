@@ -1,6 +1,15 @@
-import { ExecutorContext, logger, stripIndents } from '@nrwl/devkit';
+import { ExecutorContext, logger, stripIndents } from '@nx/devkit';
 
-import { build, Configuration, PublishOptions, Platform, Arch, createTargets, FileSet, CliOptions } from 'electron-builder';
+import {
+  build,
+  Configuration,
+  PublishOptions,
+  Platform,
+  Arch,
+  createTargets,
+  FileSet,
+  CliOptions,
+} from 'electron-builder';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { promisify } from 'util';
@@ -11,8 +20,8 @@ import { normalizePackagingOptions } from '../../utils/normalize';
 import { platform } from 'os';
 import stripJsonComments from 'strip-json-comments';
 
-
-const writeFileAsync = (path: string, data: string) => promisify(writeFile)(path, data, { encoding: 'utf8' });
+const writeFileAsync = (path: string, data: string) =>
+  promisify(writeFile)(path, data, { encoding: 'utf8' });
 
 export interface PackageElectronBuilderOptions extends Configuration {
   name: string;
@@ -24,7 +33,7 @@ export interface PackageElectronBuilderOptions extends Configuration {
   prepackageOnly: boolean;
   sourcePath: string;
   outputPath: string;
-  publishPolicy?: PublishOptions["publish"];
+  publishPolicy?: PublishOptions['publish'];
   makerOptionsPath?: string;
 }
 
@@ -34,7 +43,10 @@ export interface PackageElectronBuilderOutput {
   outputPath: string | string[];
 }
 
-export async function executor(rawOptions: PackageElectronBuilderOptions, context: ExecutorContext): Promise<{ success: boolean; }> { 
+export async function executor(
+  rawOptions: PackageElectronBuilderOptions,
+  context: ExecutorContext
+): Promise<{ success: boolean }> {
   logger.warn(stripIndents`
   *********************************************************
   DO NOT FORGET TO REBUILD YOUR FRONTEND & BACKEND PROJECTS
@@ -44,16 +56,28 @@ export async function executor(rawOptions: PackageElectronBuilderOptions, contex
 
   try {
     const { sourceRoot, projectRoot } = getSourceRoot(context);
-  
-    let options = normalizePackagingOptions(rawOptions, context.root, sourceRoot);
+
+    let options = normalizePackagingOptions(
+      rawOptions,
+      context.root,
+      sourceRoot
+    );
     options = mergePresetOptions(options);
     options = addMissingDefaultOptions(options);
-  
+
     const platforms: Platform[] = _createPlatforms(options.platform);
-    const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(platforms, null, options.arch);
+    const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(
+      platforms,
+      null,
+      options.arch
+    );
     const baseConfig: Configuration = _createBaseConfig(options, context);
     const config: Configuration = _createConfigFromOptions(options, baseConfig);
-    const normalizedOptions: CliOptions = _normalizeBuilderOptions(targets, config, rawOptions);
+    const normalizedOptions: CliOptions = _normalizeBuilderOptions(
+      targets,
+      config,
+      rawOptions
+    );
 
     await beforeBuild(options.root, options.sourcePath, options.name);
     await build(normalizedOptions);
@@ -62,19 +86,30 @@ export async function executor(rawOptions: PackageElectronBuilderOptions, contex
   } catch (error) {
     logger.error(error);
   }
-  
+
   return { success };
 }
 
-async function beforeBuild(projectRoot: string, sourcePath: string, appName: string) {
-  await writeFileAsync(join(projectRoot, sourcePath, appName, 'index.js'), `const Main = require('./${appName}/main.js');`);
+async function beforeBuild(
+  projectRoot: string,
+  sourcePath: string,
+  appName: string
+) {
+  await writeFileAsync(
+    join(projectRoot, sourcePath, appName, 'index.js'),
+    `const Main = require('./${appName}/main.js');`
+  );
 }
 
 function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
   const platforms: Platform[] = [];
 
   if (!rawPlatforms) {
-    const platformMap: Map<string, string> = new Map([['win32', 'windows'], ['darwin', 'mac'], ['linux', 'linux']]); 
+    const platformMap: Map<string, string> = new Map([
+      ['win32', 'windows'],
+      ['darwin', 'mac'],
+      ['linux', 'linux'],
+    ]);
 
     rawPlatforms = platformMap.get(platform());
   }
@@ -100,39 +135,50 @@ function _createPlatforms(rawPlatforms: string | string[]): Platform[] {
   return platforms;
 }
 
-function _createTargets(platforms: Platform[], type: string, arch: string): Map<Platform, Map<Arch, string[]>> {
+function _createTargets(
+  platforms: Platform[],
+  type: string,
+  arch: string
+): Map<Platform, Map<Arch, string[]>> {
   return createTargets(platforms, null, arch);
 }
 
-function _createBaseConfig(options: PackageElectronBuilderOptions, context: ExecutorContext): Configuration {
-  const outputPath = options.prepackageOnly ? 
-    options.outputPath.replace('executables', 'packages') : options.outputPath;
-  let files: Array<FileSet | string> = options.files ?
-   (Array.isArray(options.files) ? options.files : [options.files] ): Array<FileSet | string>()
+function _createBaseConfig(
+  options: PackageElectronBuilderOptions,
+  context: ExecutorContext
+): Configuration {
+  const outputPath = options.prepackageOnly
+    ? options.outputPath.replace('executables', 'packages')
+    : options.outputPath;
+  let files: Array<FileSet | string> = options.files
+    ? Array.isArray(options.files)
+      ? options.files
+      : [options.files]
+    : Array<FileSet | string>();
 
-   if (options.frontendProject && options.frontendProject != '') {
+  if (options.frontendProject && options.frontendProject != '') {
     files = files.concat([
       {
-          from: resolve(options.sourcePath, options.frontendProject),
-          to: options.frontendProject,
-          filter: ['**/!(*.+(js|css).map)']
-      }
+        from: resolve(options.sourcePath, options.frontendProject),
+        to: options.frontendProject,
+        filter: ['**/!(*.+(js|css).map)'],
+      },
     ]);
-   }
+  }
 
-   if (options.extraProjects) {
-    options.extraProjects.forEach(project => {
+  if (options.extraProjects) {
+    options.extraProjects.forEach((project) => {
       files = files.concat([
         {
-            from: resolve(options.sourcePath, project.trim()),
-            to: project,
-            filter: ['**/!(*.+(js|css).map)']
-        }
+          from: resolve(options.sourcePath, project.trim()),
+          to: project,
+          filter: ['**/!(*.+(js|css).map)'],
+        },
       ]);
-    })
-   }
+    });
+  }
 
-  files.forEach(file => {
+  files.forEach((file) => {
     if (file && typeof file === 'object' && file.from && file.from.length > 0) {
       file.from = resolve(options.sourcePath, file.from);
     }
@@ -141,28 +187,31 @@ function _createBaseConfig(options: PackageElectronBuilderOptions, context: Exec
   return {
     directories: {
       ...options.directories,
-      output: join(context.root, outputPath)
+      output: join(context.root, outputPath),
     },
     files: files.concat([
       './package.json',
       {
-          from: resolve(options.sourcePath, options.name),
-          to: options.name,
-          filter: ['main.js', '?(*.)preload.js', 'assets']
+        from: resolve(options.sourcePath, options.name),
+        to: options.name,
+        filter: ['main.js', '?(*.)preload.js', 'assets'],
       },
       {
-          from: resolve(options.sourcePath, options.name),
-          to: '',
-          filter: ['index.js', 'package.json']
-      },      
+        from: resolve(options.sourcePath, options.name),
+        to: '',
+        filter: ['index.js', 'package.json'],
+      },
       '!(**/*.+(js|css).map)',
-    ])
+    ]),
   };
 }
 
-function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseConfig: Configuration): Configuration {
+function _createConfigFromOptions(
+  options: PackageElectronBuilderOptions,
+  baseConfig: Configuration
+): Configuration {
   const config = Object.assign({}, options, baseConfig);
-      
+
   delete config.name;
   delete config.frontendProject;
   delete config.extraProjects;
@@ -172,34 +221,49 @@ function _createConfigFromOptions(options: PackageElectronBuilderOptions, baseCo
   delete config.prepackageOnly;
   delete config['sourceRoot'];
   delete config['$schema'];
-  delete config["publishPolicy"];
+  delete config['publishPolicy'];
   delete config.sourcePath;
   delete config.outputPath;
-  delete config["makerOptionsPath"];
+  delete config['makerOptionsPath'];
 
   return config;
 }
 
-function _normalizeBuilderOptions(targets: Map<Platform, Map<Arch, string[]>>, config: Configuration, rawOptions: PackageElectronBuilderOptions): CliOptions {
-  const normalizedOptions: CliOptions = { config, publish: rawOptions.publishPolicy || null };
+function _normalizeBuilderOptions(
+  targets: Map<Platform, Map<Arch, string[]>>,
+  config: Configuration,
+  rawOptions: PackageElectronBuilderOptions
+): CliOptions {
+  const normalizedOptions: CliOptions = {
+    config,
+    publish: rawOptions.publishPolicy || null,
+  };
 
   if (rawOptions.prepackageOnly) {
     normalizedOptions.dir = true;
   } else {
-    normalizedOptions.targets = targets
+    normalizedOptions.targets = targets;
   }
 
   return normalizedOptions;
 }
 
-function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
+function mergePresetOptions(
+  options: PackageElectronBuilderOptions
+): PackageElectronBuilderOptions {
   // load preset options file
-  const externalOptionsPath: string = options.makerOptionsPath ?
-    resolve(options.root, options.makerOptionsPath) : 
-    join(options.root, options['sourceRoot'], 'app', 'options', 'maker.options.json');
+  const externalOptionsPath: string = options.makerOptionsPath
+    ? resolve(options.root, options.makerOptionsPath)
+    : join(
+        options.root,
+        options['sourceRoot'],
+        'app',
+        'options',
+        'maker.options.json'
+      );
 
   if (statSync(externalOptionsPath).isFile()) {
-    const rawData = readFileSync(externalOptionsPath, 'utf8')
+    const rawData = readFileSync(externalOptionsPath, 'utf8');
     const externalOptions = JSON.parse(stripJsonComments(rawData));
     options = Object.assign(options, externalOptions);
   }
@@ -207,9 +271,13 @@ function mergePresetOptions(options: PackageElectronBuilderOptions): PackageElec
   return options;
 }
 
-function addMissingDefaultOptions(options: PackageElectronBuilderOptions): PackageElectronBuilderOptions {
+function addMissingDefaultOptions(
+  options: PackageElectronBuilderOptions
+): PackageElectronBuilderOptions {
   // remove unset options (use electron builder default values where possible)
-  Object.keys(options).forEach((key) => (options[key] === '') && delete options[key]);
+  Object.keys(options).forEach(
+    (key) => options[key] === '' && delete options[key]
+  );
 
   return options;
 }

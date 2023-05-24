@@ -1,5 +1,5 @@
 import { chain, Rule } from '@angular-devkit/schematics';
-import { formatFiles, updateWorkspace } from '@nrwl/workspace';
+import { formatFiles, updateWorkspace } from '@nx/workspace';
 
 function updateConfigurations(): Rule {
   return updateWorkspace((workspaceJson) => {
@@ -17,7 +17,8 @@ function updateConfigurations(): Rule {
 
               if (architect && architect.options) {
                 architect.options.prepackageOnly = true;
-                architect.options.outputPath = architect.options.out || "dist/packages";
+                architect.options.outputPath =
+                  architect.options.out || 'dist/packages';
                 delete architect.options.out;
               }
             }
@@ -27,7 +28,8 @@ function updateConfigurations(): Rule {
                 workspaceJson.projects[projectName].architect[targetName];
 
               if (architect && architect.options) {
-                architect.options.outputPath = architect.options.out || "dist/executables";
+                architect.options.outputPath =
+                  architect.options.out || 'dist/executables';
                 delete architect.options.out;
               }
             }
@@ -35,14 +37,11 @@ function updateConfigurations(): Rule {
         );
       }
     );
-    
+
     //return workspaceJson;
   });
 }
 
 export default function update(): Rule {
-  return chain([
-    updateConfigurations(),
-    formatFiles(),
-  ]);
+  return chain([updateConfigurations(), formatFiles()]);
 }
