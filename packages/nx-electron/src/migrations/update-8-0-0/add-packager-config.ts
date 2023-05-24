@@ -1,5 +1,5 @@
 import { chain, Rule, Tree } from '@angular-devkit/schematics';
-import { formatFiles, updateWorkspace } from '@nrwl/workspace';
+import { formatFiles, updateWorkspace } from '@nx/workspace';
 import { resolve } from 'path';
 
 function addConfigurations(): Rule {
@@ -14,15 +14,15 @@ function addConfigurations(): Rule {
           ([targetName, targetConfig]) => {
             if (targetConfig.builder === 'nx-electron:build') {
               const project = workspaceJson.projects[projectName];
-              const frontendProject = "{replace with frontend-app-name}";
+              const frontendProject = '{replace with frontend-app-name}';
 
               project.architect['make'] = {
-                "builder": "nx-electron:make",
-                "options": {
-                    "name": projectName,
-                    "frontendProject": frontendProject,
-                    "out": "dist/executables"
-                }
+                builder: 'nx-electron:make',
+                options: {
+                  name: projectName,
+                  frontendProject: frontendProject,
+                  out: 'dist/executables',
+                },
               };
             }
           }
@@ -41,7 +41,6 @@ function addConfigurationFile(): Rule {
     Object.entries<any>(workspaceJson.projects).forEach(
       ([projectName, project]) => {
         if (project.architect) {
-
           Object.entries<any>(project.architect).forEach(
             ([targetName, targetConfig]) => {
               if (targetConfig.builder === 'nx-electron:build') {
@@ -57,14 +56,14 @@ function addConfigurationFile(): Rule {
     // return workspaceRules;
   });
 
-  // return chain([rules]); 
+  // return chain([rules]);
 }
 
 function writeConfigurationFile(projectSourceRoot: string): Rule {
   return (host: Tree) => {
     host.overwrite(
       resolve(projectSourceRoot, 'app/options/packager.options'),
-`{
+      `{
   "$schema": "../../../../../node_modules/nx-electron/src/validation/packager.schema.json"
 }
 `
@@ -73,9 +72,5 @@ function writeConfigurationFile(projectSourceRoot: string): Rule {
 }
 
 export default function update(): Rule {
-  return chain([
-    addConfigurations(),
-    addConfigurationFile(),
-    formatFiles(),
-  ]);
+  return chain([addConfigurations(), addConfigurationFile(), formatFiles()]);
 }

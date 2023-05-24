@@ -2,7 +2,6 @@
   "title": "Schema for Executing Electron apps",
   "description": "Electron execution options",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "buildTarget": {
       "type": "string",
@@ -39,7 +38,11 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["inspect", "inspect-brk", "inspect-brk-node"]
+          "enum": [
+            "inspect",
+            "inspect-brk",
+            "inspect-brk-node"
+          ]
         },
         {
           "type": "boolean"
@@ -58,5 +61,7 @@
     }
   },
   "additionalProperties": false,
-  "required": ["buildTarget"]
+  "required": [
+    "buildTarget"
+  ]
 }

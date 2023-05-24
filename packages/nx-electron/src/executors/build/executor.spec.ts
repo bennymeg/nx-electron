@@ -1,6 +1,6 @@
-import { ExecutorContext } from '@nrwl/devkit';
-import * as projectGraph from '@nrwl/workspace/src/core/project-graph';
-import type { ProjectGraph } from '@nrwl/workspace/src/core/project-graph';
+import { ExecutorContext } from '@nx/devkit';
+import * as projectGraph from '@nx/workspace/src/core/project-graph';
+import type { ProjectGraph } from '@nx/workspace/src/core/project-graph';
 import { of } from 'rxjs';
 import executor, { BuildElectronBuilderOptions } from './executor';
 

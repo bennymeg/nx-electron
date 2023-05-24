@@ -3,10 +3,14 @@ import { map, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
 import { readdirSync } from 'fs';
 
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
-import { readCachedProjectGraph } from '@nrwl/workspace/src/core/project-graph';
-import { calculateProjectDependencies, checkDependentProjectsHaveBeenBuilt, createTmpTsConfig } from '@nrwl/workspace/src/utilities/buildable-libs-utils';
+import { readCachedProjectGraph } from '@nx/workspace/src/core/project-graph';
+import {
+  calculateProjectDependencies,
+  checkDependentProjectsHaveBeenBuilt,
+  createTmpTsConfig,
+} from '@nx/workspace/src/utilities/buildable-libs-utils';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
@@ -14,7 +18,6 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
-
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -30,23 +33,48 @@ export interface BuildElectronBuilderOptions extends BuildBuilderOptions {
   externalDependencies: 'all' | 'none' | Array<string>;
 }
 
-export interface NormalizedBuildElectronBuilderOptions extends BuildElectronBuilderOptions {
+export interface NormalizedBuildElectronBuilderOptions
+  extends BuildElectronBuilderOptions {
   webpackConfig: string;
 }
 
-
-export function executor(rawOptions: BuildElectronBuilderOptions, context: ExecutorContext): AsyncIterableIterator<ElectronBuildEvent> {
+export function executor(
+  rawOptions: BuildElectronBuilderOptions,
+  context: ExecutorContext
+): AsyncIterableIterator<ElectronBuildEvent> {
   const { sourceRoot, projectRoot } = getSourceRoot(context);
-  const normalizedOptions = normalizeBuildOptions( rawOptions, context.root, sourceRoot, projectRoot);
+  const normalizedOptions = normalizeBuildOptions(
+    rawOptions,
+    context.root,
+    sourceRoot,
+    projectRoot
+  );
   const projGraph = readCachedProjectGraph();
 
   if (!normalizedOptions.buildLibsFromSource) {
-    const { target, dependencies } =
-      calculateProjectDependencies(projGraph, context.root, context.projectName, context.targetName, context.configurationName);
+    const { target, dependencies } = calculateProjectDependencies(
+      projGraph,
+      context.root,
+      context.projectName,
+      context.targetName,
+      context.configurationName
+    );
 
-    normalizedOptions.tsConfig = createTmpTsConfig(normalizedOptions.tsConfig, context.root, target.data.root, dependencies);
+    normalizedOptions.tsConfig = createTmpTsConfig(
+      normalizedOptions.tsConfig,
+      context.root,
+      target.data.root,
+      dependencies
+    );
 
-    if (!checkDependentProjectsHaveBeenBuilt(context.root, context.projectName, context.targetName, dependencies)) {
+    if (
+      !checkDependentProjectsHaveBeenBuilt(
+        context.root,
+        context.projectName,
+        context.targetName,
+        dependencies
+      )
+    ) {
       return { success: false } as any;
     }
   }
@@ -66,8 +94,16 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
   try {
     const preloadFilesDirectory = join(normalizedOptions.sourceRoot, 'app/api');
     readdirSync(preloadFilesDirectory, { withFileTypes: true })
-      .filter(entry => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/))
-      .forEach(entry => config.entry[parse(entry.name).name] = join(preloadFilesDirectory, entry.name));
+      .filter(
+        (entry) => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/)
+      )
+      .forEach(
+        (entry) =>
+          (config.entry[parse(entry.name).name] = join(
+            preloadFilesDirectory,
+            entry.name
+          ))
+      );
   } catch (error) {
     console.warn('Failed to load preload scripts');
   }
@@ -80,7 +116,11 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
       map((stats) => {
         return {
           success: !stats.hasErrors(),
-          outfile: resolve(context.root, normalizedOptions.outputPath, MAIN_OUTPUT_FILENAME)
+          outfile: resolve(
+            context.root,
+            normalizedOptions.outputPath,
+            MAIN_OUTPUT_FILENAME
+          ),
         } as ElectronBuildEvent;
       })
     )

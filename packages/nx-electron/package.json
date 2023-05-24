@@ -46,8 +46,8 @@
     "executors"
   ],
   "peerDependencies": {
-    "@nrwl/workspace": "^15.9.2",
-    "electron": "*"
+    "electron": "*",
+    "@nx/workspace": "^15.9.2"
   },
   "dependencies": {
     "circular-dependency-plugin": "^5.2.2",

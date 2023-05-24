@@ -1,14 +1,14 @@
-import { NxJsonConfiguration, readJson, Tree, getProjects } from '@nrwl/devkit';
-import * as devkit from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { NxJsonConfiguration, readJson, Tree, getProjects } from '@nx/devkit';
+import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 // nx-ignore-next-line
-import { applicationGenerator as angularApplicationGenerator } from '@nrwl/angular/generators';
+import { applicationGenerator as angularApplicationGenerator } from '@nx/angular/generators';
 import { Schema } from './schema';
 import { generator as applicationGenerator } from './generator';
-import { overrideCollectionResolutionForTesting } from '@nrwl/devkit/ngcli-adapter';
+import { overrideCollectionResolutionForTesting } from '@nx/devkit/ngcli-adapter';
 import { join } from 'path';
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 
 describe('app', () => {
   let tree: Tree;
@@ -18,12 +18,9 @@ describe('app', () => {
 
     overrideCollectionResolutionForTesting({
       '@nrwl/cypress': join(__dirname, '../../../../cypress/generators.json'),
-      '@nrwl/jest': join(__dirname, '../../../../jest/generators.json'),
-      '@nrwl/workspace': join(
-        __dirname,
-        '../../../../workspace/generators.json'
-      ),
-      '@nrwl/angular': join(__dirname, '../../../../angular/generators.json'),
+      '@nx/jest': join(__dirname, '../../../../jest/generators.json'),
+      '@nx/workspace': join(__dirname, '../../../../workspace/generators.json'),
+      '@nx/angular': join(__dirname, '../../../../angular/generators.json'),
     });
     jest.clearAllMocks();
   });
@@ -43,7 +40,7 @@ describe('app', () => {
         skipPackageJson: false,
         linter: Linter.None,
         standaloneConfig: false,
-        unitTestRunner: 'none'
+        unitTestRunner: 'none',
       });
       const workspaceJson = readJson(tree, '/workspace.json');
       const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
@@ -67,7 +64,8 @@ describe('app', () => {
                 inspect: false,
                 fileReplacements: [
                   {
-                    replace: 'apps/electron-app/src/environments/environment.ts',
+                    replace:
+                      'apps/electron-app/src/environments/environment.ts',
                     with: 'apps/electron-app/src/environments/environment.prod.ts',
                   },
                 ],
@@ -83,7 +81,7 @@ describe('app', () => {
         })
       );
       expect(workspaceJson.projects['electron-app'].architect.lint).toEqual({
-        builder: '@nrwl/linter:eslint',
+        builder: '@nx/linter:eslint',
         outputs: ['{options.outputFile}'],
         options: {
           lintFilePatterns: ['apps/electron-app/**/*.ts'],
@@ -213,7 +211,7 @@ describe('app', () => {
       expect(
         workspaceJson.projects['my-dir-electron-app'].architect.lint
       ).toEqual({
-        builder: '@nrwl/linter:eslint',
+        builder: '@nx/linter:eslint',
         outputs: ['{options.outputFile}'],
         options: {
           lintFilePatterns: ['apps/my-dir/electron-app/**/*.ts'],
@@ -324,7 +322,7 @@ describe('app', () => {
       expect(workspaceJson.projects['electron-app'].architect.lint)
         .toMatchInlineSnapshot(`
         Object {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nx/linter:eslint",
           "options": Object {
             "lintFilePatterns": Array [
               "apps/electron-app/**/*.ts",
@@ -421,7 +419,35 @@ describe('app', () => {
     });
   });
 
-    it('should update workspace.json', async () => {
+  it('should update workspace.json', async () => {
+    await applicationGenerator(tree, {
+      name: 'electron-app',
+      frontendProject: 'electron-web',
+      addProxy: false,
+      proxyPort: 3000,
+      skipFormat: false,
+      skipPackageJson: false,
+      linter: Linter.None,
+      standaloneConfig: false,
+      unitTestRunner: 'none',
+    } as Schema);
+    const workspaceJson = readJson(tree, '/workspace.json');
+    const project = workspaceJson.projects['electron-app'];
+    const buildTarget = project.architect.build;
+
+    expect(buildTarget.options.main).toEqual('apps/electron-app/src/main.js');
+    expect(buildTarget.configurations.production.fileReplacements).toEqual([
+      {
+        replace: 'apps/electron-app/src/environments/environment.js',
+        with: 'apps/electron-app/src/environments/environment.prod.js',
+      },
+    ]);
+  });
+
+  describe('--skipFormat', () => {
+    it('should format files by default', async () => {
+      jest.spyOn(devkit, 'formatFiles');
+
       await applicationGenerator(tree, {
         name: 'electron-app',
         frontendProject: 'electron-web',
@@ -432,34 +458,6 @@ describe('app', () => {
         linter: Linter.None,
         standaloneConfig: false,
         unitTestRunner: 'none',
-      } as Schema);
-      const workspaceJson = readJson(tree, '/workspace.json');
-      const project = workspaceJson.projects['electron-app'];
-      const buildTarget = project.architect.build;
-
-      expect(buildTarget.options.main).toEqual('apps/electron-app/src/main.js');
-      expect(buildTarget.configurations.production.fileReplacements).toEqual([
-        {
-          replace: 'apps/electron-app/src/environments/environment.js',
-          with: 'apps/electron-app/src/environments/environment.prod.js',
-        },
-      ]);
-    });
-
-  describe('--skipFormat', () => {
-    it('should format files by default', async () => {
-      jest.spyOn(devkit, 'formatFiles');
-
-      await applicationGenerator(tree, {        
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none', 
       });
 
       expect(devkit.formatFiles).toHaveBeenCalled();
@@ -468,7 +466,7 @@ describe('app', () => {
     it('should not format files when --skipFormat=true', async () => {
       jest.spyOn(devkit, 'formatFiles');
 
-      await applicationGenerator(tree, { 
+      await applicationGenerator(tree, {
         name: 'electron-app',
         frontendProject: 'electron-web',
         addProxy: false,

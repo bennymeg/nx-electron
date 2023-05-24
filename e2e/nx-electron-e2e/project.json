@@ -5,11 +5,12 @@
   "sourceRoot": "e2e/nx-electron-e2e/src",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/nx-plugin:e2e",
+      "executor": "@nx/jest:jest",
       "options": {
-        "target": "nx-electron:build",
-        "jestConfig": "e2e/nx-electron-e2e/jest.config.js"
-      }
+        "jestConfig": "e2e/nx-electron-e2e/jest.config.js",
+        "runInBand": true
+      },
+      "dependsOn": ["nx-electron:build"]
     }
   },
   "tags": [],
