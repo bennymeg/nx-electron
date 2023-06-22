@@ -14,6 +14,7 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
+import { createPackageJson } from '@nrwl/js';
 
 
 export type ElectronBuildEvent = {
@@ -52,7 +53,7 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
   }
 
   if (normalizedOptions.generatePackageJson) {
-    generatePackageJson(context.projectName, projGraph, normalizedOptions);
+    createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true })
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
