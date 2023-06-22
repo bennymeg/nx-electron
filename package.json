@@ -43,7 +43,7 @@
     "@typescript-eslint/parser": "5.36.1",
     "bufferutil": "^4.0.6",
     "canvas": "^2.9.1",
-    "electron": "^17.4.2",
+    "electron": "^25.2.0",
     "eslint": "8.15.0",
     "eslint-config-prettier": "8.1.0",
     "jest": "28.1.3",
