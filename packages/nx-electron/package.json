@@ -47,7 +47,7 @@
   ],
   "peerDependencies": {
     "electron": "*",
-    "@nx/workspace": "^16.3.2"
+    "@nx/workspace": ">=16.0.0"
   },
   "dependencies": {
     "circular-dependency-plugin": "^5.2.2",
