@@ -9,7 +9,6 @@ import { Schema } from './schema';
 import {
   nxElectronVersion,
   electronVersion,
-  electronBuilderVersion,
   exitZeroVersion,
 } from '../../utils/versions';
 import { jestInitGenerator } from '@nx/jest';
@@ -22,7 +21,6 @@ function addDependencies(tree: Tree) {
       'nx-electron': nxElectronVersion,
       electron: electronVersion,
       exitzero: exitZeroVersion,
-      // 'electron-builder': electronBuilderVersion,
     }
   );
 }
@@ -33,7 +31,6 @@ function moveDependency(tree: Tree) {
 
     delete json.dependencies['nx-electron'];
     delete json.dependencies['electron'];
-    // delete json.dependencies['electron-builder'];
 
     return json;
   });
@@ -63,8 +60,6 @@ function normalizeOptions(schema: Schema) {
 export async function generator(tree: Tree, schema: Schema) {
   const options = normalizeOptions(schema);
 
-  setDefaultCollection(tree, 'nx-electron');
-
   let jestInstall: GeneratorCallback;
   if (options.unitTestRunner === 'jest') {
     jestInstall = await jestInitGenerator(tree, {});
@@ -88,7 +83,3 @@ export async function generator(tree: Tree, schema: Schema) {
 }
 
 export default generator;
-function setDefaultCollection(tree: Tree, arg1: string) {
-  throw new Error('Function not implemented.');
-}
-
