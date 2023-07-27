@@ -8,8 +8,8 @@
 - fork the `nx-electron` package from github: 
     - `git clone https://github.com/bennymeg/nx-electron.git`
 - link the forked project:
-    - `cd nx-electron && npm link`
-- make your desired changes to your fork of the nx-electron repository
+    - `cd nx-electron && npm install && npm run build && npm run link`
+- make your desired changes to your fork of the nx-electron repository then re-build
 - create a new test project and link your forked project into it:
     - `npx create-nx-workspace nx-electron-test`
     - `cd nx-electron-test && npm link nx-electron`
