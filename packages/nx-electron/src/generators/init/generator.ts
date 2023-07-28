@@ -3,14 +3,9 @@ import {
   formatFiles,
   GeneratorCallback,
   Tree,
-  updateJson,
 } from '@nx/devkit';
 import { Schema } from './schema';
-import {
-  nxElectronVersion,
-  electronVersion,
-  exitZeroVersion,
-} from '../../utils/versions';
+import { nxElectronVersion, electronVersion } from '../../utils/versions';
 import { jestInitGenerator } from '@nx/jest';
 
 function addDependencies(tree: Tree) {
@@ -20,34 +15,8 @@ function addDependencies(tree: Tree) {
     {
       'nx-electron': nxElectronVersion,
       electron: electronVersion,
-      exitzero: exitZeroVersion,
     }
   );
-}
-
-function moveDependency(tree: Tree) {
-  return updateJson(tree, 'package.json', (json) => {
-    json.dependencies = json.dependencies || {};
-
-    delete json.dependencies['nx-electron'];
-    delete json.dependencies['electron'];
-
-    return json;
-  });
-}
-
-function addScripts(tree: Tree) {
-  return updateJson(tree, 'package.json', (json) => {
-    json.scripts = json.scripts || {};
-
-    const postinstall = json.scripts['postinstall'];
-    json.scripts['postinstall'] =
-      postinstall && postinstall !== ''
-        ? `${postinstall} && exitzero electron-builder install-app-deps`
-        : 'exitzero electron-builder install-app-deps';
-
-    return json;
-  });
 }
 
 function normalizeOptions(schema: Schema) {
@@ -65,7 +34,7 @@ export async function generator(tree: Tree, schema: Schema) {
     jestInstall = await jestInitGenerator(tree, {});
   }
 
-  const installTask = await addDependencies(tree);
+  const installTask = addDependencies(tree);
 
   if (!options.skipFormat) {
     await formatFiles(tree);
@@ -76,9 +45,7 @@ export async function generator(tree: Tree, schema: Schema) {
       await jestInstall();
     }
 
-    await addScripts(tree);
     await installTask();
-    await moveDependency(tree);
   };
 }
 

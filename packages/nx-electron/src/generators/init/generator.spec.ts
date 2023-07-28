@@ -4,7 +4,7 @@ import {
 } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
-import { electronVersion, exitZeroVersion, nxElectronVersion } from '../../utils/versions';
+import { electronVersion, nxElectronVersion } from '../../utils/versions';
 import { generator as initGenerator } from './generator';
 
 describe('init', () => {
@@ -21,7 +21,6 @@ describe('init', () => {
 
     expect(packageJson.devDependencies['nx-electron']).toBe(nxElectronVersion);
     expect(packageJson.devDependencies['electron']).toBe(electronVersion);
-    expect(packageJson.devDependencies['exitzero']).toBe(exitZeroVersion);
   });
 
   it('should not add jest config if unitTestRunner is none', async () => {
