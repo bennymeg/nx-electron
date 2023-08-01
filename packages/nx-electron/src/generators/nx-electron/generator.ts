@@ -113,8 +113,7 @@ function addProject(tree: Tree, options: NormalizedSchema) {
   addProjectConfiguration(
     tree,
     options.name,
-    project,
-    options.standaloneConfig
+    project
   );
 
   const nxJsonConfiguration = readNxJson(tree);
@@ -191,7 +190,7 @@ function addProxy(tree: Tree, options: NormalizedSchema) {
   }
 }
 
-export async function addLintingToApplication(
+async function addLintingToApplication(
   tree: Tree,
   options: NormalizedSchema
 ): Promise<GeneratorCallback> {
