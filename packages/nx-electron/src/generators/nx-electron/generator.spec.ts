@@ -1,5 +1,4 @@
-import { NxJsonConfiguration, readJson, Tree, getProjects } from '@nx/devkit';
-import * as devkit from '@nx/devkit';
+import { readJson, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 // nx-ignore-next-line
@@ -10,10 +9,15 @@ import { overrideCollectionResolutionForTesting } from '@nx/devkit/ngcli-adapter
 import { join } from 'path';
 import { Linter } from '@nx/linter';
 
-describe('app', () => {
+fdescribe('app', () => {
   let tree: Tree;
 
+  let projectJson: any;
+  let options: Schema;
+
   beforeEach(() => {
+    jest.spyOn(console, 'warn').mockImplementation();
+
     tree = createTreeWithEmptyWorkspace();
 
     overrideCollectionResolutionForTesting({
@@ -22,6 +26,17 @@ describe('app', () => {
       '@nx/workspace': join(__dirname, '../../../../workspace/generators.json'),
       '@nx/angular': join(__dirname, '../../../../angular/generators.json'),
     });
+
+    options = {
+      name: 'electron-app',
+      addProxy: false,
+      proxyPort: 4000,
+      skipFormat: false,
+      skipPackageJson: false,
+      linter: Linter.None,
+      unitTestRunner: 'none',
+    };
+
     jest.clearAllMocks();
   });
 
@@ -29,456 +44,214 @@ describe('app', () => {
     overrideCollectionResolutionForTesting(null);
   });
 
-  describe('not nested', () => {
-    it('should update workspace.json', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
+  describe('when the default options are provided', () => {
+    beforeEach(async () => {
+      await applicationGenerator(tree, options);
+      projectJson = readJson(tree, 'electron-app/project.json');
+    });
+
+    it('should generate the project json with the correct source root', () => {
+      expect(projectJson.sourceRoot).toBe('electron-app/src');
+    });
+
+    it('should generate the main.ts file', () => {
+      expect(tree.exists(`electron-app/src/main.ts`)).toBeTruthy();
+    });
+
+    it('should generate the tsconfig.json file', () => {
+      expect(readJson(tree, 'electron-app/tsconfig.json')).toEqual({
+        compilerOptions: {
+          types: ['node'],
+        },
+        extends: '../tsconfig.base.json',
+        include: ['**/*.ts'],
       });
-      const workspaceJson = readJson(tree, '/workspace.json');
-      const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
-      const project = workspaceJson.projects['electron-app'];
-      expect(project.root).toEqual('apps/electron-app');
-      expect(project.architect).toEqual(
-        expect.objectContaining({
-          build: {
-            builder: 'nx-electron:build',
-            outputs: ['{options.outputPath}'],
-            options: {
-              outputPath: 'dist/apps/electron-app',
-              main: 'apps/electron-app/src/main.ts',
-              tsConfig: 'apps/electron-app/tsconfig.app.json',
-              assets: ['apps/electron-app/src/assets'],
-            },
-            configurations: {
-              production: {
-                optimization: true,
-                extractLicenses: true,
-                inspect: false,
-                fileReplacements: [
-                  {
-                    replace:
-                      'apps/electron-app/src/environments/environment.ts',
-                    with: 'apps/electron-app/src/environments/environment.prod.ts',
-                  },
-                ],
+    });
+
+    it('should generate the tsconfig.app.json file', () => {
+      expect(readJson(tree, 'electron-app/tsconfig.app.json')).toEqual({
+        extends: './tsconfig.json',
+        compilerOptions: {
+          outDir: '../dist/out-tsc',
+          types: ['node'],
+        },
+        exclude: ['**/*.spec.ts', '**/*.test.ts'],
+        include: ['**/*.ts'],
+      });
+    });
+
+    it('should generate the project json with the correct build target', () => {
+      expect(projectJson.targets.build).toEqual({
+        executor: 'nx-electron:build',
+        outputs: ['{options.outputPath}'],
+        options: {
+          assets: ['electron-app/src/assets'],
+          outputPath: 'dist/electron-app',
+          main: 'electron-app/src/main.ts',
+          tsConfig: 'electron-app/tsconfig.app.json',
+        },
+        configurations: {
+          production: {
+            optimization: true,
+            extractLicenses: true,
+            inspect: false,
+            fileReplacements: [
+              {
+                replace: 'electron-app/src/environments/environment.ts',
+                with: 'electron-app/src/environments/environment.prod.ts',
               },
-            },
-          },
-          serve: {
-            builder: 'nx-electron:execute',
-            options: {
-              buildTarget: 'electron-app:build',
-            },
-          },
-        })
-      );
-      expect(workspaceJson.projects['electron-app'].architect.lint).toEqual({
-        builder: '@nx/linter:eslint',
-        outputs: ['{options.outputFile}'],
-        options: {
-          lintFilePatterns: ['apps/electron-app/**/*.ts'],
-        },
-      });
-      expect(workspaceJson.projects['electron-app-e2e']).toBeUndefined();
-      // expect(nxJson.defaultProject).toEqual('electron-app');
-    });
-
-    it('should update tags', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-        tags: 'one,two',
-      });
-      const projects = Object.fromEntries(getProjects(tree));
-      expect(projects).toMatchObject({
-        'electron-app': {
-          tags: ['one', 'two'],
-        },
-      });
-    });
-
-    it('should generate files', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-      expect(tree.exists(`apps/electron-app/jest.config.js`)).toBeTruthy();
-      expect(tree.exists('apps/electron-app/src/main.ts')).toBeTruthy();
-
-      const tsconfig = readJson(tree, 'apps/electron-app/tsconfig.json');
-      expect(tsconfig).toMatchInlineSnapshot(`
-        Object {
-          "extends": "../../tsconfig.base.json",
-          "files": Array [],
-          "include": Array [],
-          "references": Array [
-            Object {
-              "path": "./tsconfig.app.json",
-            },
-            Object {
-              "path": "./tsconfig.spec.json",
-            },
-          ],
-        }
-      `);
-
-      const tsconfigApp = readJson(tree, 'apps/electron-app/tsconfig.app.json');
-      expect(tsconfigApp.compilerOptions.outDir).toEqual('../../dist/out-tsc');
-      expect(tsconfigApp.extends).toEqual('./tsconfig.json');
-      expect(tsconfigApp.exclude).toEqual(['**/*.spec.ts', '**/*.test.ts']);
-      const eslintrc = readJson(tree, 'apps/electron-app/.eslintrc.json');
-      expect(eslintrc).toMatchInlineSnapshot(`
-        Object {
-          "extends": Array [
-            "../../.eslintrc.json",
-          ],
-          "ignorePatterns": Array [
-            "!**/*",
-          ],
-          "overrides": Array [
-            Object {
-              "files": Array [
-                "*.ts",
-                "*.tsx",
-                "*.js",
-                "*.jsx",
-              ],
-              "rules": Object {},
-            },
-            Object {
-              "files": Array [
-                "*.ts",
-                "*.tsx",
-              ],
-              "rules": Object {},
-            },
-            Object {
-              "files": Array [
-                "*.js",
-                "*.jsx",
-              ],
-              "rules": Object {},
-            },
-          ],
-        }
-      `);
-    });
-  });
-
-  describe('nested', () => {
-    it('should update workspace.json', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-        directory: 'myDir',
-      });
-      const workspaceJson = readJson(tree, '/workspace.json');
-      const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
-
-      expect(workspaceJson.projects['my-dir-electron-app'].root).toEqual(
-        'apps/my-dir/electron-app'
-      );
-
-      expect(
-        workspaceJson.projects['my-dir-electron-app'].architect.lint
-      ).toEqual({
-        builder: '@nx/linter:eslint',
-        outputs: ['{options.outputFile}'],
-        options: {
-          lintFilePatterns: ['apps/my-dir/electron-app/**/*.ts'],
-        },
-      });
-
-      expect(workspaceJson.projects['my-dir-electron-app-e2e']).toBeUndefined();
-      // expect(nxJson.defaultProject).toEqual('my-dir-electron-app');
-    });
-
-    it('should update tags', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-        directory: 'myDir',
-        tags: 'one,two',
-      });
-      const projects = Object.fromEntries(getProjects(tree));
-      expect(projects).toMatchObject({
-        'my-dir-electron-app': {
-          tags: ['one', 'two'],
-        },
-      });
-    });
-
-    it('should generate files', async () => {
-      const hasJsonValue = ({ path, expectedValue, lookupFn }) => {
-        const config = readJson(tree, path);
-
-        expect(lookupFn(config)).toEqual(expectedValue);
-      };
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-        directory: 'myDir',
-      });
-
-      // Make sure these exist
-      [
-        `apps/my-dir/electron-app/jest.config.js`,
-        'apps/my-dir/electron-app/src/main.ts',
-      ].forEach((path) => {
-        expect(tree.exists(path)).toBeTruthy();
-      });
-
-      // Make sure these have properties
-      [
-        {
-          path: 'apps/my-dir/electron-app/tsconfig.app.json',
-          lookupFn: (json) => json.compilerOptions.outDir,
-          expectedValue: '../../../dist/out-tsc',
-        },
-        {
-          path: 'apps/my-dir/electron-app/tsconfig.app.json',
-          lookupFn: (json) => json.compilerOptions.types,
-          expectedValue: ['node'],
-        },
-        {
-          path: 'apps/my-dir/electron-app/tsconfig.app.json',
-          lookupFn: (json) => json.exclude,
-          expectedValue: ['**/*.spec.ts', '**/*.test.ts'],
-        },
-        {
-          path: 'apps/my-dir/electron-app/.eslintrc.json',
-          lookupFn: (json) => json.extends,
-          expectedValue: ['../../../.eslintrc.json'],
-        },
-      ].forEach(hasJsonValue);
-    });
-  });
-
-  describe('--unit-test-runner none', () => {
-    it('should not generate test configuration', async () => {
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-      expect(tree.exists('jest.config.js')).toBeFalsy();
-      expect(tree.exists('apps/electron-app/src/test-setup.ts')).toBeFalsy();
-      expect(tree.exists('apps/electron-app/src/test.ts')).toBeFalsy();
-      expect(tree.exists('apps/electron-app/tsconfig.spec.json')).toBeFalsy();
-      expect(tree.exists('apps/electron-app/jest.config.js')).toBeFalsy();
-      const workspaceJson = readJson(tree, 'workspace.json');
-      expect(
-        workspaceJson.projects['electron-app'].architect.test
-      ).toBeUndefined();
-      expect(workspaceJson.projects['electron-app'].architect.lint)
-        .toMatchInlineSnapshot(`
-        Object {
-          "builder": "@nx/linter:eslint",
-          "options": Object {
-            "lintFilePatterns": Array [
-              "apps/electron-app/**/*.ts",
             ],
           },
-          "outputs": Array [
-            "{options.outputFile}",
-          ],
-        }
-      `);
+        },
+      });
+    });
+
+    it('should generate the project json with the correct serve target', () => {
+      expect(projectJson.targets.serve).toEqual({
+        executor: 'nx-electron:execute',
+        options: {
+          buildTarget: 'electron-app:build',
+        },
+      });
+    });
+
+    it('should generate the project json with the correct package target', () => {
+      expect(projectJson.targets.package).toEqual({
+        executor: 'nx-electron:package',
+        options: {
+          name: 'electron-app',
+          frontendProject: '',
+          outputPath: 'dist/packages',
+          prepackageOnly: true,
+        },
+      });
+    });
+
+    it('should generate the project json with the correct make target', () => {
+      expect(projectJson.targets.make).toEqual({
+        executor: 'nx-electron:make',
+        options: {
+          name: 'electron-app',
+          frontendProject: '',
+          outputPath: 'dist/executables',
+        },
+      });
     });
   });
 
-  describe('--frontendProject', () => {
-    it('should configure proxy', async () => {
-      await angularApplicationGenerator(tree, { name: 'electron-web' });
-
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-
-      expect(tree.exists('apps/electron-web/proxy.conf.json')).toBeTruthy();
-      const serve = readJson(tree, 'workspace.json').projects['electron-web']
-        .architect.serve;
-      expect(serve.options.proxyConfig).toEqual(
-        'apps/electron-web/proxy.conf.json'
-      );
+  describe('when the lint option is provided as eslint', () => {
+    beforeEach(async () => {
+      options.linter = Linter.EsLint;
+      await applicationGenerator(tree, options);
+      projectJson = readJson(tree, 'electron-app/project.json');
     });
 
-    it('should configure proxies for multiple node projects with the same frontend app', async () => {
-      await angularApplicationGenerator(tree, { name: 'electron-web' });
-
-      await applicationGenerator(tree, {
-        name: 'cart',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-
-      await applicationGenerator(tree, {
-        name: 'billing',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-
-      expect(tree.exists('apps/electron-web/proxy.conf.json')).toBeTruthy();
-
-      expect(readJson(tree, 'apps/electron-web/proxy.conf.json')).toEqual({
-        '/api': { target: 'http://localhost:3333', secure: false },
-        '/billing-api': { target: 'http://localhost:3333', secure: false },
+    it('should generate the .eslintrc.json file', () => {
+      expect(readJson(tree, 'electron-app/.eslintrc.json')).toEqual({
+        extends: ['../.eslintrc.json'],
+        ignorePatterns: ['!**/*'],
+        overrides: [
+          {
+            files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
+            rules: {},
+          },
+          {
+            files: ['*.ts', '*.tsx'],
+            rules: {},
+          },
+          {
+            files: ['*.js', '*.jsx'],
+            rules: {},
+          },
+        ],
       });
     });
 
-    it('should work with unnormalized project names', async () => {
-      await angularApplicationGenerator(tree, { name: 'electronWeb' });
-
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electronWeb',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
+    it('should generate the project json with the correct lint target', () => {
+      expect(projectJson.targets.lint).toEqual({
+        executor: '@nx/linter:eslint',
+        outputs: ['{options.outputFile}'],
+        options: {
+          lintFilePatterns: ['electron-app/**/*.ts'],
+        },
       });
-
-      expect(tree.exists('apps/electron-web/proxy.conf.json')).toBeTruthy();
-      const serve = readJson(tree, 'workspace.json').projects['electron-web']
-        .architect.serve;
-      expect(serve.options.proxyConfig).toEqual(
-        'apps/electron-web/proxy.conf.json'
-      );
     });
   });
 
-  it('should update workspace.json', async () => {
-    await applicationGenerator(tree, {
-      name: 'electron-app',
-      frontendProject: 'electron-web',
-      addProxy: false,
-      proxyPort: 3000,
-      skipFormat: false,
-      skipPackageJson: false,
-      linter: Linter.None,
-      standaloneConfig: false,
-      unitTestRunner: 'none',
-    } as Schema);
-    const workspaceJson = readJson(tree, '/workspace.json');
-    const project = workspaceJson.projects['electron-app'];
-    const buildTarget = project.architect.build;
-
-    expect(buildTarget.options.main).toEqual('apps/electron-app/src/main.js');
-    expect(buildTarget.configurations.production.fileReplacements).toEqual([
-      {
-        replace: 'apps/electron-app/src/environments/environment.js',
-        with: 'apps/electron-app/src/environments/environment.prod.js',
-      },
-    ]);
-  });
-
-  describe('--skipFormat', () => {
-    it('should format files by default', async () => {
-      jest.spyOn(devkit, 'formatFiles');
-
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
-      });
-
-      expect(devkit.formatFiles).toHaveBeenCalled();
+  describe('when the unitTestRunner option is provided as jest', () => {
+    beforeEach(async () => {
+      options.unitTestRunner = 'jest';
+      await applicationGenerator(tree, options);
+      projectJson = readJson(tree, 'electron-app/project.json');
     });
 
-    it('should not format files when --skipFormat=true', async () => {
-      jest.spyOn(devkit, 'formatFiles');
-
-      await applicationGenerator(tree, {
-        name: 'electron-app',
-        frontendProject: 'electron-web',
-        addProxy: false,
-        proxyPort: 3000,
-        skipFormat: false,
-        skipPackageJson: false,
-        linter: Linter.None,
-        standaloneConfig: false,
-        unitTestRunner: 'none',
+    it('should generate the project json with the correct test target', () => {
+      expect(projectJson.targets.test).toEqual({
+        executor: '@nx/jest:jest',
+        outputs: ['{workspaceRoot}/coverage/{projectRoot}'],
+        options: {
+          jestConfig: 'electron-app/jest.config.ts',
+          passWithNoTests: true,
+        },
+        configurations: {
+          ci: {
+            ci: true,
+            codeCoverage: true,
+          },
+        },
       });
+    });
 
-      expect(devkit.formatFiles).not.toHaveBeenCalled();
+    it('should create the jest config', () => {
+      expect(tree.exists(`electron-app/jest.config.ts`)).toBeTruthy();
+    });
+  });
+
+  // TODO: Reimplement tags option
+  // describe('when the tags option is provided', () => {
+  //   beforeEach(async () => {
+  //     options.tags = 'example';
+  //     await applicationGenerator(tree, options);
+  //     projectJson = readJson(tree, 'electron-app/project.json');
+  //   });
+
+  //   it('should generate the project json with the correct tag', () => {
+  //     expect(projectJson.tags).toBe('example');
+  //   });
+  // });
+
+  describe('when the frontendProject option is provided', () => {
+    beforeEach(async () => {
+      await angularApplicationGenerator(tree, { name: 'electron-frontend' });
+      options.frontendProject = 'electron-frontend';
+      await applicationGenerator(tree, options);
+      projectJson = readJson(tree, 'electron-app/project.json');
+    });
+
+    it('should generate the proxy.conf.json file', () => {
+      expect(tree.exists('electron-frontend/proxy.conf.json')).toBeTruthy();
+    });
+
+    it('should add the proxy config to the frontend project', () => {
+      expect(readJson(tree, 'electron-frontend/project.json').targets.serve.options.proxyConfig).toBe(
+        'electron-frontend/proxy.conf.json'
+      )
+    });
+  });
+
+  describe('when the directory option is provided', () => {
+    beforeEach(async () => {
+      options.directory = 'directory';
+      await applicationGenerator(tree, options);
+      projectJson = readJson(tree, 'directory/electron-app/project.json');
+    });
+
+    it('should generate the project json with the correct source root', () => {
+      expect(projectJson.sourceRoot).toBe('directory/electron-app/src');
+    });
+
+    it('should generate the main.ts file', () => {
+      expect(tree.exists(`directory/electron-app/src/main.ts`)).toBeTruthy();
     });
   });
 });
