@@ -133,7 +133,7 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 ## Versioning
 
 This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
-I.e. version 13.x of nx-electron will be compatible with version 13.y of NX. 
+I.e. version 15.x of nx-electron will be compatible with version 15.y of NX. 
 
 ## Attribution
 

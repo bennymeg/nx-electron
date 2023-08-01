@@ -34,7 +34,7 @@
     "sourcePath": {
       "type": "string",
       "description": "The full path for the compiled source directory, relative to the current workspace. If this parameter is not supplied, the 'sourcePath' path from angular.json will be used.",
-      "default": "dist/apps"
+      "default": "dist/packages"
     },
     "outputPath": {
       "type": "string",
