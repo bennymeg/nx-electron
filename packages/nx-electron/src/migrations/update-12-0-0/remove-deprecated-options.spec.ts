@@ -5,7 +5,7 @@ import subject from './remove-deprecated-options';
 
 describe('Migration: Remove deprecated options', () => {
   it(`should remove deprecated node build options`, async () => {
-    let tree = createTreeWithEmptyWorkspace();
+    const tree = createTreeWithEmptyWorkspace();
 
     tree.write(
       'workspace.json',

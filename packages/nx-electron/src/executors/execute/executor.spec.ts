@@ -5,10 +5,10 @@ const devkit = require('@nx/devkit');
 import { ExecutorContext, logger } from '@nx/devkit';
 
 jest.mock('child_process');
-let { fork } = require('child_process');
+const { fork } = require('child_process');
 
 jest.mock('tree-kill');
-let treeKill = require('tree-kill');
+const treeKill = require('tree-kill');
 
 import {
   executor,

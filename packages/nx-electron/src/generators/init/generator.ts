@@ -6,12 +6,7 @@ import {
   updateJson,
 } from '@nx/devkit';
 import { Schema } from './schema';
-import {
-  nxElectronVersion,
-  electronVersion,
-  electronBuilderVersion,
-  exitZeroVersion,
-} from '../../utils/versions';
+import { nxElectronVersion, electronVersion } from '../../utils/versions';
 import { jestInitGenerator } from '@nx/jest';
 
 function addDependencies(tree: Tree) {
@@ -21,22 +16,8 @@ function addDependencies(tree: Tree) {
     {
       'nx-electron': nxElectronVersion,
       electron: electronVersion,
-      exitzero: exitZeroVersion,
-      // 'electron-builder': electronBuilderVersion,
     }
   );
-}
-
-function moveDependency(tree: Tree) {
-  return updateJson(tree, 'package.json', (json) => {
-    json.dependencies = json.dependencies || {};
-
-    delete json.dependencies['nx-electron'];
-    delete json.dependencies['electron'];
-    // delete json.dependencies['electron-builder'];
-
-    return json;
-  });
 }
 
 function addScripts(tree: Tree) {
@@ -44,10 +25,11 @@ function addScripts(tree: Tree) {
     json.scripts = json.scripts || {};
 
     const postinstall = json.scripts['postinstall'];
+
     json.scripts['postinstall'] =
       postinstall && postinstall !== ''
-        ? `${postinstall} && exitzero electron-builder install-app-deps`
-        : 'exitzero electron-builder install-app-deps';
+        ? `${postinstall} && electron-builder install-app-deps`
+        : 'electron-builder install-app-deps';
 
     return json;
   });
@@ -63,14 +45,12 @@ function normalizeOptions(schema: Schema) {
 export async function generator(tree: Tree, schema: Schema) {
   const options = normalizeOptions(schema);
 
-  setDefaultCollection(tree, 'nx-electron');
-
   let jestInstall: GeneratorCallback;
   if (options.unitTestRunner === 'jest') {
     jestInstall = await jestInitGenerator(tree, {});
   }
 
-  const installTask = await addDependencies(tree);
+  const installTask = addDependencies(tree);
 
   if (!options.skipFormat) {
     await formatFiles(tree);
@@ -81,14 +61,9 @@ export async function generator(tree: Tree, schema: Schema) {
       await jestInstall();
     }
 
-    await addScripts(tree);
+    addScripts(tree);
     await installTask();
-    await moveDependency(tree);
   };
 }
 
 export default generator;
-function setDefaultCollection(tree: Tree, arg1: string) {
-  throw new Error('Function not implemented.');
-}
-

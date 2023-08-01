@@ -8,20 +8,20 @@ import {
   names,
   offsetFromRoot,
   ProjectConfiguration,
+  readNxJson,
   readProjectConfiguration,
-  readWorkspaceConfiguration,
   stripIndents,
   TargetConfiguration,
   Tree,
+  updateNxJson,
   updateProjectConfiguration,
-  updateWorkspaceConfiguration,
+  runTasksInSerial
 } from '@nx/devkit';
 
 import { join } from 'path';
 
 import { Linter, lintProjectGenerator } from '@nx/linter';
 import { jestProjectGenerator } from '@nx/jest';
-import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import { Schema } from './schema';
 import { generator as initGenerator } from '../init/generator';
@@ -104,7 +104,6 @@ function addProject(tree: Tree, options: NormalizedSchema) {
     sourceRoot: joinPathFragments(options.appProjectRoot, 'src'),
     projectType: 'application',
     targets: {},
-    // tags: options.parsedTags,
   };
   project.targets.build = getBuildConfig(project, options);
   project.targets.serve = getServeConfig(options);
@@ -118,11 +117,11 @@ function addProject(tree: Tree, options: NormalizedSchema) {
     options.standaloneConfig
   );
 
-  const workspace = readWorkspaceConfiguration(tree);
+  const nxJsonConfiguration = readNxJson(tree);
 
-  if (!workspace.defaultProject) {
-    workspace.defaultProject = options.name;
-    updateWorkspaceConfiguration(tree, workspace);
+  if (!nxJsonConfiguration.defaultProject) {
+    nxJsonConfiguration.defaultProject = options.name;
+    updateNxJson(tree, nxJsonConfiguration);
   }
 }
 
