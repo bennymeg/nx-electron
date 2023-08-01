@@ -3,6 +3,7 @@ import {
   formatFiles,
   GeneratorCallback,
   Tree,
+  updateJson,
 } from '@nx/devkit';
 import { Schema } from './schema';
 import { nxElectronVersion, electronVersion } from '../../utils/versions';
@@ -17,6 +18,21 @@ function addDependencies(tree: Tree) {
       electron: electronVersion,
     }
   );
+}
+
+function addScripts(tree: Tree) {
+  return updateJson(tree, 'package.json', (json) => {
+    json.scripts = json.scripts || {};
+
+    const postinstall = json.scripts['postinstall'];
+
+    json.scripts['postinstall'] =
+      postinstall && postinstall !== ''
+        ? `${postinstall} && electron-builder install-app-deps`
+        : 'electron-builder install-app-deps';
+
+    return json;
+  });
 }
 
 function normalizeOptions(schema: Schema) {
@@ -45,6 +61,7 @@ export async function generator(tree: Tree, schema: Schema) {
       await jestInstall();
     }
 
+    addScripts(tree);
     await installTask();
   };
 }
