@@ -18,7 +18,7 @@ import { normalizeBuildOptions } from '../../utils/normalize';
 import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
-import { createPackageJson } from '@nrwl/js';
+import { createPackageJson } from '@nx/js';
 
 export type ElectronBuildEvent = {
   outfile: string;
