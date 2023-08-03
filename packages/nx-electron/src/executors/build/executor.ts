@@ -1,5 +1,6 @@
 import { join, parse, resolve } from 'path';
 import { map, tap } from 'rxjs/operators';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { eachValueFrom } from 'rxjs-for-await';
 import { readdirSync } from 'fs';
 
@@ -17,8 +18,7 @@ import { normalizeBuildOptions } from '../../utils/normalize';
 import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
-import { generatePackageJson } from '../../utils/generate-package-json';
-import { createPackageJson } from '@nrwl/js';
+import { createPackageJson } from '@nx/js';
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -81,7 +81,7 @@ export function executor(
   }
 
   if (normalizedOptions.generatePackageJson) {
-    createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true })
+    createPackageJson(context.projectName, projGraph as any, { ...normalizedOptions, 'isProduction': true })
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
