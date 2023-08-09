@@ -61,6 +61,10 @@
       "description": "Dependencies to keep external to the bundle. (\"all\" (default), \"none\", or an array of module names)",
       "default": "all"
     },
+    "extraMetadata": {
+      "type": "object",
+      "default": {}
+    },
     "implicitDependencies": {
       "type": "array",
       "items": {
