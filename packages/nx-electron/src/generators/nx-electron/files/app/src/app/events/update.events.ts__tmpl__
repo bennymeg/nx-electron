@@ -29,7 +29,7 @@ export default class UpdateEvents {
 
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate) => {
     const dialogOpts: MessageBoxOptions = {
-      type: 'info',
+      type: 'info' as const,
       buttons: ['Restart', 'Later'],
       title: 'Application Update',
       message: process.platform === 'win32' ? releaseNotes : releaseName,
