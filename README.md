@@ -57,7 +57,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 **NOTE:** You should add a frontend project to you workspace prior to invoking this command.
 
-**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to change the baseHref field to "./", and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
+**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to [change the baseHref field to "./"](https://github.com/dmatora/nx-electron-boilerplate/commit/b70da7a2ce730c7e2af7f4c1d69f30212eabfeb4), and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
 ## Building Nx Electron Application
 
