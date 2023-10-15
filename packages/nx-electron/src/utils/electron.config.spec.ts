@@ -3,7 +3,7 @@ import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { getElectronWebpackConfig } from './electron.config';
 
 jest.mock('./webpack/plugins/tsconfig-paths/tsconfig-paths.plugin');
-jest.mock('@nrwl/tao/src/utils/app-root', () => ({
+jest.mock('@nx/tao/src/utils/app-root', () => ({
   get appRootPath() {
     return join(__dirname, '../../../..');
   },

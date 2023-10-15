@@ -21,7 +21,7 @@ fdescribe('app', () => {
     tree = createTreeWithEmptyWorkspace();
 
     overrideCollectionResolutionForTesting({
-      '@nrwl/cypress': join(__dirname, '../../../../cypress/generators.json'),
+      '@nx/cypress': join(__dirname, '../../../../cypress/generators.json'),
       '@nx/jest': join(__dirname, '../../../../jest/generators.json'),
       '@nx/workspace': join(__dirname, '../../../../workspace/generators.json'),
       '@nx/angular': join(__dirname, '../../../../angular/generators.json'),
