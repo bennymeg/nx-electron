@@ -41,6 +41,7 @@ This module is based on Nx, you will need to [set up an Nx workspace](https://nx
 npx create-nx-workspace@16
 ```
 
+Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
 
 ## Installation
