@@ -49,5 +49,10 @@ export interface BuildBuilderOptions {
   // tsPlugins?: TsPluginEntry[];
 
   additionalEntryPoints?: AdditionalEntryPoint[];
+  extraMetadata?: ExtraMetadata;
   outputFileName?: string;
+}
+
+export interface ExtraMetadata {
+  version?: string;
 }

@@ -1,4 +1,4 @@
-import { workspaceRoot } from '@nrwl/devkit';
+import { workspaceRoot } from '@nx/devkit';
 import { Configuration } from 'webpack';
 import { merge } from 'webpack-merge';
 import nodeExternals from 'webpack-node-externals';
@@ -7,19 +7,21 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { getBaseWebpackPartial } from './config';
 
-function getElectronPartial(options: BuildElectronBuilderOptions): Configuration {
+function getElectronPartial(
+  options: BuildElectronBuilderOptions
+): Configuration {
   const webpackConfig: Configuration = {
     output: {
-      libraryTarget: 'commonjs'
+      libraryTarget: 'commonjs',
     },
     target: 'electron-main',
-    node: false
+    node: false,
   };
 
   if (options.optimization) {
     webpackConfig.optimization = {
       minimize: false,
-      concatenateModules: false
+      concatenateModules: false,
     };
   }
 
@@ -37,15 +39,18 @@ function getElectronPartial(options: BuildElectronBuilderOptions): Configuration
             keep_fnames: false,
             toplevel: true,
             output: {
-              comments: false
-            }
-          }
+              comments: false,
+            },
+          },
         }),
       ],
     };
 
     if (webpackConfig.optimization) {
-      webpackConfig.optimization = Object.assign(webpackConfig.optimization, obfuscationOptimization);
+      webpackConfig.optimization = Object.assign(
+        webpackConfig.optimization,
+        obfuscationOptimization
+      );
     } else {
       webpackConfig.optimization = obfuscationOptimization;
     }

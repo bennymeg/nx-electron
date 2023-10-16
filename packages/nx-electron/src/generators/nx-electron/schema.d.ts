@@ -1,4 +1,4 @@
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 
 export interface Schema {
   name: string;
@@ -12,5 +12,4 @@ export interface Schema {
   linter: Linter;
   tags?: string;
   setParserOptionsProject?: boolean;
-  standaloneConfig?: boolean;
 }

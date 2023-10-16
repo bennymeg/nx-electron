@@ -38,7 +38,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@15
+npx create-nx-workspace@16
 ```
 
 You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
@@ -57,7 +57,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 **NOTE:** You should add a frontend project to you workspace prior to invoking this command.
 
-**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to change the baseHref field to "./", and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
+**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to [change the baseHref field to "./"](https://github.com/dmatora/nx-electron-boilerplate/commit/b70da7a2ce730c7e2af7f4c1d69f30212eabfeb4), and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
 ## Building Nx Electron Application
 

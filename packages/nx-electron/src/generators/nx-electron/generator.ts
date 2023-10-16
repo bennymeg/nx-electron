@@ -8,20 +8,20 @@ import {
   names,
   offsetFromRoot,
   ProjectConfiguration,
+  readNxJson,
   readProjectConfiguration,
-  readWorkspaceConfiguration,
   stripIndents,
   TargetConfiguration,
   Tree,
+  updateNxJson,
   updateProjectConfiguration,
-  updateWorkspaceConfiguration,
-} from '@nrwl/devkit';
+  runTasksInSerial
+} from '@nx/devkit';
 
 import { join } from 'path';
 
-import { Linter, lintProjectGenerator } from '@nrwl/linter';
-import { jestProjectGenerator } from '@nrwl/jest';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
+import { Linter, lintProjectGenerator } from '@nx/linter';
+import { jestProjectGenerator } from '@nx/jest';
 
 import { Schema } from './schema';
 import { generator as initGenerator } from '../init/generator';
@@ -31,16 +31,16 @@ export interface NormalizedSchema extends Schema {
   parsedTags: string[];
 }
 
-function getBuildConfig(project: ProjectConfiguration, options: NormalizedSchema): TargetConfiguration {
+function getBuildConfig(
+  project: ProjectConfiguration,
+  options: NormalizedSchema
+): TargetConfiguration {
   return {
     executor: 'nx-electron:build',
     outputs: ['{options.outputPath}'],
     options: {
       outputPath: joinPathFragments('dist', options.appProjectRoot),
-      main: joinPathFragments(
-        project.sourceRoot,
-        'main.ts'
-      ),
+      main: joinPathFragments(project.sourceRoot, 'main.ts'),
       tsConfig: joinPathFragments(options.appProjectRoot, 'tsconfig.app.json'),
       assets: [joinPathFragments(project.sourceRoot, 'assets')],
     },
@@ -81,9 +81,10 @@ function getPackageConfig(options: NormalizedSchema): TargetConfiguration {
     options: {
       name: options.name,
       frontendProject: options.frontendProject || '',
+      sourcePath: "dist/apps",
       outputPath: 'dist/packages',
-      prepackageOnly: true
-    }
+      prepackageOnly: true,
+    },
   };
 }
 
@@ -93,8 +94,9 @@ function getMakeConfig(options: NormalizedSchema): TargetConfiguration {
     options: {
       name: options.name,
       frontendProject: options.frontendProject || '',
-      outputPath: 'dist/executables'
-    }
+      sourcePath: "dist/apps",
+      outputPath: 'dist/executables',
+    },
   };
 }
 
@@ -104,7 +106,6 @@ function addProject(tree: Tree, options: NormalizedSchema) {
     sourceRoot: joinPathFragments(options.appProjectRoot, 'src'),
     projectType: 'application',
     targets: {},
-    // tags: options.parsedTags,
   };
   project.targets.build = getBuildConfig(project, options);
   project.targets.serve = getServeConfig(options);
@@ -114,20 +115,21 @@ function addProject(tree: Tree, options: NormalizedSchema) {
   addProjectConfiguration(
     tree,
     options.name,
-    project,
-    options.standaloneConfig
+    project
   );
 
-  const workspace = readWorkspaceConfiguration(tree);
+  const nxJsonConfiguration = readNxJson(tree);
 
-  if (!workspace.defaultProject) {
-    workspace.defaultProject = options.name;
-    updateWorkspaceConfiguration(tree, workspace);
+  if (!nxJsonConfiguration.defaultProject) {
+    nxJsonConfiguration.defaultProject = options.name;
+    updateNxJson(tree, nxJsonConfiguration);
   }
 }
 
 function updateConstantsFile(tree: Tree, options: NormalizedSchema) {
-  const rendererAppName = !options.frontendProject ? '' : options.frontendProject;
+  const rendererAppName = !options.frontendProject
+    ? ''
+    : options.frontendProject;
 
   tree.write(
     join(options.appProjectRoot, 'src/app/constants.ts'),
@@ -190,7 +192,7 @@ function addProxy(tree: Tree, options: NormalizedSchema) {
   }
 }
 
-export async function addLintingToApplication(
+async function addLintingToApplication(
   tree: Tree,
   options: NormalizedSchema
 ): Promise<GeneratorCallback> {
@@ -200,9 +202,7 @@ export async function addLintingToApplication(
     tsConfigPaths: [
       joinPathFragments(options.appProjectRoot, 'tsconfig.app.json'),
     ],
-    eslintFilePatterns: [
-      `${options.appProjectRoot}/**/*.ts`,
-    ],
+    eslintFilePatterns: [`${options.appProjectRoot}/**/*.ts`],
     skipFormat: true,
     setParserOptionsProject: options.setParserOptionsProject,
   });

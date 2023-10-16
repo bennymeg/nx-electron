@@ -1,5 +1,5 @@
-import type { ProjectGraph } from '@nrwl/devkit';
-import { writeJsonFile, readJsonFile } from '@nrwl/devkit';
+import type { ProjectGraph } from '@nx/devkit';
+import { writeJsonFile, readJsonFile } from '@nx/devkit';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { INDEX_OUTPUT_FILENAME } from './config';
 
@@ -13,7 +13,11 @@ import { INDEX_OUTPUT_FILENAME } from './config';
  * @param options
  * @constructor
  */
-export function generatePackageJson(projectName: string, graph: ProjectGraph, options: BuildElectronBuilderOptions) {
+export function generatePackageJson(
+  projectName: string,
+  graph: ProjectGraph,
+  options: BuildElectronBuilderOptions
+) {
   // default package.json if one does not exist
   let packageJson = {
     name: projectName,
@@ -32,14 +36,17 @@ export function generatePackageJson(projectName: string, graph: ProjectGraph, op
 
   const rootPackageJson = readJsonFile(`${options.root}/package.json`);
   const npmDeps = findAllNpmDeps(projectName, graph);
-  const implicitDeps = findAllNpmImplicitDeps(rootPackageJson, options.implicitDependencies);
+  const implicitDeps = findAllNpmImplicitDeps(
+    rootPackageJson,
+    options.implicitDependencies
+  );
   const dependencies = Object.assign({}, implicitDeps, npmDeps);
 
   packageJson.version = rootPackageJson.version || '0.0.0';
-  packageJson['author'] = rootPackageJson.author || '';
-  packageJson['description'] = rootPackageJson.description || '';
-  packageJson['license'] = rootPackageJson.license || 'UNLICENSED';
-  packageJson['private'] = rootPackageJson.private || true;
+  packageJson['author'] = packageJson['author'] || rootPackageJson.author || '';
+  packageJson['description'] = packageJson['description'] || rootPackageJson.description || '';
+  packageJson['license'] = packageJson['license'] || rootPackageJson.license || 'UNLICENSED';
+  packageJson['private'] = packageJson['private'] || rootPackageJson.private || true;
 
   // update dependencies
   Object.entries(dependencies).forEach(([packageName, version]) => {
@@ -66,7 +73,9 @@ function findAllNpmDeps(
 
   seen.add(projectName);
 
-  const node = graph.externalNodes ? graph.externalNodes[projectName] : graph.nodes[projectName];
+  const node = graph.externalNodes
+    ? graph.externalNodes[projectName]
+    : graph.nodes[projectName];
 
   if (node && node.type === 'npm') {
     list[node.data.packageName] = node.data.version;
@@ -78,8 +87,7 @@ function findAllNpmDeps(
   return list;
 }
 
- function findAllNpmImplicitDeps(packageJson, implicitDeps: Array<string>) {
-
+function findAllNpmImplicitDeps(packageJson, implicitDeps: Array<string>) {
   const dependencies = implicitDeps.reduce((acc, dep) => {
     acc[dep] = packageJson.dependencies[dep];
     return acc;

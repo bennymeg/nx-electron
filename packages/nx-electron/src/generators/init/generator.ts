@@ -1,9 +1,13 @@
-import { addDependenciesToPackageJson, formatFiles, GeneratorCallback, Tree, updateJson } from '@nrwl/devkit';
+import {
+  addDependenciesToPackageJson,
+  formatFiles,
+  GeneratorCallback,
+  Tree,
+  updateJson,
+} from '@nx/devkit';
 import { Schema } from './schema';
-import { nxElectronVersion, electronVersion, electronBuilderVersion, exitZeroVersion } from '../../utils/versions';
-import { setDefaultCollection } from '@nrwl/workspace/src/utilities/set-default-collection';
-import { jestInitGenerator } from '@nrwl/jest';
-
+import { nxElectronVersion, electronVersion } from '../../utils/versions';
+import { jestInitGenerator } from '@nx/jest';
 
 function addDependencies(tree: Tree) {
   return addDependenciesToPackageJson(
@@ -11,33 +15,21 @@ function addDependencies(tree: Tree) {
     {},
     {
       'nx-electron': nxElectronVersion,
-      'electron': electronVersion,
-      'exitzero': exitZeroVersion,
-      // 'electron-builder': electronBuilderVersion,
+      electron: electronVersion,
     }
   );
 }
 
-function moveDependency(tree: Tree) {
-  return updateJson(tree, 'package.json', json => {
-    json.dependencies = json.dependencies || {};
-
-    delete json.dependencies['nx-electron'];
-    delete json.dependencies['electron'];
-    // delete json.dependencies['electron-builder'];
-
-    return json;
-  });
-}
-
 function addScripts(tree: Tree) {
-  return updateJson(tree, 'package.json', json => {
+  return updateJson(tree, 'package.json', (json) => {
     json.scripts = json.scripts || {};
 
-    const postinstall = json.scripts["postinstall"];
-    json.scripts["postinstall"] = (postinstall && postinstall !== '') ?
-                                  `${postinstall} && exitzero electron-builder install-app-deps` :
-                                  "exitzero electron-builder install-app-deps";
+    const postinstall = json.scripts['postinstall'];
+
+    json.scripts['postinstall'] =
+      postinstall && postinstall !== ''
+        ? `${postinstall} && electron-builder install-app-deps`
+        : 'electron-builder install-app-deps';
 
     return json;
   });
@@ -53,14 +45,12 @@ function normalizeOptions(schema: Schema) {
 export async function generator(tree: Tree, schema: Schema) {
   const options = normalizeOptions(schema);
 
-  setDefaultCollection(tree, 'nx-electron');
-
   let jestInstall: GeneratorCallback;
   if (options.unitTestRunner === 'jest') {
     jestInstall = await jestInitGenerator(tree, {});
   }
 
-  const installTask = await addDependencies(tree);
+  const installTask = addDependencies(tree);
 
   if (!options.skipFormat) {
     await formatFiles(tree);
@@ -71,9 +61,8 @@ export async function generator(tree: Tree, schema: Schema) {
       await jestInstall();
     }
 
-    await addScripts(tree);
+    addScripts(tree);
     await installTask();
-    await moveDependency(tree);
   };
 }
 

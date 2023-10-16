@@ -2,7 +2,6 @@
   "title": "Electron Application Packaging Target",
   "description": "Electron application packaging target options for Build Facade",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "name": {
       "description": "The name of the electron application.",
@@ -44,14 +43,22 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["windows", "mac", "linux"]
+          "enum": [
+            "windows",
+            "mac",
+            "linux"
+          ]
         },
         {
           "type": "array",
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enum": ["windows", "mac", "linux"]
+            "enum": [
+              "windows",
+              "mac",
+              "linux"
+            ]
           }
         }
       ],
@@ -59,12 +66,22 @@
     },
     "arch": {
       "type": "string",
-      "enum": ["x64", "ia32", "armv7l", "arm64"],
+      "enum": [
+        "x64",
+        "ia32",
+        "armv7l",
+        "arm64"
+      ],
       "description": "Package architecture."
     },
     "publishPolicy": {
       "type": "string",
-      "enum": ["onTag", "onTagOrDraft", "always", "never"],
+      "enum": [
+        "onTag",
+        "onTagOrDraft",
+        "always",
+        "never"
+      ],
       "description": "Package publish policy."
     },
     "makerOptionsPath": {
@@ -72,5 +89,7 @@
       "description": "Overrides the '{sourceRoot}/app/options/maker.options.json' configuration file path."
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ]
 }

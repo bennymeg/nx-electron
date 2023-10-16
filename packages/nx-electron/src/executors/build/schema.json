@@ -2,7 +2,6 @@
   "title": "Electron Application Build Target",
   "description": "Electron application build target options for Build Facade",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "main": {
       "type": "string",
@@ -47,7 +46,10 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["none", "all"]
+          "enum": [
+            "none",
+            "all"
+          ]
         },
         {
           "type": "array",
@@ -58,6 +60,10 @@
       ],
       "description": "Dependencies to keep external to the bundle. (\"all\" (default), \"none\", or an array of module names)",
       "default": "all"
+    },
+    "extraMetadata": {
+      "type": "object",
+      "default": {}
     },
     "implicitDependencies": {
       "type": "array",
@@ -110,7 +116,10 @@
           }
         },
         "additionalProperties": false,
-        "required": ["replace", "with"]
+        "required": [
+          "replace",
+          "with"
+        ]
       },
       "default": []
     },
@@ -129,8 +138,10 @@
       "default": true
     }
   },
-  "required": ["tsConfig", "main"],
-
+  "required": [
+    "tsConfig",
+    "main"
+  ],
   "definitions": {
     "assetPattern": {
       "oneOf": [
@@ -158,7 +169,11 @@
             }
           },
           "additionalProperties": false,
-          "required": ["glob", "input", "output"]
+          "required": [
+            "glob",
+            "input",
+            "output"
+          ]
         },
         {
           "type": "string"
