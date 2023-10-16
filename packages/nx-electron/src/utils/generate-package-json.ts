@@ -43,10 +43,10 @@ export function generatePackageJson(
   const dependencies = Object.assign({}, implicitDeps, npmDeps);
 
   packageJson.version = rootPackageJson.version || '0.0.0';
-  packageJson['author'] = rootPackageJson.author || '';
-  packageJson['description'] = rootPackageJson.description || '';
-  packageJson['license'] = rootPackageJson.license || 'UNLICENSED';
-  packageJson['private'] = rootPackageJson.private || true;
+  packageJson['author'] = packageJson['author'] || rootPackageJson.author || '';
+  packageJson['description'] = packageJson['description'] || rootPackageJson.description || '';
+  packageJson['license'] = packageJson['license'] || rootPackageJson.license || 'UNLICENSED';
+  packageJson['private'] = packageJson['private'] || rootPackageJson.private || true;
 
   // update dependencies
   Object.entries(dependencies).forEach(([packageName, version]) => {

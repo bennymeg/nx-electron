@@ -81,6 +81,7 @@ function getPackageConfig(options: NormalizedSchema): TargetConfiguration {
     options: {
       name: options.name,
       frontendProject: options.frontendProject || '',
+      sourcePath: "dist/apps",
       outputPath: 'dist/packages',
       prepackageOnly: true,
     },
@@ -93,6 +94,7 @@ function getMakeConfig(options: NormalizedSchema): TargetConfiguration {
     options: {
       name: options.name,
       frontendProject: options.frontendProject || '',
+      sourcePath: "dist/apps",
       outputPath: 'dist/executables',
     },
   };
