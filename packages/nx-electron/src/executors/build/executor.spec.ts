@@ -55,7 +55,7 @@ describe('ElectronBuildBuilder', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('should call webpack', async () => {
-    await executor(options, context).next();
+    await executor(options, context);
 
     expect(runWebpack).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -69,7 +69,7 @@ describe('ElectronBuildBuilder', () => {
   });
 
   it('should use outputFileName if passed in', async () => {
-    await executor({ ...options, outputFileName: 'index.js' }, context).next();
+    await executor({ ...options, outputFileName: 'index.js' }, context);
 
     expect(runWebpack).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -92,7 +92,7 @@ describe('ElectronBuildBuilder', () => {
       await executor(
         { ...options, webpackConfig: 'config.js' },
         context
-      ).next();
+      );
 
       expect(runWebpack).toHaveBeenCalledWith(
         expect.objectContaining({

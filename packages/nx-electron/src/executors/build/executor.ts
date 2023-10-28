@@ -1,24 +1,23 @@
-import { join, parse, resolve } from 'path';
-import { map, tap } from 'rxjs/operators';
+import {join, parse, resolve} from 'path';
+import {map, tap} from 'rxjs/operators';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { eachValueFrom } from 'rxjs-for-await';
-import { readdirSync } from 'fs';
+import {eachValueFrom} from 'rxjs-for-await';
+import {readdirSync} from 'fs';
 
-import { ExecutorContext } from '@nx/devkit';
-import { runWebpack } from '../../utils/run-webpack';
-import { readCachedProjectGraph } from '@nx/workspace/src/core/project-graph';
+import {ExecutorContext} from '@nx/devkit';
+import {runWebpack} from '../../utils/run-webpack';
 import {
   calculateProjectDependencies,
   checkDependentProjectsHaveBeenBuilt,
   createTmpTsConfig,
-} from '@nx/workspace/src/utilities/buildable-libs-utils';
+} from '@nx/js/src/utils/buildable-libs-utils';
 
-import { getElectronWebpackConfig } from '../../utils/electron.config';
-import { normalizeBuildOptions } from '../../utils/normalize';
-import { BuildBuilderOptions } from '../../utils/types';
-import { getSourceRoot } from '../../utils/workspace';
-import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
-import { createPackageJson } from '@nx/js';
+import {getElectronWebpackConfig} from '../../utils/electron.config';
+import {normalizeBuildOptions} from '../../utils/normalize';
+import {BuildBuilderOptions} from '../../utils/types';
+import {getSourceRoot} from '../../utils/workspace';
+import {MAIN_OUTPUT_FILENAME} from '../../utils/config';
+import {createPackageJson} from '@nx/js';
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -39,10 +38,10 @@ export interface NormalizedBuildElectronBuilderOptions
   webpackConfig: string;
 }
 
-export function executor(
+export async function executor(
   rawOptions: BuildElectronBuilderOptions,
   context: ExecutorContext
-): AsyncIterableIterator<ElectronBuildEvent> {
+): Promise<{success: boolean}> {
   const { sourceRoot, projectRoot } = getSourceRoot(context);
   const normalizedOptions = normalizeBuildOptions(
     rawOptions,
@@ -50,7 +49,7 @@ export function executor(
     sourceRoot,
     projectRoot
   );
-  const projGraph = readCachedProjectGraph();
+  const projGraph = context.projectGraph;
 
   if (!normalizedOptions.buildLibsFromSource) {
     const { target, dependencies } = calculateProjectDependencies(
@@ -81,11 +80,12 @@ export function executor(
   }
 
   if (normalizedOptions.generatePackageJson) {
-    createPackageJson(context.projectName, projGraph as any, { ...normalizedOptions, 'isProduction': true })
+    createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true });
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
   if (normalizedOptions.webpackConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     config = require(normalizedOptions.webpackConfig)(config, {
       normalizedOptions,
       configuration: context.configurationName,
@@ -109,7 +109,7 @@ export function executor(
     console.warn('Failed to load preload scripts');
   }
 
-  return eachValueFrom(
+  const results = await eachValueFrom(
     runWebpack(config).pipe(
       tap((stats) => {
         console.info(stats.toString(config.stats));
@@ -126,6 +126,12 @@ export function executor(
       })
     )
   );
+  for await (const res of results) {
+    if(!res.success) {
+      return res;
+    }
+  }
+  return {success: true};
 }
 
 export default executor;
