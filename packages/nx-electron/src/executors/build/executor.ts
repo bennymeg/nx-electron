@@ -38,10 +38,10 @@ export interface NormalizedBuildElectronBuilderOptions
   webpackConfig: string;
 }
 
-export async function executor(
+export function executor(
   rawOptions: BuildElectronBuilderOptions,
   context: ExecutorContext
-): Promise<{success: boolean}> {
+): AsyncIterableIterator<ElectronBuildEvent> {
   const { sourceRoot, projectRoot } = getSourceRoot(context);
   const normalizedOptions = normalizeBuildOptions(
     rawOptions,
@@ -109,7 +109,7 @@ export async function executor(
     console.warn('Failed to load preload scripts');
   }
 
-  const results = await eachValueFrom(
+  return eachValueFrom(
     runWebpack(config).pipe(
       tap((stats) => {
         console.info(stats.toString(config.stats));
@@ -126,12 +126,6 @@ export async function executor(
       })
     )
   );
-  for await (const res of results) {
-    if(!res.success) {
-      return res;
-    }
-  }
-  return {success: true};
 }
 
 export default executor;
