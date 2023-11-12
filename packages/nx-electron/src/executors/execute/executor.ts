@@ -161,7 +161,7 @@ async function* startBuild(
             ************************************************`);
   }
 
-  for await (const res of await runExecutor<ElectronBuildEvent>(
+  for await (const buildEventResponse of await runExecutor<ElectronBuildEvent>(
     buildTarget,
     {
       ...options.buildTargetOptions,
@@ -170,7 +170,7 @@ async function* startBuild(
     },
     context
   )) {
-    yield res;
+    yield buildEventResponse;
   }
 }
 

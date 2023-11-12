@@ -1,23 +1,23 @@
-import {join, parse, resolve} from 'path';
-import {map, tap} from 'rxjs/operators';
+import { join, parse, resolve } from 'path';
+import { map, tap } from 'rxjs/operators';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {eachValueFrom} from 'rxjs-for-await';
-import {readdirSync} from 'fs';
+import { eachValueFrom } from 'rxjs-for-await';
+import { readdirSync } from 'fs';
 
-import {ExecutorContext} from '@nx/devkit';
-import {runWebpack} from '../../utils/run-webpack';
+import { ExecutorContext } from '@nx/devkit';
+import { runWebpack } from '../../utils/run-webpack';
 import {
   calculateProjectDependencies,
   checkDependentProjectsHaveBeenBuilt,
   createTmpTsConfig,
 } from '@nx/js/src/utils/buildable-libs-utils';
 
-import {getElectronWebpackConfig} from '../../utils/electron.config';
-import {normalizeBuildOptions} from '../../utils/normalize';
-import {BuildBuilderOptions} from '../../utils/types';
-import {getSourceRoot} from '../../utils/workspace';
-import {MAIN_OUTPUT_FILENAME} from '../../utils/config';
-import {createPackageJson} from '@nx/js';
+import { getElectronWebpackConfig } from '../../utils/electron.config';
+import { normalizeBuildOptions } from '../../utils/normalize';
+import { BuildBuilderOptions } from '../../utils/types';
+import { getSourceRoot } from '../../utils/workspace';
+import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
+import { createPackageJson } from '@nx/js';
 
 export type ElectronBuildEvent = {
   outfile: string;
