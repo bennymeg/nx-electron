@@ -56,13 +56,15 @@ export async function generator(tree: Tree, schema: Schema) {
     await formatFiles(tree);
   }
 
-  return async () => {
-    if (jestInstall) {
-      await jestInstall();
-    }
+  if (jestInstall) {
+    await jestInstall();
+  }
 
-    addScripts(tree);
-    await installTask();
+  addScripts(tree);
+  await installTask();
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  return async () => {
   };
 }
 

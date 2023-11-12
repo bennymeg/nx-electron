@@ -6,12 +6,11 @@ import { readdirSync } from 'fs';
 
 import { ExecutorContext } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
-import { readCachedProjectGraph } from '@nx/workspace/src/core/project-graph';
 import {
   calculateProjectDependencies,
   checkDependentProjectsHaveBeenBuilt,
   createTmpTsConfig,
-} from '@nx/workspace/src/utilities/buildable-libs-utils';
+} from '@nx/js/src/utils/buildable-libs-utils';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
@@ -50,7 +49,7 @@ export function executor(
     sourceRoot,
     projectRoot
   );
-  const projGraph = readCachedProjectGraph();
+  const projGraph = context.projectGraph;
 
   if (!normalizedOptions.buildLibsFromSource) {
     const { target, dependencies } = calculateProjectDependencies(
@@ -81,11 +80,12 @@ export function executor(
   }
 
   if (normalizedOptions.generatePackageJson) {
-    createPackageJson(context.projectName, projGraph as any, { ...normalizedOptions, 'isProduction': true })
+    createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true });
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
   if (normalizedOptions.webpackConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     config = require(normalizedOptions.webpackConfig)(config, {
       normalizedOptions,
       configuration: context.configurationName,

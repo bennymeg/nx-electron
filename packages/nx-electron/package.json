@@ -47,7 +47,7 @@
   ],
   "peerDependencies": {
     "electron": "*",
-    "@nx/workspace": ">=16.0.0"
+    "@nx/workspace": "^16"
   },
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",

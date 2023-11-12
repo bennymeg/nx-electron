@@ -144,7 +144,7 @@ async function* startBuild(
   options: ElectronExecuteBuilderOptions,
   context: ExecutorContext
 ) {
-  const buildTarget = parseTargetString(options.buildTarget);
+  const buildTarget = parseTargetString(options.buildTarget, context.projectGraph);
   const buildOptions = readTargetOptions<ElectronExecuteBuilderOptions>(
     buildTarget,
     context
@@ -161,7 +161,7 @@ async function* startBuild(
             ************************************************`);
   }
 
-  yield* await runExecutor<ElectronBuildEvent>(
+  for await (const buildEventResponse of await runExecutor<ElectronBuildEvent>(
     buildTarget,
     {
       ...options.buildTargetOptions,
@@ -169,7 +169,9 @@ async function* startBuild(
       watch: options.watch,
     },
     context
-  );
+  )) {
+    yield buildEventResponse;
+  }
 }
 
 function runWaitUntilTargets(
