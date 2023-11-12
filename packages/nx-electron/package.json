@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "16.0.0",
+  "version": "16.1.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -51,17 +51,17 @@
   },
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",
-    "electron-builder": "^24.4.0",
+    "electron-builder": "^24.6.3",
     "fork-ts-checker-webpack-plugin": "^6.5.2",
     "license-webpack-plugin": "^4.0.2",
     "rxjs-for-await": "^1.0.0",
     "strip-json-comments": "^3.1.1",
-    "terser-webpack-plugin": "^5.3.1",
+    "terser-webpack-plugin": "^5.3.9",
     "tree-kill": "^1.2.2",
-    "ts-loader": "^9.4.2",
-    "tsconfig-paths-webpack-plugin": "^4.0.1",
-    "webpack": "^5.79.0",
-    "webpack-merge": "^5.8.0"
+    "ts-loader": "^9.5.0",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "webpack": "^5.89.0",
+    "webpack-merge": "^5.10.0"
   },
   "devDependencies": {
     "webpack-node-externals": "^3.0.0"
