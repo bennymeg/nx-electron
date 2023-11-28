@@ -7,7 +7,7 @@ import { Schema } from './schema';
 import { generator as applicationGenerator } from './generator';
 import { overrideCollectionResolutionForTesting } from '@nx/devkit/ngcli-adapter';
 import { join } from 'path';
-import { Linter } from '@nx/linter';
+import { Linter } from '@nx/eslint';
 
 fdescribe('app', () => {
   let tree: Tree;
@@ -169,7 +169,7 @@ fdescribe('app', () => {
 
     it('should generate the project json with the correct lint target', () => {
       expect(projectJson.targets.lint).toEqual({
-        executor: '@nx/linter:eslint',
+        executor: '@nx/eslint:eslint',
         outputs: ['{options.outputFile}'],
         options: {
           lintFilePatterns: ['electron-app/**/*.ts'],
@@ -233,9 +233,10 @@ fdescribe('app', () => {
     });
 
     it('should add the proxy config to the frontend project', () => {
-      expect(readJson(tree, 'electron-frontend/project.json').targets.serve.options.proxyConfig).toBe(
-        'electron-frontend/proxy.conf.json'
-      )
+      expect(
+        readJson(tree, 'electron-frontend/project.json').targets.serve.options
+          .proxyConfig
+      ).toBe('electron-frontend/proxy.conf.json');
     });
   });
 
