@@ -1933,6 +1933,9 @@
           "description": "Whether a dark mode is supported. If your app does have a dark mode, you can make your app follow the system-wide dark mode setting.",
           "type": "boolean"
         },
+        "defaultArch": {
+          "type": "string"
+        },
         "detectUpdateChannel": {
           "default": true,
           "description": "Whether to infer update channel from application version pre-release components. e.g. if version `0.12.1-alpha.1`, channel will be set to `alpha`. Otherwise to `latest`.",
@@ -1950,7 +1953,7 @@
               "type": "string"
             }
           ],
-          "description": "The electron locales. By default Electron locales used as is."
+          "description": "The electron locales to keep. By default, all Electron locales used as-is."
         },
         "electronUpdaterCompatibility": {
           "description": "The [electron-updater compatibility](/auto-update#compatibility) semver range.",
@@ -1960,14 +1963,28 @@
           ]
         },
         "entitlements": {
-          "description": "The path to entitlements file for signing the app. `build/entitlements.mac.plist` will be used if exists (it is a recommended way to set).\nMAS entitlements is specified in the [mas](/configuration/mas).",
+          "description": "The path to entitlements file for signing the app. `build/entitlements.mac.plist` will be used if exists (it is a recommended way to set).\nMAS entitlements is specified in the [mas](/configuration/mas).\nSee [this folder in osx-sign's repository](https://github.com/electron/osx-sign/tree/main/entitlements) for examples.\nBe aware that your app may crash if the right entitlements are not set like `com.apple.security.cs.allow-jit` for example on arm64 builds with Electron 20+.\nSee [Signing and Notarizing macOS Builds from the Electron documentation](https://www.electronjs.org/docs/latest/tutorial/code-signing#signing--notarizing-macos-builds) for more information.",
           "type": [
             "null",
             "string"
           ]
         },
         "entitlementsInherit": {
-          "description": "The path to child entitlements which inherit the security settings for signing frameworks and bundles of a distribution. `build/entitlements.mac.inherit.plist` will be used if exists (it is a recommended way to set).\nOtherwise [default](https://github.com/electron-userland/electron-osx-sign/blob/master/default.entitlements.darwin.inherit.plist).\n\nThis option only applies when signing with `entitlements` provided.",
+          "description": "The path to child entitlements which inherit the security settings for signing frameworks and bundles of a distribution. `build/entitlements.mac.inherit.plist` will be used if exists (it is a recommended way to set).\nSee [this folder in osx-sign's repository](https://github.com/electron/osx-sign/tree/main/entitlements) for examples.\n\nThis option only applies when signing with `entitlements` provided.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "entitlementsLoginHelper": {
+          "description": "Path to login helper entitlement file.\nWhen using App Sandbox, the the `com.apple.security.inherit` key that is normally in the inherited entitlements cannot be inherited since the login helper is a standalone executable.\nDefaults to the value provided for `entitlements`. This option only applies when signing with `entitlements` provided.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "executableName": {
+          "description": "The executable name. Defaults to `productName`.",
           "type": [
             "null",
             "string"
@@ -2091,7 +2108,7 @@
         },
         "gatekeeperAssess": {
           "default": false,
-          "description": "Whether to let electron-osx-sign validate the signing or not.",
+          "description": "Whether to let @electron/osx-sign validate the signing or not.",
           "type": "boolean"
         },
         "generateUpdatesFilesForAllChannels": {
@@ -2112,6 +2129,46 @@
             "string"
           ]
         },
+        "helperEHBundleId": {
+          "default": "${appBundleIdentifier}.helper.EH",
+          "description": "The bundle identifier to use in the EH helper's plist.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "helperGPUBundleId": {
+          "default": "${appBundleIdentifier}.helper.GPU",
+          "description": "The bundle identifier to use in the GPU helper's plist.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "helperNPBundleId": {
+          "default": "${appBundleIdentifier}.helper.NP",
+          "description": "The bundle identifier to use in the NP helper's plist.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "helperPluginBundleId": {
+          "default": "${appBundleIdentifier}.helper.Plugin",
+          "description": "The bundle identifier to use in the Plugin helper's plist.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "helperRendererBundleId": {
+          "default": "${appBundleIdentifier}.helper.Renderer",
+          "description": "The bundle identifier to use in the Renderer helper's plist.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
         "icon": {
           "default": "build/icon.icns",
           "description": "The path to application icon.",
@@ -2127,12 +2184,39 @@
             "string"
           ]
         },
+        "mergeASARs": {
+          "default": true,
+          "description": "Whether to merge ASAR files for different architectures or not.\n\nThis option has no effect unless building for \"universal\" arch.",
+          "type": "boolean"
+        },
         "minimumSystemVersion": {
           "description": "The minimum version of macOS required for the app to run. Corresponds to `LSMinimumSystemVersion`.",
           "type": [
             "null",
             "string"
           ]
+        },
+        "notarize": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/NotarizeLegacyOptions"
+            },
+            {
+              "$ref": "#/definitions/NotarizeNotaryOptions"
+            },
+            {
+              "type": [
+                "null",
+                "boolean"
+              ]
+            }
+          ],
+          "description": "Options to use for @electron/notarize (ref: https://github.com/electron/notarize).\nSupports both `legacy` and `notarytool` notarization tools. Use `false` to explicitly disable\n\nNote: In order to activate the notarization step You MUST specify one of the following via environment variables:\n1. `APPLE_API_KEY`, `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`.\n2. `APPLE_ID` and `APPLE_APP_SPECIFIC_PASSWORD`\n3. `APPLE_KEYCHAIN` and `APPLE_KEYCHAIN_PROFILE`\n\nFor security reasons it is recommended to use the first option (see https://github.com/electron-userland/electron-builder/issues/7859)"
+        },
+        "preAutoEntitlements": {
+          "default": true,
+          "description": "Whether to enable entitlements automation from @electron/osx-sign.",
+          "type": "boolean"
         },
         "protocols": {
           "anyOf": [
@@ -2170,13 +2254,16 @@
               "$ref": "#/definitions/GenericServerOptions"
             },
             {
-              "$ref": "#/definitions/BintrayOptions"
-            },
-            {
               "$ref": "#/definitions/CustomPublishOptions"
             },
             {
+              "$ref": "#/definitions/KeygenOptions"
+            },
+            {
               "$ref": "#/definitions/SnapStoreOptions"
+            },
+            {
+              "$ref": "#/definitions/BitbucketOptions"
             },
             {
               "items": {
@@ -2194,13 +2281,16 @@
                     "$ref": "#/definitions/GenericServerOptions"
                   },
                   {
-                    "$ref": "#/definitions/BintrayOptions"
-                  },
-                  {
                     "$ref": "#/definitions/CustomPublishOptions"
                   },
                   {
+                    "$ref": "#/definitions/KeygenOptions"
+                  },
+                  {
                     "$ref": "#/definitions/SnapStoreOptions"
+                  },
+                  {
+                    "$ref": "#/definitions/BitbucketOptions"
                   },
                   {
                     "type": "string"
@@ -2227,6 +2317,35 @@
             "null",
             "string"
           ]
+        },
+        "signIgnore": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": [
+                "null",
+                "string"
+              ]
+            }
+          ],
+          "description": "Regex or an array of regex's that signal skipping signing a file."
+        },
+        "singleArchFiles": {
+          "description": "Minimatch pattern of paths that are allowed to be present in one of the\nASAR files, but not in the other.\n\nThis option has no effect unless building for \"universal\" arch and applies\nonly if `mergeASARs` is `true`.",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "strictVerify": {
+          "default": true,
+          "description": "Whether to let @electron/osx-sign verify the contents or not.",
+          "type": "boolean"
         },
         "target": {
           "anyOf": [
@@ -2281,7 +2400,14 @@
               "type": "null"
             }
           ],
-          "description": "The target package type: list of `default`, `dmg`, `mas`, `mas-dev`, `pkg`, `7z`, `zip`, `tar.xz`, `tar.lz`, `tar.gz`, `tar.bz2`, `dir`. Defaults to `default` (dmg and zip for Squirrel.Mac)."
+          "description": "The target package type: list of `default`, `dmg`, `mas`, `mas-dev`, `pkg`, `7z`, `zip`, `tar.xz`, `tar.lz`, `tar.gz`, `tar.bz2`, `dir`. Defaults to `default` (`dmg` and `zip` for Squirrel.Mac). Note: Squirrel.Mac auto update mechanism requires both `dmg` and `zip` to be enabled, even when only `dmg` is used. Disabling `zip` will break auto update in `dmg` packages."
+        },
+        "timestamp": {
+          "description": "Specify the URL of the timestamp authority server",
+          "type": [
+            "null",
+            "string"
+          ]
         },
         "type": {
           "anyOf": [
@@ -2298,6 +2424,13 @@
           ],
           "default": "distribution",
           "description": "Whether to sign app for development or for distribution."
+        },
+        "x64ArchFiles": {
+          "description": "Minimatch pattern of paths that are allowed to be x64 binaries in both\nASAR files\n\nThis option has no effect unless building for \"universal\" arch and applies\nonly if `mergeASARs` is `true`.",
+          "type": [
+            "null",
+            "string"
+          ]
         }
       },
       "type": "object"
@@ -2960,6 +3093,39 @@
           "type": "boolean"
         }
       },
+      "type": "object"
+    },
+    "NotarizeLegacyOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "appBundleId": {
+          "description": "The app bundle identifier your Electron app is using. E.g. com.github.electron. Useful if notarization ID differs from app ID (unlikely).\nOnly used by `legacy` notarization tool",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ascProvider": {
+          "description": "Your Team Short Name. Only used by `legacy` notarization tool",
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "NotarizeNotaryOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "teamId": {
+          "description": "The team ID you want to notarize under for when using `notarytool`",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
       "type": "object"
     },
     "NsisOptions": {
