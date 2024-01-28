@@ -100,7 +100,7 @@ export function executor(
       )
       .forEach(
         (entry) =>
-          (config.entry[parse(entry.name).name] = join(
+          (config.entry[parse(entry.name).name] = resolve(
             preloadFilesDirectory,
             entry.name
           ))
