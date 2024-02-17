@@ -58,7 +58,7 @@ function getElectronPartial(
 
   if (options.externalDependencies === 'all') {
     const modulesDir = `${workspaceRoot}/node_modules`;
-    webpackConfig.externals = [nodeExternals({ modulesDir })];
+    webpackConfig.externals = [nodeExternals({ modulesDir })] as unknown as typeof webpackConfig.externals;
   } else if (Array.isArray(options.externalDependencies)) {
     webpackConfig.externals = [
       function (context, callback) {

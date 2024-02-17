@@ -1,2 +1,2 @@
-export const nxElectronVersion = '^17.0.1';
-export const electronVersion = '^27.0.4';
+export const nxElectronVersion = '^18.0.0';
+export const electronVersion = '^28.2.3';
