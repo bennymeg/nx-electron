@@ -6,14 +6,11 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/nx-electron/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/nx-electron"],
+      "outputs": ["{workspaceRoot}/coverage/packages/nx-electron"],
       "options": {
         "jestConfig": "packages/nx-electron/jest.config.ts"
       }
