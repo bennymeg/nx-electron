@@ -95,8 +95,8 @@ export function getBaseWebpackPartial(
         },
       }),
       new DefinePlugin({
-        __BUILD_VERSION__: 
-          options.extraMetadata?.version || JSON.stringify(require(join(options.root, 'package.json')).version),
+        __BUILD_VERSION__:
+          JSON.stringify(options.extraMetadata?.version || require(join(options.root, 'package.json')).version),
         __BUILD_DATE__: Date.now(),
       }),
     ],
