@@ -38,7 +38,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@18
+npx create-nx-workspace@19
 ```
 
 Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
