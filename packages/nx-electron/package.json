@@ -1,6 +1,6 @@
 {
   "name": "nx-electron",
-  "version": "19.0.0-alpha.1",
+  "version": "19.0.0-beta.0",
   "main": "src/index.js",
   "description": "Electron Plugin for Nx",
   "author": "Benny Megidish",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "copy-webpack-plugin": "^12.0.2",
-    "electron-builder": "^25.0.5",
+    "electron-builder": "^25.1.7",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "license-webpack-plugin": "^4.0.2",
     "rxjs-for-await": "^1.0.0",
