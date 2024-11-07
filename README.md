@@ -31,6 +31,12 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
 - **Making**: Makes your frontend and backend webpack bundles into single executable.
 
+# Compitability
+
+This repository follows the semantic versioning rules while adhering to Nx and Angular versioning scheme.
+Make sure that nx-electron major version matching Nx major version.
+I.e. version 19.x of nx-electron will be compatible with version 19.y of Nx. 
+
 # Getting Started
 
 ## Prerequisite
@@ -130,11 +136,6 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 ## Contribute
 
 - Follow [this instructions](https://github.com/bennymeg/nx-electron/blob/master/CONTRIBUTING.md) in order to learn how to contribute to this project.
-
-## Versioning
-
-This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
-I.e. version 15.x of nx-electron will be compatible with version 15.y of NX. 
 
 ## Attribution
 
