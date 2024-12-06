@@ -180,7 +180,7 @@ function runWaitUntilTargets(
 ): Promise<{ success: boolean }[]> {
   return Promise.all(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
-      const target = parseTargetString(waitUntilTarget);
+      const target = parseTargetString(waitUntilTarget, context.projectGraph);
       const output = await runExecutor(target, {}, context);
 
       return new Promise<{ success: boolean }>(async (resolve) => {
