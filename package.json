@@ -52,7 +52,6 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
-    "electron-builder": "^25.1.8",
     "rxjs": "^7.8.1",
     "rxjs-for-await": "^1.0.0"
   },
