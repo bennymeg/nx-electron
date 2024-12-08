@@ -21,15 +21,15 @@
   "devDependencies": {
     "@angular-devkit/core": "18.2.5",
     "@angular-devkit/schematics": "18.2.5",
-    "@nx/angular": "19.8.0",
-    "@nx/devkit": "19.8.0",
-    "@nx/eslint": "19.8.0",
-    "@nx/eslint-plugin": "19.8.0",
-    "@nx/jest": "19.8.0",
-    "@nx/js": "19.8.0",
-    "@nx/node": "19.8.0",
-    "@nx/plugin": "19.8.0",
-    "@nx/workspace": "19.8.0",
+    "@nx/angular": "20.1.4",
+    "@nx/devkit": "20.1.4",
+    "@nx/eslint": "20.1.4",
+    "@nx/eslint-plugin": "20.1.4",
+    "@nx/jest": "20.1.4",
+    "@nx/js": "20.1.4",
+    "@nx/node": "20.1.4",
+    "@nx/plugin": "20.1.4",
+    "@nx/workspace": "20.1.4",
     "@schematics/angular": "18.2.5",
     "@swc-node/register": "1.9.2",
     "@swc/core": "^1.5.29",
@@ -44,7 +44,7 @@
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "jest": "29.7.0",
-    "nx": "19.8.0",
+    "nx": "20.1.4",
     "prettier": "3.2.5",
     "shx": "^0.3.4",
     "standard-version": "^9.5.0",
@@ -52,7 +52,9 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
-    "rxjs": "^7.8.1"
+    "electron-builder": "^25.1.8",
+    "rxjs": "^7.8.1",
+    "rxjs-for-await": "^1.0.0"
   },
   "engines": {
     "node": ">= 16.0.0"

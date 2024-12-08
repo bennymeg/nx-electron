@@ -4,7 +4,7 @@ export function getSourceRoot(context: ExecutorContext): {
   sourceRoot: string;
   projectRoot: string;
 } {
-  const { sourceRoot, root } = context.workspace.projects[context.projectName];
+  const { sourceRoot, root } = context.projectsConfigurations.projects[context.projectName];
 
   if (sourceRoot && root) {
     return { sourceRoot, projectRoot: root };
