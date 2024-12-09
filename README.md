@@ -31,7 +31,7 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
 - **Making**: Makes your frontend and backend webpack bundles into single executable.
 
-# Compitability
+# Compatibility
 
 This repository follows the semantic versioning rules while adhering to Nx and Angular versioning scheme.
 Make sure that nx-electron major version matching Nx major version.
@@ -44,7 +44,7 @@ I.e. version 19.x of nx-electron will be compatible with version 19.y of Nx.
 This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
 
 ```bash
-npx create-nx-workspace@19
+npx create-nx-workspace@20
 ```
 
 Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
