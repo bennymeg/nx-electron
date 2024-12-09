@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "copy-webpack-plugin": "^12.0.2",
-    "electron-builder": "^25.1.7",
+    "electron-builder": "^25.1.8",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "license-webpack-plugin": "^4.0.2",
     "rxjs-for-await": "^1.0.0",
@@ -59,8 +59,8 @@
     "terser-webpack-plugin": "^5.3.10",
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.5.1",
-    "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "webpack": "^5.94.0",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "webpack": "^5.97.1",
     "webpack-merge": "^5.10.0"
   },
   "devDependencies": {
