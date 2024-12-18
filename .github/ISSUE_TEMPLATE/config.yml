@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: "\U0001F680 Feature Request"
+    about: "Suggest a new feature to make Nx-Electron better"
+    url: https://github.com/bennymeg/nx-electron/discussions/new?category=feature-requests
   - name: Github Sponsor
     url: https://github.com/sponsors/bennymeg
     about: Help support Nx-Electron by sponsoring us
