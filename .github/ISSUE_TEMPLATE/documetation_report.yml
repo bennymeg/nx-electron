@@ -2,7 +2,7 @@ name: 📖 Documentation Report
 description: Help improve our docs.
 labels: ["documentation"]
 body:
- - type: checkboxes
+  - type: checkboxes
     id: type
     attributes:
       label: Issue Type
