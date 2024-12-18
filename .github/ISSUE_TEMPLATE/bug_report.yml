@@ -43,12 +43,16 @@ body:
       label: Nx-Electron Version
       description: |
         Please provide the name and the version of Nx-electron you are using.
+    validations:
+      required: true
   - type: input
     id: nx
     attributes:
       label: Nx workspace Version
       description: |
         Please provide the name and the version of Nx workspace ou are using.
+    validations:
+      required: true
   - type: input
     id: pm
     attributes:
