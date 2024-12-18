@@ -1,5 +1,5 @@
 name: 🐞 Bug Report
-description: This form is to report unexpected behavior in Nx-Electron.
+description: Report unexpected behavior in Nx-Electron.
 labels: ["bug"]
 body:
   - type: markdown
