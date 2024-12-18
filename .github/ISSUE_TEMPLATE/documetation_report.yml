@@ -1,0 +1,19 @@
+name: 📖 Documentation Report
+description: Help improve our docs.
+labels: ["documentation"]
+body:
+ - type: checkboxes
+    id: type
+    attributes:
+      label: Issue Type
+      description: What is the type of this issue?
+      options:
+        - label: Reporting a typo
+        - label: Reporting a documentation bug
+        - label: Documentation improvement
+        - label: Documentation feedback
+  - type: textarea
+    id: info
+    attributes:
+      label: Request Description
+      description: Please describe the issue.
