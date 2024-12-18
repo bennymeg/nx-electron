@@ -17,3 +17,5 @@ body:
     attributes:
       label: Request Description
       description: Please describe the issue.
+    validations:
+      required: true
