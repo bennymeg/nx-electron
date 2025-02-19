@@ -4,7 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
 import { readdirSync } from 'fs';
 
-import { ExecutorContext } from '@nx/devkit';
+import { ExecutorContext, writeJsonFile } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
 import {
   calculateProjectDependencies,
@@ -80,7 +80,8 @@ export function executor(
   }
 
   if (normalizedOptions.generatePackageJson) {
-    createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true });
+    const packageJsonContent = createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true });
+    writeJsonFile(join(normalizedOptions.outputPath, 'package.json'), packageJsonContent);
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
@@ -100,10 +101,10 @@ export function executor(
       )
       .forEach(
         (entry) =>
-          (config.entry[parse(entry.name).name] = resolve(
-            preloadFilesDirectory,
-            entry.name
-          ))
+        (config.entry[parse(entry.name).name] = resolve(
+          preloadFilesDirectory,
+          entry.name
+        ))
       );
   } catch (error) {
     console.warn('Failed to load preload scripts');
