@@ -8,7 +8,7 @@ Electron builders and schematics for Nrwl Nx platform.
 
 [![License](https://img.shields.io/github/license/bennymeg/nx-electron.svg?color=40bb12)](https://github.com/bennymeg/nx-electron/blob/master/LICENSE)
 [![NPM Version](https://img.shields.io/npm/v/nx-electron.svg)](https://www.npmjs.com/package/nx-electron)
-[![Downloads](https://img.shields.io/badge/downloads-700k+-respect)](https://npm-stat.com/charts.html?package=nx-electron&from=2019-11-01)
+[![Downloads](https://img.shields.io/badge/downloads-750k+-respect)](https://npm-stat.com/charts.html?package=nx-electron&from=2019-11-01)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/bennymeg)
 [![Star this repo](https://img.shields.io/github/stars/bennymeg/nx-electron?style=social)](https://github.com/bennymeg/nx-electron)
 
