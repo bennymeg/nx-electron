@@ -8,7 +8,6 @@ import { ExecutorContext, writeJsonFile } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
 import {
   calculateProjectDependencies,
-  checkDependentProjectsHaveBeenBuilt,
   createTmpTsConfig,
 } from '@nx/js/src/utils/buildable-libs-utils';
 
@@ -66,17 +65,6 @@ export function executor(
       target.data.root,
       dependencies
     );
-
-    if (
-      !checkDependentProjectsHaveBeenBuilt(
-        context.root,
-        context.projectName,
-        context.targetName,
-        dependencies
-      )
-    ) {
-      return { success: false } as any;
-    }
   }
 
   if (normalizedOptions.generatePackageJson) {
