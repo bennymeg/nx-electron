@@ -21,6 +21,7 @@
   "devDependencies": {
     "@angular-devkit/core": "19.2.13",
     "@angular-devkit/schematics": "19.2.13",
+    "@eslint/eslintrc": "^2.1.1",
     "@nx/angular": "21.1.2",
     "@nx/devkit": "21.1.2",
     "@nx/eslint": "21.1.2",
@@ -37,11 +38,9 @@
     "@types/node": "^20.14.2",
     "@types/webpack": "^5.28.5",
     "@types/webpack-node-externals": "^3.0.4",
-    "@typescript-eslint/eslint-plugin": "8.19.0",
-    "@typescript-eslint/parser": "8.19.0",
     "bufferutil": "^4.0.9",
     "electron": "^34.5.6",
-    "eslint": "8.57.0",
+    "eslint": "^9.8.0",
     "eslint-config-prettier": "10.0.0",
     "jest": "29.7.0",
     "nx": "21.1.2",
@@ -49,7 +48,8 @@
     "shx": "^0.4.0",
     "standard-version": "^9.5.0",
     "ts-jest": "29.1.2",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "typescript-eslint": "^8.19.0"
   },
   "dependencies": {
     "electron-builder": "^25.1.8",
