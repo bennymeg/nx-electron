@@ -35,8 +35,10 @@ function addScripts(tree: Tree, backendAppName = '<electron-app-name>', frontend
     json.scripts['nxe:build:backend'] = `nx build ${backendAppName}`;
     json.scripts['nxe:serve:frontend'] = `nx serve ${frontendAppName}`;
     json.scripts['nxe:serve:backend'] = `nx serve ${backendAppName}`;
-    json.scripts['nxe:package:frontend'] = `nx run <${backendAppName}:make --prepackgeOnly`;
-    json.scripts['nxe:make:backend'] = `nx run <${backendAppName}:make`;
+    json.scripts['nxe:test:frontend'] = `nx test ${frontendAppName}`;
+    json.scripts['nxe:test:backend'] = `nx test ${backendAppName}`;
+    json.scripts['nxe:package:app'] = `nx run <${backendAppName}:make --prepackgeOnly`;
+    json.scripts['nxe:make:app'] = `nx run <${backendAppName}:make`;
 
     return json;
   });

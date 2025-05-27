@@ -72,26 +72,43 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 > 2. Use router outlet hash strategy.
 > Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
-## Building Nx Electron Application
+> [!NOTE]
+> `Nx Electron` application usually contain both frontend and backend. 
+> When you wish to build, serve, test, etc. your application, make sure to invoke the command for both the frontend and the backend. 
+> Most of the the time, side-by-side terminal windows are more convenient.
 
-- Run `nx build <electron-app-name>` to build your application.
+### Building Nx Electron Application
 
-## Serving Nx Electron Application
+- Frontend: Run `nxe:build:frontend` or `nx build <frontend-app-name>` to build your frontend application.
+- Backend: Run `nxe:build:backend` or `nx build <electron-app-name>` to build your backend application.
 
-- Run `nx serve <electron-app-name>` to serve your application.
+### Serving Nx Electron Application
 
-## Packaging Nx Electron Application
+- Frontend: Run `nxe:serve:frontend` or `nx serve <frontend-app-name>` to serve your frontend application.
+- Backend: Run `nxe:serve:backend` or `nx serve <electron-app-name>` to serve your backend application.
 
-- Run `nx run <electron-app-name>:package [--options]` to package your application.
-- Or `nx run <electron-app-name>:make --prepackgeOnly` to package your application.
+### Testing Nx Electron Application
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
+- Frontend: Run `nxe:test:frontend` or `nx test <frontend-app-name>` to test your frontend application.
+- Backend: Run `nxe:test:backend` or `nx test <electron-app-name>` to test your backend application.
 
-## Making Nx Electron Application (standalone build)
+### Packaging Nx Electron Application
 
-- Run `nx run <electron-app-name>:make [--options]` to make your application.
+- Run `nxe:package:app` or `nx run <electron-app-name>:package [--options]` to package your application.
 
-The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
+    The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
+
+    > [!IMPORTANT] 
+    > Make sure to build both the frontend project and the backend project before packaging your application.
+
+### Making Nx Electron Application (standalone build)
+
+- Run `nxe:make:app` or `nx run <electron-app-name>:make [--options]` to make your standalone application.
+
+    The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
+
+    > [!IMPORTANT] 
+    > Make sure to build both the frontend project and the backend project before making your standalone application.
 
 ## Configuring static packaging / making options
 
@@ -104,10 +121,6 @@ It is possible to configure all the packaging / making [options](https://www.ele
 
 To migrate automatically run `ng update nx-electron@<version>`.
 You can find detailed information in the following [migration guides](https://github.com/bennymeg/nx-electron/blob/master/docs/migration/).
-
-## Testing Nx Electron Application
-
-- Run `nx test <electron-app-name>` to test your application.
 
 ## Debugging Nx Electron Application
 
