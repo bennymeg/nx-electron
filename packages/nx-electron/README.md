@@ -20,7 +20,7 @@ Electron builders and schematics for Nrwl Nx platform.
 
 # Features
 
-Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
+`Nx Electron` provides a set of power ups on [Nx](https://nx.dev) for developing cross platform desktop apps using [Electron](https://electronjs.org/).
 
 - **Schematics**: Provides schematics for developing cross platform apps in a mono repo environment.
 - **Typescript**: Uses Typescript to help reduce errors, and create more structured code.
@@ -28,20 +28,25 @@ Nx Electron provides a set of power ups on [Nx](https://nx.dev) for developing c
 - **Minimization**: Electron apps tend to be quite large, hence we use webpack to bundle, and minimize to code.
 - **Live Update**: Provides continuous live reload for your backend code.
 - **Event Templates**: Provides templates for common events like squirrel setup events, auto update events and IPC events.
-- **Packaging**: Packages your frontend and backend webpack bundles into single electron package.
-- **Making**: Makes your frontend and backend webpack bundles into single executable.
+- **Packaging**: Packages your frontend and backend webpack bundles into an electron package.
+- **Making**: Makes your frontend and backend webpack bundles into single standalone executable.
+
+# Compatibility
+
+> [!IMPORTANT] 
+> This repository follows the semantic versioning rules while adhering to both Nx and Angular versioning scheme.
+> **Make sure that `Nx Electron` major version match Nx major version**.
+> I.e. version 21.x of `Nx Electron` will be compatible with version 21.y of Nx. 
 
 # Getting Started
 
 ## Prerequisite
 
-This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use nx-electron.
+This module is based on Nx, you will need to [set up an Nx workspace](https://nx.dev/web/getting-started/getting-started) before you can use `Nx Electron`.
 
 ```bash
 npx create-nx-workspace@21
 ```
-
-You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
 
 ## Installation
 
@@ -55,9 +60,17 @@ npm install -D nx-electron
 nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ```
 
-**NOTE:** You should add a frontend project to you workspace prior to invoking this command.
+> [!IMPORTANT] 
+> Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
 
-**NOTE:** On certain frontend platforms (such as Angular, React, etc...) it is important to [change the baseHref field to "./"](https://github.com/dmatora/nx-electron-boilerplate/commit/b70da7a2ce730c7e2af7f4c1d69f30212eabfeb4), and use the hash strategy on the router in order for it to work well with electron. Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
+> [!NOTE] 
+> You should add a frontend project to you workspace prior to invoking this command.
+
+> [!TIP]
+> On certain frontend platforms (such as Angular, React, etc...) it is important to:
+> 1. [change the baseHref field to "./"](https://github.com/dmatora/nx-electron-boilerplate/commit/b70da7a2ce730c7e2af7f4c1d69f30212eabfeb4).
+> 2. Use router outlet hash strategy.
+> Further details can be found [here](https://github.com/bennymeg/nx-electron/issues/18#issuecomment-616982776).
 
 ## Building Nx Electron Application
 
@@ -74,7 +87,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
 The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
-## Making Nx Electron Application
+## Making Nx Electron Application (standalone build)
 
 - Run `nx run <electron-app-name>:make [--options]` to make your application.
 
@@ -83,7 +96,9 @@ The options that can be passed are described [here](https://github.com/bennymeg/
 ## Configuring static packaging / making options
 
 It is possible to configure all the packaging / making [options](https://www.electron.build/configuration/configuration) in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_. For more information [read this article](https://github.com/bennymeg/nx-electron/blob/master/docs/packaging.md).
-**Notice:** the option you define at this file will override the options you pass manually via the command line or choose via the angular console.
+
+> [!IMPORTANT] 
+> Option you define at this file will override the options you pass manually via the command line or choose via the angular console.
 
 ## Migrating Nx Electron Application
 
@@ -129,11 +144,6 @@ If you're having any problem, please [raise an issue](https://github.com/bennyme
 ## Contribute
 
 - Follow [this instructions](https://github.com/bennymeg/nx-electron/blob/master/CONTRIBUTING.md) in order to learn how to contribute to this project.
-
-## Versioning
-
-This repository follows the semantic versioning rules while adhering to Nx and Angular version scheme.
-I.e. version 15.x of nx-electron will be compatible with version 15.y of NX. 
 
 ## Attribution
 

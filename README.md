@@ -48,9 +48,6 @@ This module is based on Nx, you will need to [set up an Nx workspace](https://nx
 npx create-nx-workspace@21
 ```
 
-Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
-You should also create a frontend project in you workspace (in any nx supported framework you like) for you electron app.
-
 ## Installation
 
 ```bash
@@ -62,6 +59,9 @@ npm install -D nx-electron
 ```bash
 nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 ```
+
+> [!IMPORTANT] 
+> Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
 
 > [!NOTE] 
 > You should add a frontend project to you workspace prior to invoking this command.
