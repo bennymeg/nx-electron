@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema",
+  "$schema": "https://json-schema.org/schema",
   "$id": "SchematicsNxElectronApp",
   "title": "Nx Application Options Schema",
   "type": "object",
@@ -13,15 +13,14 @@
       },
       "x-prompt": "What name would you like to use for the electron application?"
     },
-    "directory": {
-      "type": "string",
-      "description": "The directory of the new application.",
-      "x-prompt": "In which directory should the electron application be generated?"
-    },
     "frontendProject": {
       "type": "string",
       "description": "Frontend project that needs to access this application.",
-      "x-prompt": "What's the name of the web app in your workspace you'd like to use inside Electron?"
+      "x-prompt": "What's the name of the web application in your workspace you'd like to use inside Electron?"
+    },
+    "directory": {
+      "type": "string",
+      "description": "The directory of the new application."
     },
     "extraProjects": {
       "type": "array",

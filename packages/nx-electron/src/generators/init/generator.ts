@@ -20,7 +20,7 @@ function addDependencies(tree: Tree) {
   );
 }
 
-function addScripts(tree: Tree) {
+function addScripts(tree: Tree, backendAppName = '<electron-app-name>', frontendAppName = '<frontend-app-name>') {
   return updateJson(tree, 'package.json', (json) => {
     json.scripts = json.scripts || {};
 
@@ -30,6 +30,13 @@ function addScripts(tree: Tree) {
       postinstall && postinstall !== ''
         ? `${postinstall} && electron-builder install-app-deps`
         : 'electron-builder install-app-deps';
+
+    json.scripts['nxe:build:frontend'] = `nx build ${frontendAppName}`;
+    json.scripts['nxe:build:backend'] = `nx build ${backendAppName}`;
+    json.scripts['nxe:serve:frontend'] = `nx serve ${frontendAppName}`;
+    json.scripts['nxe:serve:backend'] = `nx serve ${backendAppName}`;
+    json.scripts['nxe:package:frontend'] = `nx run <${backendAppName}:make --prepackgeOnly`;
+    json.scripts['nxe:make:backend'] = `nx run <${backendAppName}:make`;
 
     return json;
   });
@@ -60,7 +67,7 @@ export async function generator(tree: Tree, schema: Schema) {
     await jestInstall();
   }
 
-  addScripts(tree);
+  addScripts(tree, options['name'], options['frontendProject']);
   await installTask();
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
