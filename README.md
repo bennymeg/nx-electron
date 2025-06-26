@@ -98,7 +98,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
     The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
-    > ⚠ **Important**
+    > ✦︎ **Important**
     > 
     > Make sure to build both the frontend project and the backend project before packaging your application.
 
@@ -108,7 +108,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
     The options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
-    > ⚠ **Important**
+    > ✦︎ **Important**
     > 
     > Make sure to build both the frontend project and the backend project before making your standalone application.
 
