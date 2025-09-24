@@ -39,7 +39,7 @@
     "@types/webpack": "^5.28.5",
     "@types/webpack-node-externals": "^3.0.4",
     "bufferutil": "^4.0.9",
-    "electron": "^34.5.6",
+    "electron": "^35.7.5",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "10.0.0",
     "jest": "29.7.0",
