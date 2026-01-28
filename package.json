@@ -52,7 +52,7 @@
     "typescript-eslint": "^8.19.0"
   },
   "dependencies": {
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.6.0",
     "rxjs": "^7.8.2",
     "rxjs-for-await": "^1.0.0"
   },
