@@ -1,7 +1,4 @@
-import {
-  readJson,
-  Tree,
-} from '@nx/devkit';
+import { readJson, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 import { electronVersion, nxElectronVersion } from '../../utils/versions';
@@ -24,7 +21,7 @@ describe('init', () => {
   });
 
   it('should not add jest config if unitTestRunner is none', async () => {
-    await initGenerator(tree, { skipFormat: false });
+    await initGenerator(tree, { skipFormat: false, unitTestRunner: 'none' });
     expect(tree.exists('jest.config.js')).toEqual(false);
   });
 });
