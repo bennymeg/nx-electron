@@ -6,10 +6,6 @@ import { readdirSync } from 'fs';
 
 import { ExecutorContext, writeJsonFile } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
-import {
-  calculateProjectDependencies,
-  createTmpTsConfig,
-} from '@nx/js/src/utils/buildable-libs-utils';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
@@ -17,6 +13,10 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { createPackageJson } from '@nx/js';
+import {
+  calculateProjectDependencies,
+  createTmpTsConfig,
+} from '@nx/js/src/utils/buildable-libs-utils';
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -52,7 +52,7 @@ export function executor(
 
   if (!normalizedOptions.buildLibsFromSource) {
     const { target, dependencies } = calculateProjectDependencies(
-      projGraph as any,
+      projGraph,
       context.root,
       context.projectName,
       context.targetName,
@@ -70,7 +70,7 @@ export function executor(
   if (normalizedOptions.generatePackageJson) {
     const packageJsonContent = createPackageJson(
       context.projectName,
-      projGraph as any,
+      projGraph,
       { ...normalizedOptions, isProduction: true },
     );
     writeJsonFile(
