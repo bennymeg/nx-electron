@@ -52,7 +52,7 @@ export function executor(
 
   if (!normalizedOptions.buildLibsFromSource) {
     const { target, dependencies } = calculateProjectDependencies(
-      projGraph,
+      projGraph as any,
       context.root,
       context.projectName,
       context.targetName,
@@ -70,7 +70,7 @@ export function executor(
   if (normalizedOptions.generatePackageJson) {
     const packageJsonContent = createPackageJson(
       context.projectName,
-      projGraph,
+      projGraph as any,
       { ...normalizedOptions, isProduction: true },
     );
     writeJsonFile(

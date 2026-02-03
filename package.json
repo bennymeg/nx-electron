@@ -44,11 +44,12 @@
     "shx": "^0.4.0",
     "standard-version": "^9.5.0",
     "ts-jest": "29.1.2",
+    "ts-node": "^10.9.2",
     "typescript": "5.7.3",
     "typescript-eslint": "^8.19.0"
   },
   "dependencies": {
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.0",
     "rxjs": "^7.8.2",
     "rxjs-for-await": "^1.0.0"
   },
