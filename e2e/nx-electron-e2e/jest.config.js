@@ -2,6 +2,7 @@ module.exports = {
   displayName: 'nx-electron-e2e',
   preset: '../../jest.preset.js',
   globals: {},
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

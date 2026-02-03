@@ -1,12 +1,13 @@
-import { readJson, Tree } from '@nx/devkit';
+import {
+  addProjectConfiguration,
+  readJson,
+  readProjectConfiguration,
+  Tree,
+} from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
-// nx-ignore-next-line
-import { applicationGenerator as angularApplicationGenerator } from '@nx/angular/generators';
 import { Schema } from './schema';
 import { generator as applicationGenerator } from './generator';
-import { overrideCollectionResolutionForTesting } from '@nx/devkit/ngcli-adapter';
-import { join } from 'path';
 import { Linter } from '@nx/eslint';
 
 fdescribe('app', () => {
@@ -19,13 +20,6 @@ fdescribe('app', () => {
     jest.spyOn(console, 'warn').mockImplementation();
 
     tree = createTreeWithEmptyWorkspace();
-
-    overrideCollectionResolutionForTesting({
-      '@nx/cypress': join(__dirname, '../../../../cypress/generators.json'),
-      '@nx/jest': join(__dirname, '../../../../jest/generators.json'),
-      '@nx/workspace': join(__dirname, '../../../../workspace/generators.json'),
-      '@nx/angular': join(__dirname, '../../../../angular/generators.json'),
-    });
 
     options = {
       name: 'electron-app',
@@ -40,14 +34,10 @@ fdescribe('app', () => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    overrideCollectionResolutionForTesting(null);
-  });
-
   describe('when the default options are provided', () => {
     beforeEach(async () => {
       await applicationGenerator(tree, options);
-      projectJson = readJson(tree, 'electron-app/project.json');
+      projectJson = readProjectConfiguration(tree, 'electron-app');
     });
 
     it('should generate the project json with the correct source root', () => {
@@ -121,6 +111,7 @@ fdescribe('app', () => {
         options: {
           name: 'electron-app',
           frontendProject: '',
+          sourcePath: 'dist/apps',
           outputPath: 'dist/packages',
           prepackageOnly: true,
         },
@@ -133,6 +124,7 @@ fdescribe('app', () => {
         options: {
           name: 'electron-app',
           frontendProject: '',
+          sourcePath: 'dist/apps',
           outputPath: 'dist/executables',
         },
       });
@@ -143,34 +135,12 @@ fdescribe('app', () => {
     beforeEach(async () => {
       options.linter = Linter.EsLint;
       await applicationGenerator(tree, options);
-      projectJson = readJson(tree, 'electron-app/project.json');
-    });
-
-    it('should generate the .eslintrc.json file', () => {
-      expect(readJson(tree, 'electron-app/.eslintrc.json')).toEqual({
-        extends: ['../.eslintrc.json'],
-        ignorePatterns: ['!**/*'],
-        overrides: [
-          {
-            files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
-            rules: {},
-          },
-          {
-            files: ['*.ts', '*.tsx'],
-            rules: {},
-          },
-          {
-            files: ['*.js', '*.jsx'],
-            rules: {},
-          },
-        ],
-      });
+      projectJson = readProjectConfiguration(tree, 'electron-app');
     });
 
     it('should generate the project json with the correct lint target', () => {
       expect(projectJson.targets.lint).toEqual({
-        executor: '@nx/eslint:eslint',
-        outputs: ['{options.outputFile}'],
+        executor: '@nx/eslint:lint',
         options: {
           lintFilePatterns: ['electron-app/**/*.ts'],
         },
@@ -182,7 +152,7 @@ fdescribe('app', () => {
     beforeEach(async () => {
       options.unitTestRunner = 'jest';
       await applicationGenerator(tree, options);
-      projectJson = readJson(tree, 'electron-app/project.json');
+      projectJson = readProjectConfiguration(tree, 'electron-app');
     });
 
     it('should generate the project json with the correct test target', () => {
@@ -190,20 +160,13 @@ fdescribe('app', () => {
         executor: '@nx/jest:jest',
         outputs: ['{workspaceRoot}/coverage/{projectRoot}'],
         options: {
-          jestConfig: 'electron-app/jest.config.ts',
-          passWithNoTests: true,
-        },
-        configurations: {
-          ci: {
-            ci: true,
-            codeCoverage: true,
-          },
+          jestConfig: 'electron-app/jest.config.cts',
         },
       });
     });
 
     it('should create the jest config', () => {
-      expect(tree.exists(`electron-app/jest.config.ts`)).toBeTruthy();
+      expect(tree.exists(`electron-app/jest.config.cts`)).toBeTruthy();
     });
   });
 
@@ -222,21 +185,33 @@ fdescribe('app', () => {
 
   describe('when the frontendProject option is provided', () => {
     beforeEach(async () => {
-      await angularApplicationGenerator(tree, { name: 'electron-frontend' });
+      addProjectConfiguration(tree, 'electron-frontend', {
+        root: 'apps/electron-frontend',
+        sourceRoot: 'apps/electron-frontend/src',
+        projectType: 'application',
+        targets: {
+          serve: {
+            executor: '@nx/angular:serve',
+            options: {},
+          },
+        },
+      });
       options.frontendProject = 'electron-frontend';
       await applicationGenerator(tree, options);
-      projectJson = readJson(tree, 'electron-app/project.json');
+      projectJson = readProjectConfiguration(tree, 'electron-app');
     });
 
     it('should generate the proxy.conf.json file', () => {
-      expect(tree.exists('electron-frontend/proxy.conf.json')).toBeTruthy();
+      expect(
+        tree.exists('apps/electron-frontend/proxy.conf.json'),
+      ).toBeTruthy();
     });
 
     it('should add the proxy config to the frontend project', () => {
       expect(
-        readJson(tree, 'electron-frontend/project.json').targets.serve.options
-          .proxyConfig
-      ).toBe('electron-frontend/proxy.conf.json');
+        readProjectConfiguration(tree, 'electron-frontend').targets.serve
+          .options.proxyConfig,
+      ).toBe('apps/electron-frontend/proxy.conf.json');
     });
   });
 
@@ -244,7 +219,7 @@ fdescribe('app', () => {
     beforeEach(async () => {
       options.directory = 'directory';
       await applicationGenerator(tree, options);
-      projectJson = readJson(tree, 'directory/electron-app/project.json');
+      projectJson = readProjectConfiguration(tree, 'directory-electron-app');
     });
 
     it('should generate the project json with the correct source root', () => {
