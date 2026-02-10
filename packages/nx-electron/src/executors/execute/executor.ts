@@ -35,7 +35,7 @@ let subProcess: ChildProcess = null;
 
 export async function* executor(
   options: ElectronExecuteBuilderOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
 ) {
   process.on('SIGTERM', () => {
     subProcess?.kill();
@@ -52,7 +52,7 @@ export async function* executor(
       if (!result.success) {
         console.log('throw');
         throw new Error(
-          `Wait until target failed: ${options.waitUntilTargets[i]}.`
+          `Wait until target failed: ${options.waitUntilTargets[i]}.`,
         );
       }
     }
@@ -70,7 +70,7 @@ export async function* executor(
 
 function runProcess(
   event: ElectronBuildEvent,
-  options: ElectronExecuteBuilderOptions
+  options: ElectronExecuteBuilderOptions,
 ) {
   if (subProcess) {
     throw new Error('Already running');
@@ -110,7 +110,7 @@ function normalizeArgs(file: string, options: ElectronExecuteBuilderOptions) {
 
 async function handleBuildEvent(
   event: ElectronBuildEvent,
-  options: ElectronExecuteBuilderOptions
+  options: ElectronExecuteBuilderOptions,
 ) {
   if ((!event.success || options.watch) && subProcess) {
     await killProcess();
@@ -142,12 +142,12 @@ async function killProcess() {
 
 async function* startBuild(
   options: ElectronExecuteBuilderOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
 ) {
-  const buildTarget = parseTargetString(options.buildTarget, context.projectGraph);
+  const buildTarget = parseTargetString(options.buildTarget, context);
   const buildOptions = readTargetOptions<ElectronExecuteBuilderOptions>(
     buildTarget,
-    context
+    context,
   );
 
   if (buildOptions['optimization']) {
@@ -168,7 +168,7 @@ async function* startBuild(
       generatePackageJson: false,
       watch: options.watch,
     },
-    context
+    context,
   )) {
     yield buildEventResponse;
   }
@@ -176,11 +176,11 @@ async function* startBuild(
 
 function runWaitUntilTargets(
   options: ElectronExecuteBuilderOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
 ): Promise<{ success: boolean }[]> {
   return Promise.all(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
-      const target = parseTargetString(waitUntilTarget, context.projectGraph);
+      const target = parseTargetString(waitUntilTarget, context);
       const output = await runExecutor(target, {}, context);
 
       return new Promise<{ success: boolean }>(async (resolve) => {
@@ -193,7 +193,7 @@ function runWaitUntilTargets(
           event = await output.next();
         }
       });
-    })
+    }),
   );
 }
 

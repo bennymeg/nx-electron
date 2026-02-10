@@ -5,7 +5,9 @@ const devkit = require('@nx/devkit');
 import { ExecutorContext, logger } from '@nx/devkit';
 
 jest.mock('child_process');
-const { fork } = require('child_process');
+const { spawn } = require('child_process');
+
+jest.mock('electron', () => '/mocked/electron');
 
 jest.mock('tree-kill');
 const treeKill = require('tree-kill');
@@ -30,11 +32,14 @@ describe('ElectronExecuteBuilder', () => {
     (devkit.readTargetOptions as any).mockImplementation(() => buildOptions);
 
     (devkit.parseTargetString as any).mockImplementation(
-      jest.requireActual('@nx/devkit').parseTargetString
+      jest.requireActual('@nx/devkit').parseTargetString,
     );
 
-    fork.mockImplementation(() => {
+    spawn.mockImplementation(() => {
       return {
+        pid: 123,
+        stdout: { on: jest.fn() },
+        stderr: { on: jest.fn() },
         on: (eventName, cb) => {
           if (eventName === 'exit') {
             cb();
@@ -49,20 +54,34 @@ describe('ElectronExecuteBuilder', () => {
     context = {
       root: '/root',
       cwd: '/root',
-      workspace: {
-        version: 2,
-        projects: {
+      projectGraph: {
+        nodes: {
           'electron-app': {
-            root: '/root/electron-app',
-            targets: {
-              build: {
-                executor: 'build',
-                options: {},
-              },
+            name: 'electron-app',
+            type: 'app',
+            data: {
+              root: '/root/electron-app',
+              sourceRoot: '/root/electron-app/src',
             },
           },
+          project1: {
+            name: 'project1',
+            type: 'app',
+            data: { root: '/root/project1', sourceRoot: '/root/project1/src' },
+          },
+          project2: {
+            name: 'project2',
+            type: 'app',
+            data: { root: '/root/project2', sourceRoot: '/root/project2/src' },
+          },
         },
+        dependencies: {},
       },
+      projectsConfigurations: {
+        version: 2,
+        projects: {},
+      },
+      nxJsonConfiguration: {},
       isVerbose: false,
     };
 
@@ -92,15 +111,17 @@ describe('ElectronExecuteBuilder', () => {
       },
       {
         testOption: true,
+        generatePackageJson: false,
         watch: true,
       },
-      context
+      context,
     );
-    expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-      execArgv: ['--inspect=9229'],
-    });
+    expect(spawn).toHaveBeenCalledWith(expect.any(String), [
+      '--inspect=9229',
+      'outfile.js',
+    ]);
     expect(treeKill).toHaveBeenCalledTimes(0);
-    expect(fork).toHaveBeenCalledTimes(1);
+    expect(spawn).toHaveBeenCalledTimes(1);
   });
 
   describe('--inspect', () => {
@@ -111,12 +132,13 @@ describe('ElectronExecuteBuilder', () => {
             ...options,
             inspect: InspectType.Inspect,
           },
-          context
+          context,
         )) {
         }
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: ['--inspect=9229'],
-        });
+        expect(spawn).toHaveBeenCalledWith(expect.any(String), [
+          '--inspect=9229',
+          'outfile.js',
+        ]);
       });
     });
 
@@ -127,12 +149,13 @@ describe('ElectronExecuteBuilder', () => {
             ...options,
             inspect: InspectType.InspectBrk,
           },
-          context
+          context,
         )) {
         }
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: ['--inspect-brk=9229'],
-        });
+        expect(spawn).toHaveBeenCalledWith(expect.any(String), [
+          '--inspect-brk=9229',
+          'outfile.js',
+        ]);
       });
     });
   });
@@ -145,12 +168,13 @@ describe('ElectronExecuteBuilder', () => {
             ...options,
             port: 1234,
           },
-          context
+          context,
         )) {
         }
-        expect(fork).toHaveBeenCalledWith('outfile.js', [], {
-          execArgv: ['--inspect=1234'],
-        });
+        expect(spawn).toHaveBeenCalledWith(expect.any(String), [
+          '--inspect=1234',
+          'outfile.js',
+        ]);
       });
     });
   });
@@ -178,7 +202,7 @@ describe('ElectronExecuteBuilder', () => {
       {
         ...options,
       },
-      context
+      context,
     )) {
     }
     expect(loggerError).toHaveBeenLastCalledWith('Error Message');
@@ -191,10 +215,14 @@ describe('ElectronExecuteBuilder', () => {
         inspect: false,
         args: ['arg1', 'arg2'],
       },
-      context
+      context,
     )) {
     }
-    expect(fork).toHaveBeenCalledWith('outfile.js', ['arg1', 'arg2'], {});
+    expect(spawn).toHaveBeenCalledWith(expect.any(String), [
+      'outfile.js',
+      'arg1',
+      'arg2',
+    ]);
   });
 
   it('should warn users who try to use it in production', async () => {
@@ -208,7 +236,7 @@ describe('ElectronExecuteBuilder', () => {
         inspect: false,
         args: ['arg1', 'arg2'],
       },
-      context
+      context,
     )) {
     }
     expect(loggerWarn).toHaveBeenCalled();
@@ -222,7 +250,7 @@ describe('ElectronExecuteBuilder', () => {
           ...options,
           waitUntilTargets: ['project1:target1', 'project2:target2'],
         },
-        context
+        context,
       )) {
       }
 
@@ -234,7 +262,7 @@ describe('ElectronExecuteBuilder', () => {
           target: 'target1',
         },
         {},
-        context
+        context,
       );
       expect(runExecutor).toHaveBeenCalledWith(
         {
@@ -242,7 +270,7 @@ describe('ElectronExecuteBuilder', () => {
           target: 'target2',
         },
         {},
-        context
+        context,
       );
     });
 
@@ -257,12 +285,12 @@ describe('ElectronExecuteBuilder', () => {
             ...options,
             waitUntilTargets: ['project1:target1', 'project2:target2'],
           },
-          context
+          context,
         )) {
         }
       } catch (e) {
         expect(e.message).toMatchInlineSnapshot(
-          `"Wait until target failed: project1:target1."`
+          `"Wait until target failed: project1:target1."`,
         );
       }
     });
