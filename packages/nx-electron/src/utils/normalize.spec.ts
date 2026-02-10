@@ -2,6 +2,14 @@ import { normalizeBuildOptions } from './normalize';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import * as fs from 'fs';
 
+jest.mock('fs', () => {
+  const actualFs = jest.requireActual('fs');
+  return {
+    ...actualFs,
+    statSync: jest.fn(actualFs.statSync),
+  };
+});
+
 describe('normalizeBuildOptions', () => {
   let options: BuildElectronBuilderOptions;
   let root: string;
@@ -38,7 +46,7 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.root).toEqual('/root');
   });
@@ -48,7 +56,7 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.main).toEqual('/root/apps/electron-app/src/main.ts');
   });
@@ -63,10 +71,10 @@ describe('normalizeBuildOptions', () => {
       },
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.additionalEntryPoints[0].entryPath).toEqual(
-      '/root/some/path.ts'
+      '/root/some/path.ts',
     );
   });
 
@@ -75,7 +83,7 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.outputPath).toEqual('/root/dist/apps/electron-app');
   });
@@ -85,13 +93,15 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
-    expect(result.tsConfig).toEqual('/root/apps/electron-app/tsconfig.app.json');
+    expect(result.tsConfig).toEqual(
+      '/root/apps/electron-app/tsconfig.app.json',
+    );
   });
 
   it('should normalize asset patterns', () => {
-    jest.spyOn(fs, 'statSync').mockReturnValue({
+    (fs.statSync as jest.Mock).mockReturnValue({
       isDirectory: () => true,
     } as any);
     const result = normalizeBuildOptions(
@@ -110,7 +120,7 @@ describe('normalizeBuildOptions', () => {
       },
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.assets).toEqual([
       {
@@ -132,7 +142,7 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.fileReplacements).toEqual([
       {
@@ -151,7 +161,7 @@ describe('normalizeBuildOptions', () => {
       options,
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.outputFileName).toEqual('main.js');
   });
@@ -161,7 +171,7 @@ describe('normalizeBuildOptions', () => {
       { ...options, outputFileName: 'index.js' },
       root,
       sourceRoot,
-      projectRoot
+      projectRoot,
     );
     expect(result.outputFileName).toEqual('index.js');
   });

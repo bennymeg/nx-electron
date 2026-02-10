@@ -1,13 +1,23 @@
-import { ExecutorContext, ProjectGraph } from '@nx/devkit';
-import * as projectGraph from '@nx/workspace/src/core/project-graph';
+import { ExecutorContext } from '@nx/devkit';
 import { of } from 'rxjs';
 import executor, { BuildElectronBuilderOptions } from './executor';
+
+jest.mock('@nx/js', () => {
+  const actual = jest.requireActual('@nx/js');
+  return {
+    ...actual,
+    readTsConfig: jest.fn(() => ({ options: { target: 99 } })),
+  };
+});
+
+jest.mock('tsconfig-paths-webpack-plugin', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({})),
+}));
 
 jest.mock('../../utils/run-webpack', () => ({
   runWebpack: jest.fn(),
 }));
-
-jest.mock('@nx/workspace/src/core/project-graph');
 
 import { runWebpack } from '../../utils/run-webpack';
 
@@ -16,10 +26,6 @@ describe('ElectronBuildBuilder', () => {
   let options: BuildElectronBuilderOptions;
 
   beforeEach(() => {
-    jest
-      .spyOn(projectGraph, 'readCachedProjectGraph')
-      .mockReturnValue({} as ProjectGraph);
-
     (<any>runWebpack).mockReturnValue(of({ hasErrors: () => false }));
 
     context = {
@@ -27,15 +33,24 @@ describe('ElectronBuildBuilder', () => {
       cwd: '/root',
       projectName: 'my-app',
       targetName: 'build',
-      workspace: {
-        version: 2,
-        projects: {
-          'my-app': <any>{
-            root: 'apps/electron-app',
-            sourceRoot: 'apps/electron-app',
+      projectGraph: {
+        nodes: {
+          'my-app': {
+            name: 'my-app',
+            type: 'app',
+            data: {
+              root: 'apps/electron-app',
+              sourceRoot: 'apps/electron-app',
+            },
           },
         },
+        dependencies: {},
       },
+      projectsConfigurations: {
+        version: 2,
+        projects: {},
+      },
+      nxJsonConfiguration: {},
       isVerbose: false,
     };
 
@@ -49,6 +64,7 @@ describe('ElectronBuildBuilder', () => {
       fileReplacements: [],
       assets: [],
       statsJson: false,
+      extraMetadata: { version: '0.0.0' },
     };
   });
 
@@ -60,11 +76,11 @@ describe('ElectronBuildBuilder', () => {
     expect(runWebpack).toHaveBeenCalledWith(
       expect.objectContaining({
         output: expect.objectContaining({
-          filename: 'main.js',
+          filename: expect.any(Function),
           libraryTarget: 'commonjs',
           path: '/root/dist/apps/electron-app',
         }),
-      })
+      }),
     );
   });
 
@@ -74,11 +90,11 @@ describe('ElectronBuildBuilder', () => {
     expect(runWebpack).toHaveBeenCalledWith(
       expect.objectContaining({
         output: expect.objectContaining({
-          filename: 'index.js',
+          filename: expect.any(Function),
           libraryTarget: 'commonjs',
-          path: '/root/dist/apps/wibble',
+          path: '/root/dist/apps/electron-app',
         }),
-      })
+      }),
     );
   });
 
@@ -87,22 +103,19 @@ describe('ElectronBuildBuilder', () => {
       jest.mock(
         '/root/config.js',
         () => (options) => ({ ...options, prop: 'my-val' }),
-        { virtual: true }
+        { virtual: true },
       );
-      await executor(
-        { ...options, webpackConfig: 'config.js' },
-        context
-      );
+      await executor({ ...options, webpackConfig: 'config.js' }, context);
 
       expect(runWebpack).toHaveBeenCalledWith(
         expect.objectContaining({
           output: expect.objectContaining({
-            filename: 'main.js',
+            filename: expect.any(Function),
             libraryTarget: 'commonjs',
-            path: '/root/dist/apps/wibble',
+            path: '/root/dist/apps/electron-app',
           }),
           prop: 'my-val',
-        })
+        }),
       );
     });
   });

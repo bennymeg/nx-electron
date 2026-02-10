@@ -1,13 +1,9 @@
 import { ExecutorContext } from '@nx/devkit';
 import { PackageElectronBuilderOptions } from './executor';
 
-jest.mock('@nx/workspace/src/core/project-graph');
-
 jest.mock('glob');
 
 jest.mock('fs-extra');
-
-jest.mock('@nx/workspace/src/utilities/fileutils');
 
 describe('MakeElectronBuilder', () => {
   let context: ExecutorContext;
@@ -17,7 +13,7 @@ describe('MakeElectronBuilder', () => {
     options = {
       root: '.',
       platform: 'windows',
-      extraProjects:[],
+      extraProjects: [],
       arch: 'x64',
       name: 'electron-app',
       frontendProject: 'frontend',

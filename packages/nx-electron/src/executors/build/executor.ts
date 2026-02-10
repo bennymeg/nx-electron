@@ -6,10 +6,6 @@ import { readdirSync } from 'fs';
 
 import { ExecutorContext, writeJsonFile } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
-import {
-  calculateProjectDependencies,
-  createTmpTsConfig,
-} from '@nx/js/src/utils/buildable-libs-utils';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
 import { normalizeBuildOptions } from '../../utils/normalize';
@@ -17,6 +13,10 @@ import { BuildBuilderOptions } from '../../utils/types';
 import { getSourceRoot } from '../../utils/workspace';
 import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { createPackageJson } from '@nx/js';
+import {
+  calculateProjectDependencies,
+  createTmpTsConfig,
+} from '@nx/js/src/utils/buildable-libs-utils';
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -39,14 +39,14 @@ export interface NormalizedBuildElectronBuilderOptions
 
 export function executor(
   rawOptions: BuildElectronBuilderOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
 ): AsyncIterableIterator<ElectronBuildEvent> {
   const { sourceRoot, projectRoot } = getSourceRoot(context);
   const normalizedOptions = normalizeBuildOptions(
     rawOptions,
     context.root,
     sourceRoot,
-    projectRoot
+    projectRoot,
   );
   const projGraph = context.projectGraph;
 
@@ -56,20 +56,27 @@ export function executor(
       context.root,
       context.projectName,
       context.targetName,
-      context.configurationName
+      context.configurationName,
     );
 
     normalizedOptions.tsConfig = createTmpTsConfig(
       normalizedOptions.tsConfig,
       context.root,
       target.data.root,
-      dependencies
+      dependencies,
     );
   }
 
   if (normalizedOptions.generatePackageJson) {
-    const packageJsonContent = createPackageJson(context.projectName, projGraph, { ...normalizedOptions, 'isProduction': true });
-    writeJsonFile(join(normalizedOptions.outputPath, 'package.json'), packageJsonContent);
+    const packageJsonContent = createPackageJson(
+      context.projectName,
+      projGraph,
+      { ...normalizedOptions, isProduction: true },
+    );
+    writeJsonFile(
+      join(normalizedOptions.outputPath, 'package.json'),
+      packageJsonContent,
+    );
   }
 
   let config = getElectronWebpackConfig(normalizedOptions);
@@ -85,14 +92,14 @@ export function executor(
     const preloadFilesDirectory = join(normalizedOptions.sourceRoot, 'app/api');
     readdirSync(preloadFilesDirectory, { withFileTypes: true })
       .filter(
-        (entry) => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/)
+        (entry) => entry.isFile() && entry.name.match(/(.+[.])?preload.ts/),
       )
       .forEach(
         (entry) =>
-        (config.entry[parse(entry.name).name] = resolve(
-          preloadFilesDirectory,
-          entry.name
-        ))
+          (config.entry[parse(entry.name).name] = resolve(
+            preloadFilesDirectory,
+            entry.name,
+          )),
       );
   } catch (error) {
     console.warn('Failed to load preload scripts');
@@ -109,11 +116,11 @@ export function executor(
           outfile: resolve(
             context.root,
             normalizedOptions.outputPath,
-            MAIN_OUTPUT_FILENAME
+            MAIN_OUTPUT_FILENAME,
           ),
         } as ElectronBuildEvent;
-      })
-    )
+      }),
+    ),
   );
 }
 

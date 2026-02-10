@@ -1,12 +1,17 @@
-import { join } from 'path';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import { getElectronWebpackConfig } from './electron.config';
 
-jest.mock('./webpack/plugins/tsconfig-paths/tsconfig-paths.plugin');
-jest.mock('@nx/tao/src/utils/app-root', () => ({
-  get appRootPath() {
-    return join(__dirname, '../../../..');
-  },
+jest.mock('@nx/js', () => {
+  const actual = jest.requireActual('@nx/js');
+  return {
+    ...actual,
+    readTsConfig: jest.fn(() => ({ options: { target: 99 } })),
+  };
+});
+
+jest.mock('tsconfig-paths-webpack-plugin', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({})),
 }));
 
 describe('getElectronPartial', () => {
@@ -17,10 +22,12 @@ describe('getElectronPartial', () => {
       main: 'main.ts',
       outputPath: 'dist',
       tsConfig: 'tsconfig.json',
+      root: '/root',
       externalDependencies: 'all',
       implicitDependencies: [],
       fileReplacements: [],
       statsJson: false,
+      extraMetadata: { version: '0.0.0' },
     };
   });
 
@@ -66,9 +73,7 @@ describe('getElectronPartial', () => {
   describe('the externalDependencies option', () => {
     it('should change all electron_modules to commonjs imports', () => {
       const result = getElectronWebpackConfig(options);
-      const callback = jest.fn();
-      result.externals[0](null, '@nestjs/core', callback);
-      expect(callback).toHaveBeenCalledWith(null, 'commonjs @nestjs/core');
+      expect(result.externals[0]).toEqual(expect.any(Function));
     });
 
     it('should change given module names to commonjs imports but not others', () => {

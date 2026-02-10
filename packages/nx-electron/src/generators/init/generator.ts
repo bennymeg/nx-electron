@@ -4,6 +4,7 @@ import {
   GeneratorCallback,
   Tree,
   updateJson,
+  runTasksInSerial,
 } from '@nx/devkit';
 import { Schema } from './schema';
 import { nxElectronVersion, electronVersion } from '../../utils/versions';
@@ -16,11 +17,15 @@ function addDependencies(tree: Tree) {
     {
       'nx-electron': nxElectronVersion,
       electron: electronVersion,
-    }
+    },
   );
 }
 
-function addScripts(tree: Tree, backendAppName = '<electron-app-name>', frontendAppName = '<frontend-app-name>') {
+function addScripts(
+  tree: Tree,
+  backendAppName = '<electron-app-name>',
+  frontendAppName = '<frontend-app-name>',
+) {
   return updateJson(tree, 'package.json', (json) => {
     json.scripts = json.scripts || {};
 
@@ -37,7 +42,8 @@ function addScripts(tree: Tree, backendAppName = '<electron-app-name>', frontend
     json.scripts['nxe:serve:backend'] = `nx serve ${backendAppName}`;
     json.scripts['nxe:test:frontend'] = `nx test ${frontendAppName}`;
     json.scripts['nxe:test:backend'] = `nx test ${backendAppName}`;
-    json.scripts['nxe:package:app'] = `nx run ${backendAppName}:make --prepackageOnly`;
+    json.scripts['nxe:package:app'] =
+      `nx run ${backendAppName}:make --prepackgeOnly`;
     json.scripts['nxe:make:app'] = `nx run ${backendAppName}:make`;
 
     return json;
@@ -54,6 +60,8 @@ function normalizeOptions(schema: Schema) {
 export async function generator(tree: Tree, schema: Schema) {
   const options = normalizeOptions(schema);
 
+  const tasks: GeneratorCallback[] = [];
+
   let jestInstall: GeneratorCallback;
   if (options.unitTestRunner === 'jest') {
     jestInstall = await jestInitGenerator(tree, {});
@@ -66,15 +74,13 @@ export async function generator(tree: Tree, schema: Schema) {
   }
 
   if (jestInstall) {
-    await jestInstall();
+    tasks.push(jestInstall);
   }
 
   addScripts(tree, options['name'], options['frontendProject']);
-  await installTask();
+  tasks.push(installTask);
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  return async () => {
-  };
+  return runTasksInSerial(...tasks);
 }
 
 export default generator;
