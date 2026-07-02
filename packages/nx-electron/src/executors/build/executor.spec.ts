@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { ExecutorContext } from '@nx/devkit';
 import { of } from 'rxjs';
 import executor, { BuildElectronBuilderOptions } from './executor';
@@ -78,7 +79,7 @@ describe('ElectronBuildBuilder', () => {
         output: expect.objectContaining({
           filename: expect.any(Function),
           libraryTarget: 'commonjs',
-          path: '/root/dist/apps/electron-app',
+          path: resolve(context.root, 'dist/apps/electron-app'),
         }),
       }),
     );
@@ -92,7 +93,7 @@ describe('ElectronBuildBuilder', () => {
         output: expect.objectContaining({
           filename: expect.any(Function),
           libraryTarget: 'commonjs',
-          path: '/root/dist/apps/electron-app',
+          path: resolve(context.root, 'dist/apps/electron-app'),
         }),
       }),
     );
@@ -101,7 +102,7 @@ describe('ElectronBuildBuilder', () => {
   describe('webpackConfig', () => {
     it('should handle custom path', async () => {
       jest.mock(
-        '/root/config.js',
+        resolve('/root', 'config.js'),
         () => (options) => ({ ...options, prop: 'my-val' }),
         { virtual: true },
       );
@@ -112,7 +113,7 @@ describe('ElectronBuildBuilder', () => {
           output: expect.objectContaining({
             filename: expect.any(Function),
             libraryTarget: 'commonjs',
-            path: '/root/dist/apps/electron-app',
+            path: resolve(context.root, 'dist/apps/electron-app'),
           }),
           prop: 'my-val',
         }),

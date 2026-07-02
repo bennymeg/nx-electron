@@ -10,7 +10,13 @@ import {
   FileSet,
   CliOptions,
 } from 'electron-builder';
-import { writeFile, statSync, readFileSync } from 'fs';
+import {
+  writeFile,
+  statSync,
+  readFileSync,
+  existsSync,
+  writeFileSync,
+} from 'fs';
 import { join, resolve } from 'path';
 import { promisify } from 'util';
 
@@ -64,6 +70,8 @@ export async function executor(
     );
     options = mergePresetOptions(options);
     options = addMissingDefaultOptions(options);
+
+    syncArtifactVersion(options);
 
     const platforms: Platform[] = _createPlatforms(options.platform);
     const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(
@@ -206,7 +214,7 @@ function _createBaseConfig(
   };
 }
 
-function _createConfigFromOptions(
+export function _createConfigFromOptions(
   options: PackageElectronBuilderOptions,
   baseConfig: Configuration
 ): Configuration {
@@ -246,6 +254,58 @@ function _normalizeBuilderOptions(
   }
 
   return normalizedOptions;
+}
+
+/**
+ * Mirrors the version that the maker options (or a `--extraMetadata.version` /
+ * `--buildVersion` command line override) provide into the app's generated
+ * `package.json` that is bundled into the artifact.
+ *
+ * electron-builder applies `extraMetadata` to the metadata it uses for naming
+ * the installer, but nx-electron ships a pre-generated `package.json` (produced
+ * by the `build` executor and copied verbatim from the build output), so that
+ * override never reaches the `package.json` embedded inside the artifact. As a
+ * result `app.getVersion()` and the bundled `package.json` stayed on the build
+ * time version (e.g. `0.0.1`) even though the installer was named correctly.
+ */
+export function syncArtifactVersion(
+  options: PackageElectronBuilderOptions
+): void {
+  const version: unknown =
+    (options.extraMetadata as { version?: unknown } | undefined)?.version ??
+    options.buildVersion;
+
+  if (typeof version !== 'string' || version.length === 0) {
+    return;
+  }
+
+  const packageJsonPath = resolve(
+    options.root,
+    options['sourcePath'],
+    options.name,
+    'package.json'
+  );
+
+  if (!existsSync(packageJsonPath)) {
+    return;
+  }
+
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+
+  if (packageJson.version === version) {
+    return;
+  }
+
+  packageJson.version = version;
+  writeFileSync(
+    packageJsonPath,
+    JSON.stringify(packageJson, null, 2) + '\n',
+    'utf8'
+  );
+
+  logger.info(
+    `Set bundled package.json version to "${version}" for "${options.name}".`
+  );
 }
 
 function mergePresetOptions(

@@ -21,7 +21,7 @@ import {
 import { join } from 'path';
 
 import { Linter, lintProjectGenerator } from '@nx/eslint';
-import { jestProjectGenerator } from '@nx/jest';
+import { configurationGenerator } from '@nx/jest';
 
 import { Schema } from './schema';
 import { generator as initGenerator } from '../init/generator';
@@ -33,7 +33,7 @@ export interface NormalizedSchema extends Schema {
 
 function getBuildConfig(
   project: ProjectConfiguration,
-  options: NormalizedSchema
+  options: NormalizedSchema,
 ): TargetConfiguration {
   return {
     executor: 'nx-electron:build',
@@ -53,11 +53,11 @@ function getBuildConfig(
           {
             replace: joinPathFragments(
               project.sourceRoot,
-              'environments/environment.ts'
+              'environments/environment.ts',
             ),
             with: joinPathFragments(
               project.sourceRoot,
-              'environments/environment.prod.ts'
+              'environments/environment.prod.ts',
             ),
           },
         ],
@@ -133,7 +133,7 @@ function updateConstantsFile(tree: Tree, options: NormalizedSchema) {
     export const rendererAppName = '${rendererAppName}';                        // options.name.split('-')[0] + '-web'
     export const electronAppName = '${options.name}';
     export const updateServerUrl = 'https://deployment-server-url.com';         // TODO: insert your update server url here
-    `
+    `,
   );
 }
 
@@ -166,8 +166,8 @@ function addProxy(tree: Tree, options: NormalizedSchema) {
             },
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     } else {
       //add new entry to existing config
@@ -190,7 +190,7 @@ function addProxy(tree: Tree, options: NormalizedSchema) {
 
 async function addLintingToApplication(
   tree: Tree,
-  options: NormalizedSchema
+  options: NormalizedSchema,
 ): Promise<GeneratorCallback> {
   const lintTask = await lintProjectGenerator(tree, {
     linter: options.linter,
@@ -229,7 +229,7 @@ export async function generator(tree: Tree, schema: Schema) {
   }
 
   if (options.unitTestRunner === 'jest') {
-    const jestTask = await jestProjectGenerator(tree, {
+    const jestTask = await configurationGenerator(tree, {
       project: options.name,
       setupFile: 'none',
       skipSerializers: true,
