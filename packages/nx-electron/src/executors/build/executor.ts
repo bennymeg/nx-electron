@@ -84,9 +84,15 @@ export function executor(
       projectRoot,
       'package.json',
     );
-    const projectHasVersion =
-      existsSync(projectPackageJsonPath) &&
-      !!readJsonFile(projectPackageJsonPath).version;
+    let projectHasVersion = false;
+    try {
+      projectHasVersion =
+        existsSync(projectPackageJsonPath) &&
+        !!readJsonFile(projectPackageJsonPath).version;
+    } catch {
+      // malformed/unreadable project package.json: treat as "no version"
+      // and fall back to the workspace root version below.
+    }
 
     if (!projectHasVersion) {
       try {
