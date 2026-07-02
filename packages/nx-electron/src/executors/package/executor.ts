@@ -214,7 +214,7 @@ function _createBaseConfig(
   };
 }
 
-function _createConfigFromOptions(
+export function _createConfigFromOptions(
   options: PackageElectronBuilderOptions,
   baseConfig: Configuration
 ): Configuration {
@@ -268,7 +268,9 @@ function _normalizeBuilderOptions(
  * result `app.getVersion()` and the bundled `package.json` stayed on the build
  * time version (e.g. `0.0.1`) even though the installer was named correctly.
  */
-function syncArtifactVersion(options: PackageElectronBuilderOptions): void {
+export function syncArtifactVersion(
+  options: PackageElectronBuilderOptions
+): void {
   const version: unknown =
     (options.extraMetadata as { version?: unknown } | undefined)?.version ??
     options.buildVersion;
