@@ -87,6 +87,11 @@
     "makerOptionsPath": {
       "type": "string",
       "description": "Overrides the '{sourceRoot}/app/options/maker.options.json' configuration file path."
+    },
+    "failOnMissingFiles": {
+      "type": "boolean",
+      "description": "Fail the packaging when the source ('from') of a configured copy step ('files', 'extraResources', 'extraFiles', 'frontendProject', 'extraProjects') does not exist. Set to false to only log a warning and let electron-builder silently skip the entry.",
+      "default": true
     }
   },
   "required": [

@@ -7,6 +7,19 @@ You can find a detailed description of all of its available options [here](https
 ## CLI options
 The CLI options that can be passed are described [here](https://github.com/bennymeg/nx-electron/blob/master/packages/nx-electron/src/validation/maker.schema.json).
 
+## Copy steps and missing sources
+
+Additional files and assets are included in the artifact via electron-builder's `files`, `extraResources` and `extraFiles` options (the `from` of a `files` entry is resolved relative to `sourcePath`, `extraResources` / `extraFiles` relative to the workspace root). electron-builder itself silently skips a copy step whose `from` does not exist, which would produce a "successful" package that is missing assets.
+
+Nx Electron therefore verifies before packaging that every explicitly configured copy step source (`files` FileSets, `frontendProject`, `extraProjects`, `extraResources`, `extraFiles`) exists and fails the target otherwise. Glob patterns and entries containing `${macro}` expansions are not checked.
+
+To restore the lenient behaviour (only a warning is logged) set `failOnMissingFiles` to `false`, either as target option or inside `maker.options.json`:
+```json
+{
+  "failOnMissingFiles": false
+}
+```
+
 ## Configuring static packaging options
 
 It is possible to configure all the packaging that are describes above in _`.\apps\<electron-app-name>\src\app\options\maker.options.json`_.
