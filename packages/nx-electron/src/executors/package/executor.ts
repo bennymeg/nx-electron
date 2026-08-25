@@ -10,7 +10,7 @@ import {
   FileSet,
   CliOptions,
 } from 'electron-builder';
-import { writeFile, statSync, readFileSync } from 'fs';
+import { writeFile, statSync, readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { promisify } from 'util';
 
@@ -35,6 +35,13 @@ export interface PackageElectronBuilderOptions extends Configuration {
   outputPath: string;
   publishPolicy?: PublishOptions['publish'];
   makerOptionsPath?: string;
+  /**
+   * Fail the packaging when the source (`from`) of a configured copy step
+   * (`files`, `extraResources`, `extraFiles`, `frontendProject`,
+   * `extraProjects`) does not exist. Defaults to `true`; set to `false` to
+   * only log a warning and let electron-builder silently skip the entry.
+   */
+  failOnMissingFiles?: boolean;
 }
 
 export interface PackageElectronBuilderOutput {
@@ -143,7 +150,7 @@ function _createTargets(
   return createTargets(platforms, null, arch);
 }
 
-function _createBaseConfig(
+export function _createBaseConfig(
   options: PackageElectronBuilderOptions,
   context: ExecutorContext
 ): Configuration {
@@ -184,6 +191,8 @@ function _createBaseConfig(
     }
   });
 
+  validateFileSources(files, options);
+
   return {
     directories: {
       ...options.directories,
@@ -206,7 +215,7 @@ function _createBaseConfig(
   };
 }
 
-function _createConfigFromOptions(
+export function _createConfigFromOptions(
   options: PackageElectronBuilderOptions,
   baseConfig: Configuration
 ): Configuration {
@@ -225,8 +234,92 @@ function _createConfigFromOptions(
   delete config.sourcePath;
   delete config.outputPath;
   delete config['makerOptionsPath'];
+  delete config['failOnMissingFiles'];
 
   return config;
+}
+
+/** Matches glob syntax and electron-builder `${macro}` expansions. */
+const NON_LITERAL_PATH = /[*?[\]{}!]|\$\{/;
+
+function isLiteralPath(from: unknown): from is string {
+  return (
+    typeof from === 'string' && from.length > 0 && !NON_LITERAL_PATH.test(from)
+  );
+}
+
+function toArray<T>(value: T | T[] | null | undefined): T[] {
+  if (value == null) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * Collects the absolute `from` paths of all explicitly configured copy steps
+ * (`files` FileSets — including the ones derived from `frontendProject` and
+ * `extraProjects` — as well as top-level `extraResources` / `extraFiles`)
+ * whose source does not exist on disk.
+ *
+ * `files` entries are expected to be resolved already (see
+ * `_createBaseConfig`); `extraResources` / `extraFiles` are resolved against
+ * the workspace root, which is what electron-builder uses as project directory.
+ * Plain string patterns, globs and entries containing macros are ignored since
+ * their existence cannot be determined statically.
+ */
+export function findMissingFileSources(
+  files: Array<FileSet | string>,
+  options: PackageElectronBuilderOptions
+): string[] {
+  const sources = new Set<string>();
+
+  files.forEach((file) => {
+    if (file && typeof file === 'object' && isLiteralPath(file.from)) {
+      sources.add(file.from);
+    }
+  });
+
+  (['extraResources', 'extraFiles'] as const).forEach((key) => {
+    toArray(options[key]).forEach((entry) => {
+      if (entry && typeof entry === 'object' && isLiteralPath(entry.from)) {
+        sources.add(resolve(options.root, entry.from));
+      }
+    });
+  });
+
+  return Array.from(sources).filter((source) => !existsSync(source));
+}
+
+/**
+ * electron-builder silently skips (debug log only) `files` entries whose
+ * `from` directory does not exist and merely warns for `extraResources` /
+ * `extraFiles`. A typo in a path or a forgotten build step therefore yields a
+ * "successful" artifact that is missing assets. Fail loudly instead, unless
+ * `failOnMissingFiles` is explicitly set to `false`.
+ */
+export function validateFileSources(
+  files: Array<FileSet | string>,
+  options: PackageElectronBuilderOptions
+): void {
+  const missing = findMissingFileSources(files, options);
+
+  if (missing.length === 0) {
+    return;
+  }
+
+  const message = [
+    'The following copy step source(s) configured for packaging do not exist:',
+    ...missing.map((source) => `  - ${source}`),
+    'Make sure the referenced projects / assets have been built before packaging, or fix the "from" path(s).',
+    'Set "failOnMissingFiles": false to downgrade this error to a warning.',
+  ].join('\n');
+
+  if (options.failOnMissingFiles === false) {
+    logger.warn(message);
+    return;
+  }
+
+  throw new Error(message);
 }
 
 function _normalizeBuilderOptions(
