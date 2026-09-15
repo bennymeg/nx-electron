@@ -160,13 +160,13 @@ fdescribe('app', () => {
         executor: '@nx/jest:jest',
         outputs: ['{workspaceRoot}/coverage/{projectRoot}'],
         options: {
-          jestConfig: 'electron-app/jest.config.ts',
+          jestConfig: 'electron-app/jest.config.cts',
         },
       });
     });
 
     it('should create the jest config', () => {
-      expect(tree.exists(`electron-app/jest.config.ts`)).toBeTruthy();
+      expect(tree.exists(`electron-app/jest.config.cts`)).toBeTruthy();
     });
   });
 

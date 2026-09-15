@@ -16,7 +16,7 @@ import { createPackageJson } from '@nx/js';
 import {
   calculateProjectDependencies,
   createTmpTsConfig,
-} from '@nx/js/src/utils/buildable-libs-utils';
+} from '@nx/js/internal';
 
 export type ElectronBuildEvent = {
   outfile: string;
