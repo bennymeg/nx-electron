@@ -32,7 +32,9 @@ export function generatePackageJson(
     if (!packageJson.dependencies) {
       packageJson.dependencies = {};
     }
-  } catch (e) {}
+  } catch {
+    // no project-level package.json, keep the default defined above
+  }
 
   const rootPackageJson = readJsonFile(`${options.root}/package.json`);
   const npmDeps = findAllNpmDeps(projectName, graph);

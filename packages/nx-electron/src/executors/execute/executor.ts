@@ -182,17 +182,18 @@ function runWaitUntilTargets(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
       const target = parseTargetString(waitUntilTarget, context);
       const output = await runExecutor(target, {}, context);
+      const firstEvent = await output.next();
 
-      return new Promise<{ success: boolean }>(async (resolve) => {
-        let event = await output.next();
-        // Resolve after first event
-        resolve(event.value as { success: boolean });
-
-        // Continue iterating
+      // Keep iterating in the background so the target keeps running
+      void (async () => {
+        let event = firstEvent;
         while (!event.done) {
           event = await output.next();
         }
-      });
+      })();
+
+      // Resolve after first event
+      return firstEvent.value as { success: boolean };
     }),
   );
 }

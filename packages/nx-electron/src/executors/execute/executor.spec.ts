@@ -134,6 +134,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context,
         )) {
+          // drain the generator so the executor runs to completion
         }
         expect(spawn).toHaveBeenCalledWith(expect.any(String), [
           '--inspect=9229',
@@ -151,6 +152,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context,
         )) {
+          // drain the generator so the executor runs to completion
         }
         expect(spawn).toHaveBeenCalledWith(expect.any(String), [
           '--inspect-brk=9229',
@@ -170,6 +172,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context,
         )) {
+          // drain the generator so the executor runs to completion
         }
         expect(spawn).toHaveBeenCalledWith(expect.any(String), [
           '--inspect=1234',
@@ -187,6 +190,7 @@ describe('ElectronExecuteBuilder', () => {
     const loggerError = jest.spyOn(logger, 'error');
 
     for await (const event of executor(options, context)) {
+      // drain the generator so the executor runs to completion
     }
     expect(loggerError).toHaveBeenCalledWith('Error Message');
   });
@@ -204,6 +208,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context,
     )) {
+      // drain the generator so the executor runs to completion
     }
     expect(loggerError).toHaveBeenLastCalledWith('Error Message');
   });
@@ -217,6 +222,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context,
     )) {
+      // drain the generator so the executor runs to completion
     }
     expect(spawn).toHaveBeenCalledWith(expect.any(String), [
       'outfile.js',
@@ -238,6 +244,7 @@ describe('ElectronExecuteBuilder', () => {
       },
       context,
     )) {
+      // drain the generator so the executor runs to completion
     }
     expect(loggerWarn).toHaveBeenCalled();
   });
@@ -252,6 +259,7 @@ describe('ElectronExecuteBuilder', () => {
         },
         context,
       )) {
+        // drain the generator so the executor runs to completion
       }
 
       expect(runExecutor).toHaveBeenCalledTimes(3);
@@ -287,6 +295,7 @@ describe('ElectronExecuteBuilder', () => {
           },
           context,
         )) {
+          // drain the generator so the executor runs to completion
         }
       } catch (e) {
         expect(e.message).toMatchInlineSnapshot(
