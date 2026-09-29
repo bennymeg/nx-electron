@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { normalizeBuildOptions } from './normalize';
 import { BuildElectronBuilderOptions } from '../executors/build/executor';
 import * as fs from 'fs';
@@ -58,7 +59,9 @@ describe('normalizeBuildOptions', () => {
       sourceRoot,
       projectRoot,
     );
-    expect(result.main).toEqual('/root/apps/electron-app/src/main.ts');
+    expect(result.main).toEqual(
+      resolve(root, 'apps/electron-app/src/main.ts'),
+    );
   });
 
   it('should resolve additional entries from root', () => {
@@ -74,7 +77,7 @@ describe('normalizeBuildOptions', () => {
       projectRoot,
     );
     expect(result.additionalEntryPoints[0].entryPath).toEqual(
-      '/root/some/path.ts',
+      resolve(root, 'some/path.ts'),
     );
   });
 
@@ -85,7 +88,7 @@ describe('normalizeBuildOptions', () => {
       sourceRoot,
       projectRoot,
     );
-    expect(result.outputPath).toEqual('/root/dist/apps/electron-app');
+    expect(result.outputPath).toEqual(resolve(root, 'dist/apps/electron-app'));
   });
 
   it('should resolve the tsConfig path', () => {
@@ -96,7 +99,7 @@ describe('normalizeBuildOptions', () => {
       projectRoot,
     );
     expect(result.tsConfig).toEqual(
-      '/root/apps/electron-app/tsconfig.app.json',
+      resolve(root, 'apps/electron-app/tsconfig.app.json'),
     );
   });
 
@@ -124,12 +127,12 @@ describe('normalizeBuildOptions', () => {
     );
     expect(result.assets).toEqual([
       {
-        input: '/root/apps/electron-app/src/assets',
+        input: resolve(root, 'apps/electron-app/src/assets'),
         output: 'assets',
         glob: '**/*',
       },
       {
-        input: '/root/outsideproj',
+        input: resolve(root, 'outsideproj'),
         output: 'output',
         glob: '**/*',
         ignore: ['**/*.json'],
@@ -146,12 +149,12 @@ describe('normalizeBuildOptions', () => {
     );
     expect(result.fileReplacements).toEqual([
       {
-        replace: '/root/apps/environment/environment.ts',
-        with: '/root/apps/environment/environment.prod.ts',
+        replace: resolve(root, 'apps/environment/environment.ts'),
+        with: resolve(root, 'apps/environment/environment.prod.ts'),
       },
       {
-        replace: '/root/module1.ts',
-        with: '/root/module2.ts',
+        replace: resolve(root, 'module1.ts'),
+        with: resolve(root, 'module2.ts'),
       },
     ]);
   });

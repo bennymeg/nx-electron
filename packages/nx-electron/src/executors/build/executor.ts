@@ -2,9 +2,9 @@ import { join, parse, resolve } from 'path';
 import { map, tap } from 'rxjs/operators';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { eachValueFrom } from 'rxjs-for-await';
-import { readdirSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 
-import { ExecutorContext, writeJsonFile } from '@nx/devkit';
+import { ExecutorContext, readJsonFile, writeJsonFile } from '@nx/devkit';
 import { runWebpack } from '../../utils/run-webpack';
 
 import { getElectronWebpackConfig } from '../../utils/electron.config';
@@ -16,7 +16,7 @@ import { createPackageJson } from '@nx/js';
 import {
   calculateProjectDependencies,
   createTmpTsConfig,
-} from '@nx/js/src/utils/buildable-libs-utils';
+} from '@nx/js/internal';
 
 export type ElectronBuildEvent = {
   outfile: string;
@@ -73,6 +73,40 @@ export function executor(
       projGraph,
       { ...normalizedOptions, isProduction: true },
     );
+
+    // `createPackageJson` (from @nx/js) only reads the version from the app
+    // project's own package.json and otherwise defaults to '0.0.1'. Since
+    // nx-electron apps usually have no package.json, fall back to the workspace
+    // root package.json version so the generated (and ultimately packaged)
+    // artifact tracks the workspace version instead of being stuck on '0.0.1'.
+    const projectPackageJsonPath = join(
+      context.root,
+      projectRoot,
+      'package.json',
+    );
+    let projectHasVersion = false;
+    try {
+      projectHasVersion =
+        existsSync(projectPackageJsonPath) &&
+        !!readJsonFile(projectPackageJsonPath).version;
+    } catch {
+      // malformed/unreadable project package.json: treat as "no version"
+      // and fall back to the workspace root version below.
+    }
+
+    if (!projectHasVersion) {
+      try {
+        const { version: rootVersion } = readJsonFile(
+          join(context.root, 'package.json'),
+        );
+        if (rootVersion) {
+          packageJsonContent.version = rootVersion;
+        }
+      } catch {
+        // keep the version produced by createPackageJson
+      }
+    }
+
     writeJsonFile(
       join(normalizedOptions.outputPath, 'package.json'),
       packageJsonContent,

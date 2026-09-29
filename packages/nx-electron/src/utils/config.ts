@@ -1,9 +1,4 @@
-import {
-  Configuration,
-  ProgressPlugin,
-  DefinePlugin,
-  WebpackPluginInstance,
-} from 'webpack';
+import { Configuration, ProgressPlugin, DefinePlugin } from 'webpack';
 
 import * as ts from 'typescript';
 import { join } from 'path';
@@ -14,6 +9,12 @@ import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nx/js';
 import { BuildBuilderOptions } from './types';
+
+// The element type accepted by webpack's `Configuration.plugins`. We derive it
+// from `Configuration` rather than importing `WebpackPluginInstance`, because
+// webpack 5.99+ changed the public `WebpackPluginInstance` export to a function
+// type, which no longer accepts plugin instances (e.g. `new ProgressPlugin()`).
+type WebpackPlugin = NonNullable<Configuration['plugins']>[number];
 
 export const MAIN_OUTPUT_FILENAME = 'main.js';
 export const INDEX_OUTPUT_FILENAME = 'index.js';
@@ -107,7 +108,7 @@ export function getBaseWebpackPartial(
     stats: options.verbose ? 'verbose' : 'normal',
   };
 
-  const extraPlugins: WebpackPluginInstance[] = [];
+  const extraPlugins: WebpackPlugin[] = [];
 
   if (options.progress) {
     extraPlugins.push(new ProgressPlugin());
@@ -122,7 +123,7 @@ export function getBaseWebpackPartial(
         },
         perChunkOutput: false,
         outputFilename: `3rdpartylicenses.txt`,
-      }) as unknown as WebpackPluginInstance
+      }) as unknown as WebpackPlugin
     );
   }
 
