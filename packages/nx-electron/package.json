@@ -62,9 +62,7 @@
     "ts-loader": "^9.5.2",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
     "webpack": "^5.99.9",
-    "webpack-merge": "^5.10.0"
-  },
-  "devDependencies": {
+    "webpack-merge": "^5.10.0",
     "webpack-node-externals": "^3.0.0"
   }
 }
