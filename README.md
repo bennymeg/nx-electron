@@ -57,11 +57,16 @@ npm install -D nx-electron
 ## Creating Nx Electron Application
 
 ```bash
-nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
+nx g nx-electron:app <directory> --frontendProject=<frontend-app-name>
 ```
 
+For example, `nx g nx-electron:app apps/desktop --frontendProject=web` creates the electron application `desktop` in `apps/desktop`. Like the Nx application generators, the directory is used as given, and the project name defaults to its last segment. Pass `--name=<electron-app-name>` to choose another name.
+
 > [!IMPORTANT] 
-> Make sure to select Integrated monorepo as a project style, and Webpack as a bundler.
+> Make sure to select Webpack as a bundler for your frontend project.
+
+> [!NOTE]
+> In workspaces that use the TS solution setup (package manager workspaces and TypeScript project references, the default of `create-nx-workspace`), the application is configured in its `package.json`, added to the workspaces and to the root `tsconfig.json` references, and builds into `<directory>/dist`. Packaging still expects the frontend project's build output in `<sourcePath>/<frontend-app-name>` (`dist/apps/<frontend-app-name>` by default).
 
 > [!NOTE] 
 > You should add a frontend project to you workspace prior to invoking this command.
@@ -100,7 +105,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
     > ✦︎ **Important**
     > 
-    > Make sure to build both the frontend project and the backend project before packaging your application.
+    > Applications generated with nx-electron 23 or later build the backend project and the frontend project automatically before packaging (`dependsOn`). For older applications, make sure to build both before packaging your application.
 
 ### Making Nx Electron Application (standalone build)
 
@@ -110,7 +115,7 @@ nx g nx-electron:app <electron-app-name> --frontendProject=<frontend-app-name>
 
     > ✦︎ **Important**
     > 
-    > Make sure to build both the frontend project and the backend project before making your standalone application.
+    > Applications generated with nx-electron 23 or later build the backend project and the frontend project automatically before making (`dependsOn`). For older applications, make sure to build both before making your standalone application.
 
 ## Configuring static packaging / making options
 

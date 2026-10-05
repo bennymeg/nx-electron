@@ -43,7 +43,7 @@ function addScripts(
     json.scripts['nxe:test:frontend'] = `nx test ${frontendAppName}`;
     json.scripts['nxe:test:backend'] = `nx test ${backendAppName}`;
     json.scripts['nxe:package:app'] =
-      `nx run ${backendAppName}:make --prepackgeOnly`;
+      `nx run ${backendAppName}:make --prepackageOnly`;
     json.scripts['nxe:make:app'] = `nx run ${backendAppName}:make`;
 
     return json;

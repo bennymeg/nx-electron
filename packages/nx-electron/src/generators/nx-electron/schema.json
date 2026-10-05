@@ -4,23 +4,25 @@
   "title": "Nx Application Options Schema",
   "type": "object",
   "properties": {
-    "name": {
-      "description": "The name of the application.",
+    "directory": {
+      "description": "The directory of the new application.",
       "type": "string",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the electron application?"
+      "x-prompt": "Which directory do you want to create the application in?"
+    },
+    "name": {
+      "description": "The name of the application.",
+      "type": "string",
+      "pattern": "(?:^@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/[a-zA-Z0-9-~][a-zA-Z0-9-._~]*|^[a-zA-Z][^:]*)$",
+      "x-priority": "important"
     },
     "frontendProject": {
       "type": "string",
       "description": "Frontend project that needs to access this application.",
       "x-prompt": "What's the name of the web application in your workspace you'd like to use inside Electron?"
-    },
-    "directory": {
-      "type": "string",
-      "description": "The directory of the new application."
     },
     "extraProjects": {
       "type": "array",
@@ -71,7 +73,11 @@
       "type": "boolean",
       "description": "Whether or not to configure the ESLint \"parserOptions.project\" option. We do not do this by default for lint performance reasons.",
       "default": false
+    },
+    "useProjectJson": {
+      "type": "boolean",
+      "description": "Use a `project.json` configuration file instead of inlining the Nx configuration in the `package.json` file."
     }
   },
-  "required": ["name"]
+  "required": ["directory"]
 }

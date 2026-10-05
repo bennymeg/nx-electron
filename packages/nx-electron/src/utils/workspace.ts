@@ -1,7 +1,10 @@
 import {
   ExecutorContext,
+  joinPathFragments,
   readProjectsConfigurationFromProjectGraph,
 } from '@nx/devkit';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 export function getSourceRoot(context: ExecutorContext): {
   sourceRoot: string;
@@ -21,11 +24,19 @@ export function getSourceRoot(context: ExecutorContext): {
   );
   const { sourceRoot, root } = projects[projectName] ?? {};
 
-  if (sourceRoot && root) {
+  if (!root) {
+    throw new Error('Project does not have a root. Please define it.');
+  }
+
+  if (sourceRoot) {
     return { sourceRoot, projectRoot: root };
   }
 
-  throw new Error(
-    'Project does not have a sourceRoot or root. Please define both.',
-  );
+  // Projects configured in package.json (the TS solution setup) usually have no
+  // sourceRoot. Fall back like Nx does (`getProjectSourceRoot` in @nx/js).
+  const srcFolder = joinPathFragments(root, 'src');
+  return {
+    sourceRoot: existsSync(join(context.root, srcFolder)) ? srcFolder : root,
+    projectRoot: root,
+  };
 }
