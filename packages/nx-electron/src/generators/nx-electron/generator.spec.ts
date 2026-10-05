@@ -48,6 +48,11 @@ fdescribe('app', () => {
       expect(tree.exists(`electron-app/src/main.ts`)).toBeTruthy();
     });
 
+    it('should generate the assets folder with a .gitkeep file', () => {
+      expect(tree.exists(`electron-app/src/assets/.gitkeep`)).toBeTruthy();
+      expect(tree.children('electron-app/src/assets')).toEqual(['.gitkeep']);
+    });
+
     it('should generate the tsconfig.json file', () => {
       expect(readJson(tree, 'electron-app/tsconfig.json')).toEqual({
         compilerOptions: {
