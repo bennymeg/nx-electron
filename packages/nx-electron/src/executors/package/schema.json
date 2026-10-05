@@ -32,12 +32,12 @@
     },
     "sourcePath": {
       "type": "string",
-      "description": "The full path for the compiled source directory, relative to the current workspace. If this parameter is not supplied, the 'sourcePath' path from angular.json will be used.",
+      "description": "Directory, relative to the workspace root, that contains the build outputs of `frontendProject` and `extraProjects` (as `<sourcePath>/<project>`). Relative `from` paths of `files` entries are resolved against it as well. The electron application itself is taken from the `outputPath` of its `nx-electron:build` target, or from `<sourcePath>/<name>` if it has none.",
       "default": "dist/apps"
     },
     "outputPath": {
       "type": "string",
-      "description": "The full path for the new output directory, relative to the current workspace. If this parameter is not supplied, the 'outputPath' path from angular.json will be used."
+      "description": "Directory, relative to the workspace root, that electron-builder writes to. With `prepackageOnly`, `executables` in the path is replaced by `packages`."
     },
     "platform": {
       "oneOf": [
@@ -87,6 +87,11 @@
     "makerOptionsPath": {
       "type": "string",
       "description": "Overrides the '{sourceRoot}/app/options/maker.options.json' configuration file path."
+    },
+    "failOnMissingFiles": {
+      "type": "boolean",
+      "description": "Fail the packaging when the source ('from') of a configured copy step ('files', 'extraResources', 'extraFiles', 'frontendProject', 'extraProjects') does not exist. Set to false to only log a warning and let electron-builder silently skip the entry.",
+      "default": true
     }
   },
   "required": [

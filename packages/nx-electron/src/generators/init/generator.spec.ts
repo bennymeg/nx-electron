@@ -20,8 +20,34 @@ describe('init', () => {
     expect(packageJson.devDependencies['electron']).toBe(electronVersion);
   });
 
+  it('should not add dependencies if skipPackageJson is set', async () => {
+    const task = await initGenerator(tree, {
+      skipFormat: true,
+      skipPackageJson: true,
+      unitTestRunner: 'none',
+    });
+
+    const { devDependencies = {} } = readJson(tree, 'package.json');
+    expect(devDependencies['nx-electron']).toBeUndefined();
+    expect(devDependencies['electron']).toBeUndefined();
+    // nothing to install
+    await expect(Promise.resolve(task())).resolves.toBeUndefined();
+  });
+
   it('should not add jest config if unitTestRunner is none', async () => {
     await initGenerator(tree, { skipFormat: false, unitTestRunner: 'none' });
     expect(tree.exists('jest.config.js')).toEqual(false);
+  });
+
+  it('should add an nxe:package:app script that runs make with --prepackageOnly', async () => {
+    // the application generator passes its own options (incl. the app name) on
+    const options = { skipFormat: false, name: 'electron-app' };
+    await initGenerator(tree, options);
+
+    const packageJson = readJson(tree, 'package.json');
+
+    expect(packageJson.scripts['nxe:package:app']).toBe(
+      'nx run electron-app:make --prepackageOnly',
+    );
   });
 });

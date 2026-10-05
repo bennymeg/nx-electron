@@ -41,6 +41,13 @@ export interface PackageElectronBuilderOptions extends Configuration {
   outputPath: string;
   publishPolicy?: PublishOptions['publish'];
   makerOptionsPath?: string;
+  /**
+   * Fail the packaging when the source (`from`) of a configured copy step
+   * (`files`, `extraResources`, `extraFiles`, `frontendProject`,
+   * `extraProjects`) does not exist. Defaults to `true`; set to `false` to
+   * only log a warning and let electron-builder silently skip the entry.
+   */
+  failOnMissingFiles?: boolean;
 }
 
 export interface PackageElectronBuilderOutput {
@@ -71,7 +78,9 @@ export async function executor(
     options = mergePresetOptions(options);
     options = addMissingDefaultOptions(options);
 
-    syncArtifactMetadata(options);
+    const appSourcePath = resolveAppSourcePath(options, context);
+
+    syncArtifactMetadata(options, appSourcePath);
 
     const platforms: Platform[] = _createPlatforms(options.platform);
     const targets: Map<Platform, Map<Arch, string[]>> = _createTargets(
@@ -79,7 +88,11 @@ export async function executor(
       null,
       options.arch
     );
-    const baseConfig: Configuration = _createBaseConfig(options, context);
+    const baseConfig: Configuration = _createBaseConfig(
+      options,
+      context,
+      appSourcePath
+    );
     const config: Configuration = _createConfigFromOptions(options, baseConfig);
     const normalizedOptions: CliOptions = _normalizeBuilderOptions(
       targets,
@@ -87,7 +100,7 @@ export async function executor(
       rawOptions
     );
 
-    await beforeBuild(options.root, options.sourcePath, options.name);
+    await beforeBuild(appSourcePath, options.name);
     await build(normalizedOptions);
 
     success = true;
@@ -98,13 +111,30 @@ export async function executor(
   return { success };
 }
 
-async function beforeBuild(
-  projectRoot: string,
-  sourcePath: string,
-  appName: string
-) {
+/**
+ * Returns the build output directory of the electron app, as configured on
+ * its `nx-electron:build` target. `<sourcePath>/<name>` only matches it for
+ * apps directly in the apps directory (not with `--directory` or in the TS
+ * solution setup), so it is used as fallback only.
+ */
+export function resolveAppSourcePath(
+  options: PackageElectronBuilderOptions,
+  context: ExecutorContext
+): string {
+  const targets = context.projectGraph?.nodes[options.name]?.data.targets;
+  const buildTarget = Object.values(targets ?? {}).find(
+    (target) => target.executor === 'nx-electron:build'
+  );
+  const outputPath: unknown = buildTarget?.options?.outputPath;
+
+  return typeof outputPath === 'string' && outputPath.length > 0
+    ? resolve(options.root, outputPath)
+    : resolve(options.root, options.sourcePath, options.name);
+}
+
+async function beforeBuild(appSourcePath: string, appName: string) {
   await writeFileAsync(
-    join(projectRoot, sourcePath, appName, 'index.js'),
+    join(appSourcePath, 'index.js'),
     `const Main = require('./${appName}/main.js');`
   );
 }
@@ -151,9 +181,10 @@ function _createTargets(
   return createTargets(platforms, null, arch);
 }
 
-function _createBaseConfig(
+export function _createBaseConfig(
   options: PackageElectronBuilderOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
+  appSourcePath: string
 ): Configuration {
   const outputPath = options.prepackageOnly
     ? options.outputPath.replace('executables', 'packages')
@@ -192,6 +223,8 @@ function _createBaseConfig(
     }
   });
 
+  validateFileSources(files, options);
+
   return {
     directories: {
       ...options.directories,
@@ -200,12 +233,12 @@ function _createBaseConfig(
     files: files.concat([
       './package.json',
       {
-        from: resolve(options.sourcePath, options.name),
+        from: appSourcePath,
         to: options.name,
         filter: ['main.js', '?(*.)preload.js', 'assets'],
       },
       {
-        from: resolve(options.sourcePath, options.name),
+        from: appSourcePath,
         to: '',
         filter: ['index.js', 'package.json'],
       },
@@ -233,8 +266,92 @@ export function _createConfigFromOptions(
   delete config.sourcePath;
   delete config.outputPath;
   delete config['makerOptionsPath'];
+  delete config['failOnMissingFiles'];
 
   return config;
+}
+
+/** Matches glob syntax and electron-builder `${macro}` expansions. */
+const NON_LITERAL_PATH = /[*?[\]{}!]|\$\{/;
+
+function isLiteralPath(from: unknown): from is string {
+  return (
+    typeof from === 'string' && from.length > 0 && !NON_LITERAL_PATH.test(from)
+  );
+}
+
+function toArray<T>(value: T | T[] | null | undefined): T[] {
+  if (value == null) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * Collects the absolute `from` paths of all explicitly configured copy steps
+ * (`files` FileSets — including the ones derived from `frontendProject` and
+ * `extraProjects` — as well as top-level `extraResources` / `extraFiles`)
+ * whose source does not exist on disk.
+ *
+ * `files` entries are expected to be resolved already (see
+ * `_createBaseConfig`); `extraResources` / `extraFiles` are resolved against
+ * the workspace root, which is what electron-builder uses as project directory.
+ * Plain string patterns, globs and entries containing macros are ignored since
+ * their existence cannot be determined statically.
+ */
+export function findMissingFileSources(
+  files: Array<FileSet | string>,
+  options: PackageElectronBuilderOptions
+): string[] {
+  const sources = new Set<string>();
+
+  files.forEach((file) => {
+    if (file && typeof file === 'object' && isLiteralPath(file.from)) {
+      sources.add(file.from);
+    }
+  });
+
+  (['extraResources', 'extraFiles'] as const).forEach((key) => {
+    toArray(options[key]).forEach((entry) => {
+      if (entry && typeof entry === 'object' && isLiteralPath(entry.from)) {
+        sources.add(resolve(options.root, entry.from));
+      }
+    });
+  });
+
+  return Array.from(sources).filter((source) => !existsSync(source));
+}
+
+/**
+ * electron-builder silently skips (debug log only) `files` entries whose
+ * `from` directory does not exist and merely warns for `extraResources` /
+ * `extraFiles`. A typo in a path or a forgotten build step therefore yields a
+ * "successful" artifact that is missing assets. Fail loudly instead, unless
+ * `failOnMissingFiles` is explicitly set to `false`.
+ */
+export function validateFileSources(
+  files: Array<FileSet | string>,
+  options: PackageElectronBuilderOptions
+): void {
+  const missing = findMissingFileSources(files, options);
+
+  if (missing.length === 0) {
+    return;
+  }
+
+  const message = [
+    'The following copy step source(s) configured for packaging do not exist:',
+    ...missing.map((source) => `  - ${source}`),
+    'Make sure the referenced projects / assets have been built before packaging, or fix the "from" path(s).',
+    'Set "failOnMissingFiles": false to downgrade this error to a warning.',
+  ].join('\n');
+
+  if (options.failOnMissingFiles === false) {
+    logger.warn(message);
+    return;
+  }
+
+  throw new Error(message);
 }
 
 function _normalizeBuilderOptions(
@@ -272,7 +389,8 @@ function _normalizeBuilderOptions(
  * deep-merged and a `null` value removes the field.
  */
 export function syncArtifactMetadata(
-  options: PackageElectronBuilderOptions
+  options: PackageElectronBuilderOptions,
+  appSourcePath = resolve(options.root, options.sourcePath, options.name)
 ): void {
   const metadata: Record<string, unknown> = {
     ...(options.extraMetadata as Record<string, unknown> | undefined),
@@ -290,12 +408,7 @@ export function syncArtifactMetadata(
     return;
   }
 
-  const packageJsonPath = resolve(
-    options.root,
-    options['sourcePath'],
-    options.name,
-    'package.json'
-  );
+  const packageJsonPath = resolve(appSourcePath, 'package.json');
 
   if (!existsSync(packageJsonPath)) {
     return;

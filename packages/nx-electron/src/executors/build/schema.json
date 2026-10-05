@@ -7,6 +7,28 @@
       "type": "string",
       "description": "The name of the main entry-point file."
     },
+    "additionalEntryPoints": {
+      "type": "array",
+      "description": "Additional entry points that are bundled next to `main`. Each one is written to `<outputPath>/<entryName>.js`.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entryName": {
+            "type": "string",
+            "description": "The name of the output file, without extension."
+          },
+          "entryPath": {
+            "type": "string",
+            "description": "The entry file, relative to the workspace root."
+          }
+        },
+        "required": [
+          "entryName",
+          "entryPath"
+        ]
+      },
+      "default": []
+    },
     "tsConfig": {
       "type": "string",
       "description": "The name of the Typescript configuration file."
@@ -14,6 +36,11 @@
     "outputPath": {
       "type": "string",
       "description": "The output path of the generated files."
+    },
+    "outputFileName": {
+      "type": "string",
+      "description": "The name of the bundled main entry file. The package and make executors expect `main.js`.",
+      "default": "main.js"
     },
     "watch": {
       "type": "boolean",
@@ -63,7 +90,14 @@
     },
     "extraMetadata": {
       "type": "object",
-      "default": {}
+      "default": {},
+      "description": "Metadata of the application. `version` sets the `__BUILD_VERSION__` constant (defaults to the version in the root package.json).",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "The application version."
+        }
+      }
     },
     "implicitDependencies": {
       "type": "array",
@@ -71,12 +105,14 @@
         "type": "string"
       },
       "description": "Implicit dependencies to keep in the dynamically generated package json.",
-      "default": []
+      "default": [],
+      "x-deprecated": "Has no effect."
     },
     "statsJson": {
       "type": "boolean",
       "description": "Generates a 'stats.json' file which can be analyzed using tools such as: #webpack-bundle-analyzer' or https: //webpack.github.io/analyse.",
-      "default": false
+      "default": false,
+      "x-deprecated": "Has no effect."
     },
     "verbose": {
       "type": "boolean",

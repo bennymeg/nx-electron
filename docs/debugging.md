@@ -46,6 +46,8 @@ In this document we will describe how to configure you IDE to debug your nx-elec
 }
 ```
 
+  Replace `dist/apps/{electron-app-name}` with the `outputPath` of the app's `build` target. That is `dist/<app directory>` by default, and `<app directory>/dist` in workspaces with the TS solution setup.
+
 - Tasks.json task:
 ```
 {
