@@ -3,6 +3,8 @@ import {
   readJson,
   readProjectConfiguration,
   Tree,
+  updateJson,
+  writeJson,
 } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
@@ -19,7 +21,12 @@ fdescribe('app', () => {
   beforeEach(() => {
     jest.spyOn(console, 'warn').mockImplementation();
 
-    tree = createTreeWithEmptyWorkspace();
+    // The Nx 23 test workspace defaults to the oxfmt formatter. The jest
+    // configuration generator then installs oxfmt into a temp directory and
+    // loads it, which Jest cannot parse (ES module); prettier 3 cannot be
+    // loaded inside Jest either. The specs read the generated files as JSON,
+    // so they don't need a formatter.
+    tree = createTreeWithEmptyWorkspace({ formatter: 'none' });
 
     options = {
       name: 'electron-app',
@@ -46,6 +53,11 @@ fdescribe('app', () => {
 
     it('should generate the main.ts file', () => {
       expect(tree.exists(`electron-app/src/main.ts`)).toBeTruthy();
+    });
+
+    it('should generate the assets folder with a .gitkeep file', () => {
+      expect(tree.exists(`electron-app/src/assets/.gitkeep`)).toBeTruthy();
+      expect(tree.children('electron-app/src/assets')).toEqual(['.gitkeep']);
     });
 
     it('should generate the tsconfig.json file', () => {
@@ -228,6 +240,34 @@ fdescribe('app', () => {
 
     it('should generate the main.ts file', () => {
       expect(tree.exists(`directory/electron-app/src/main.ts`)).toBeTruthy();
+    });
+  });
+
+  describe('when the workspace uses the TS solution setup', () => {
+    beforeEach(async () => {
+      updateJson(tree, 'package.json', (json) => ({
+        ...json,
+        workspaces: ['packages/*'],
+      }));
+      writeJson(tree, 'tsconfig.base.json', {
+        compilerOptions: { composite: true, declaration: true },
+      });
+      writeJson(tree, 'tsconfig.json', {
+        extends: './tsconfig.base.json',
+        files: [],
+        references: [],
+      });
+
+      await applicationGenerator(tree, options);
+    });
+
+    // TypeScript 6 requires an explicit rootDir (TS5011) and the TS solution
+    // setup's tsconfig.base.json does not define one.
+    it('should set the rootDir of the tsconfig.app.json file to src', () => {
+      expect(
+        readJson(tree, 'electron-app/tsconfig.app.json').compilerOptions
+          .rootDir,
+      ).toBe('src');
     });
   });
 });

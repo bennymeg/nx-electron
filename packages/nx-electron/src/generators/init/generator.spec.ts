@@ -24,4 +24,16 @@ describe('init', () => {
     await initGenerator(tree, { skipFormat: false, unitTestRunner: 'none' });
     expect(tree.exists('jest.config.js')).toEqual(false);
   });
+
+  it('should add an nxe:package:app script that runs make with --prepackageOnly', async () => {
+    // the application generator passes its own options (incl. the app name) on
+    const options = { skipFormat: false, name: 'electron-app' };
+    await initGenerator(tree, options);
+
+    const packageJson = readJson(tree, 'package.json');
+
+    expect(packageJson.scripts['nxe:package:app']).toBe(
+      'nx run electron-app:make --prepackageOnly',
+    );
+  });
 });
