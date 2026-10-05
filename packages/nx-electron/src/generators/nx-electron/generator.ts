@@ -13,10 +13,12 @@ import {
   stripIndents,
   TargetConfiguration,
   Tree,
+  updateJson,
   updateNxJson,
   updateProjectConfiguration,
   runTasksInSerial,
 } from '@nx/devkit';
+import { isUsingTsSolutionSetup } from '@nx/js/internal';
 
 import { join } from 'path';
 
@@ -144,6 +146,19 @@ function addAppFiles(tree: Tree, options: NormalizedSchema) {
     root: options.appProjectRoot,
     offset: offsetFromRoot(options.appProjectRoot),
   });
+
+  // TypeScript 6 requires an explicit rootDir, which the TS solution setup's
+  // tsconfig.base.json does not define (the integrated one sets `rootDir: '.'`).
+  if (isUsingTsSolutionSetup(tree)) {
+    updateJson(
+      tree,
+      joinPathFragments(options.appProjectRoot, 'tsconfig.app.json'),
+      (json) => {
+        json.compilerOptions = { ...json.compilerOptions, rootDir: 'src' };
+        return json;
+      },
+    );
+  }
 }
 
 function addProxy(tree: Tree, options: NormalizedSchema) {

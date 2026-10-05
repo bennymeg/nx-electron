@@ -3,6 +3,8 @@ import {
   readJson,
   readProjectConfiguration,
   Tree,
+  updateJson,
+  writeJson,
 } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
@@ -233,6 +235,34 @@ fdescribe('app', () => {
 
     it('should generate the main.ts file', () => {
       expect(tree.exists(`directory/electron-app/src/main.ts`)).toBeTruthy();
+    });
+  });
+
+  describe('when the workspace uses the TS solution setup', () => {
+    beforeEach(async () => {
+      updateJson(tree, 'package.json', (json) => ({
+        ...json,
+        workspaces: ['packages/*'],
+      }));
+      writeJson(tree, 'tsconfig.base.json', {
+        compilerOptions: { composite: true, declaration: true },
+      });
+      writeJson(tree, 'tsconfig.json', {
+        extends: './tsconfig.base.json',
+        files: [],
+        references: [],
+      });
+
+      await applicationGenerator(tree, options);
+    });
+
+    // TypeScript 6 requires an explicit rootDir (TS5011) and the TS solution
+    // setup's tsconfig.base.json does not define one.
+    it('should set the rootDir of the tsconfig.app.json file to src', () => {
+      expect(
+        readJson(tree, 'electron-app/tsconfig.app.json').compilerOptions
+          .rootDir,
+      ).toBe('src');
     });
   });
 });
